@@ -1,0 +1,232 @@
+﻿@model iLabPlus.Models.BDiLabPlus.TarifasVenta
+
+@{
+
+}
+
+<div class="modal modalWrapper" id="modalTarifa" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTarifaTitle">Tarifa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormTarifaCreateEdit" method="post" asp-controller="TarifasVenta" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyTarifa">
+
+                    <div class="TabsTarifa" style="width:100%;height:100%;">
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="TarifaLabel">
+                                                Tarifa <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Código de Tarifa" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Tarifa" type="text" class="form-control" asp-for="Tarifa">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="TarDescripcionLabel">Descripción</label>
+                                            <input id="TarDescripcion" type="text" class="form-control" asp-for="TarDescripcion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Porcentaje Etiqueta</label>
+                                            <input id="TarEtiqueta" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="TarEtiqueta">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Porcentaje Hechura</label>
+                                            <input id="TarHechura" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="TarHechura">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Porcentaje Peso</label>
+                                            <input id="TarPeso" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="TarPeso">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Porcentaje PesoHechura</label>
+                                            <input id="TarPesoHechura" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="TarPesoHechura">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row IsoDatBottom" style="margin-top: 2rem !important;">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-1" style="">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div style="height:100%">
+                            <a>Observaciones</a>
+                            <div>
+                                <textarea class="form-control" id="TarObserv" style="margin-top: 10px;" asp-for="TarObserv"></textarea>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalTarifa-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalTarifa-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsTarifa"))
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        // Posiciona en la primera tab
+        var TabsObj = wijmo.Control.getControl('.TabsTarifa');
+        $('#modalTarifa').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+        // Carga el editor de texto
+        $('#TarObserv').summernote(
+            {
+                height: 520,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        var ModelGuid = "@Model.Guid";
+
+        if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+            document.getElementById("Tarifa").focus();
+        } else {
+            $("#Tarifa").prop("disabled", true);
+            $("#Tarifa").parent().addClass("disabled");
+        }
+
+
+
+
+    });
+
+
+
+
+
+
+</script>

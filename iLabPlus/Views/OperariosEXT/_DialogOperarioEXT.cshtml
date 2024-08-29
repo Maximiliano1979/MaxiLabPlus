@@ -1,0 +1,529 @@
+﻿@model iLabPlus.Models.BDiLabPlus.OperariosEXT
+
+@{
+
+
+}
+
+<div class="modal " id="modalOperario" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalOperarioTitle">Operario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormOperarioCreateEdit" method="post" asp-controller="OperariosEXT" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyOperario">
+
+                    <div class="TabsOperario" style="width:100%;height:100%;">
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default required" style="padding-bottom: 0;">
+                                            <label id="OpeTipoLabel">Tipo</label>
+                                            @(Html.C1().ComboBoxFor(c => c.OpeTipo)
+                                            .Id("OpeTipo")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListOperarioTipo)
+                                            .IsDisabled(false)
+                                            .SelectedValue(-1)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="OperarioLabel">
+                                                Operario <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Código de Operario" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Operario" type="text" class="form-control" asp-for="Operario" readonly>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-7" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="OpeNombreLabel">Nombre</label>
+                                            <input id="OpeNombre" type="text" class="form-control" asp-for="OpeNombre">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeNIFLabel">Nif</label>
+                                            <input id="OpeNIF" type="text" class="form-control" asp-for="OpeNIF">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeTelefono1Label">Teléfono</label>
+                                            <input id="OpeTelefono1" type="text" class="form-control" asp-for="OpeTelefono1">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-7" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeTelefono1DescLabel">Descripción</label>
+                                            <input id="OpeTelefono1Desc" type="text" class="form-control" asp-for="OpeTelefono1Desc">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-3" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-9" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeMailLabel">Mail</label>
+                                            <input id="OpeMail" type="text" class="form-control" asp-for="OpeMail">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-3" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IVA</label>
+                                            <input id="OpeIVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="OpeIVA">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IRPF</label>
+                                            <input id="OpeIRPF" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="OpeIRPF">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-1" style="padding-left:0px;">
+                                    </div>
+
+                                    <div class="col-4" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta Contable</label>
+                                            <input id="OpeCuentaContable" type="text" class="form-control" asp-for="OpeCuentaContable">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-3" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-5" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión Etiqueta</label>
+                                            <input id="OpeComisionEtiqueta" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="OpeComisionEtiqueta">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión Hechura</label>
+                                            <input id="OpeComisionHechura" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="OpeComisionHechura">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row " style="">
+                                    <div class="col-3" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-5" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión Peso</label>
+                                            <input id="OpeComisionPeso" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="OpeComisionPeso">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión PesoHechura</label>
+                                            <input id="OpeComisionPesoHechura" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="OpeComisionPesoHechura">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row IsoDatBottom" style="margin-top: 2rem !important;">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Direcciones</a>
+                            <div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label>Dirección</label>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección</label>
+                                            <input id="OpeDireccion" type="text" class="form-control" asp-for="OpeDireccion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Código postal</label>
+                                            <input id="OpeDirDP" type="text" class="form-control" asp-for="OpeDirDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Población</label>
+                                            <input id="OpeDirPoblacion" type="text" class="form-control" asp-for="OpeDirPoblacion">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Provincia</label>
+                                            <input id="OpeDirProvincia" type="text" class="form-control" asp-for="OpeDirProvincia">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>País</label>
+                                            <input id="OpeDirPais" type="text" class="form-control" asp-for="OpeDirPais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label>Comunicaciones</label>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeTelefono2Label">Teléfono 2</label>
+                                            <input id="OpeTelefono2" type="text" class="form-control" asp-for="OpeTelefono2">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-8" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeTelefono2DescLabel">Descripción</label>
+                                            <input id="OpeTelefono2Desc" type="text" class="form-control" asp-for="OpeTelefono2Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row " style="">
+
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeTelefono3Label">Teléfono 3</label>
+                                            <input id="OpeTelefono3" type="text" class="form-control" asp-for="OpeTelefono3">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-8" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="OpeTelefono3DescLabel">Descripción</label>
+                                            <input id="OpeTelefono3Desc" type="text" class="form-control" asp-for="OpeTelefono3Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div style="height:100%">
+                            <a>Observaciones</a>
+                            <div>
+                                <textarea class="form-control" id="OpeObserv" style="margin-top: 10px;" asp-for="OpeObserv"></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <a>Bancos</a>
+                            <div>
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Banco</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Entidad</label>
+                                            <input id="OpeBcoBanco" type="text" class="form-control" asp-for="OpeBcoBanco">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cod. Entidad</label>
+                                            <input id="OpeBcoCtaCte1" maxlength="4" type="text" class="form-control" asp-for="OpeBcoCtaCte1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Sucursal</label>
+                                            <input id="OpeBcoCtaCte2" maxlength="4" type="text" class="form-control" asp-for="OpeBcoCtaCte2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Díg. de control</label>
+                                            <input id="OpeBcoCtaCte3" maxlength="2" type="text" class="form-control" asp-for="OpeBcoCtaCte3">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta</label>
+                                            <input id="OpeBcoCtaCte4" maxlength="10" type="text" class="form-control" asp-for="OpeBcoCtaCte4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Iban</label>
+                                            <input id="OpeBcoIBAN" type="text" class="form-control" asp-for="OpeBcoIBAN">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Swift</label>
+                                            <input id="OpeBcoSwift" type="text" class="form-control" asp-for="OpeBcoSwift">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Forma de pago</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Pago</label>
+                                            <input id="OpeFPago" type="text" class="form-control" asp-for="OpeFPago">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Vencimientos</label>
+                                            <input id="OpeFPvto" type="text" class="form-control InputIntegerMask" asp-for="OpeFPvto">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Intervalo</label>
+                                            <input id="OpeFPint" type="text" class="form-control InputIntegerMask" asp-for="OpeFPint">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Plazo</label>
+                                            <input id="OpeFPlazo" type="text" class="form-control InputIntegerMask" asp-for="OpeFPlazo">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 1</label>
+                                            <input id="OpeFPdia1" type="text" class="form-control InputIntegerMask" asp-for="OpeFPdia1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 2</label>
+                                            <input id="OpeFPdia2" type="text" class="form-control InputIntegerMask" asp-for="OpeFPdia2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 3</label>
+                                            <input id="OpeFPdia3" type="text" class="form-control InputIntegerMask" asp-for="OpeFPdia3">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalOperario-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalOperario-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsOperario"))
+
+
+<script>
+
+    $(document).ready(function () {
+
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        // Posiciona en la primera tab
+        var TabsObj = wijmo.Control.getControl('.TabsOperario');
+        $('#modalOperario').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+        // Carga el editor de texto
+        $('#OpeObserv').summernote(
+            {
+                height: 520,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        var ModelGuid = "@Model.Guid";
+
+        if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+            $('#Operario').val('Automático');
+            $("#Operario").prop("readonly", true);
+            $("#Operario").parent().addClass("disabled");
+        } else {
+            $("#Operario").prop("readonly", true);
+            $("#Operario").parent().addClass("disabled");
+        }
+
+
+
+
+    });
+
+
+
+
+
+
+</script>

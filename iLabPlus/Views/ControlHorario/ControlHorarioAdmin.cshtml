@@ -1,0 +1,165 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.ControlHorario>
+
+@{
+    ViewBag.Title = "ControlHorarioAdmin";
+
+
+    var actions = ViewBag.Actions;
+
+}
+
+<script src="~/js/gridsFunctions.js"></script>
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+
+
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-3" style="padding-left:0;">
+        <h3>Control Horario Admin</h3>
+    </div>
+
+    <div class="col-9 page_heading_func">
+
+        <button id="BtnControlHorarioAdminNew" type="button" class="btn btn-default BtnControlHorarioAdminNew" onclick="BtnDialogControlHorarioAdminNew()"><i class="far fa-fw fa-plus"></i></button>
+
+        <p id="gridSearch" style="width:300px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></p>
+
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Control Horario 1</a></li>
+                @*<li role="separator" class="divider"></li>*@
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-table"></i> &nbsp;&nbsp;&nbsp;Informe de Control Horario Seleccionados Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Control Horario 3</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Control Horario 4</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Control Horario 5</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-bs-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;Importar Control Horario</a></li> @*OJO CON EL DATA-KEY ACA PORQUE DICE CLIENTES*@
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> &nbsp;&nbsp;&nbsp;Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="ResetearConfigGrid()"><i class="fal fa-fw fa-sd-card"></i> &nbsp;&nbsp;&nbsp;Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row wrapper wrapper-content  ">
+    <div class="ibox-content">
+
+        @(Html.C1().FlexGrid()
+                        .Id("gridControlHorarioAdmin")
+                        //.AutoGenerateColumns(true)
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AllowPinning(true)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid GridEvents truncate")
+                        .DefaultRowSize(27)
+                        .Filterable(f => {
+                            f.DefaultFilterType(FilterType.Both);
+                            f.Id("theGridFilter");
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        //.IsDisabled(true)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.Row)
+                        //.ShowColumnFooters(true)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model)
+                        .AutoGenerateColumns(false)
+                        //.FrozenColumns(2)
+                        .OrderBy("ControlHorario")
+                        .FrozenColumns((int)@ViewBag.ColumnsPinnedUser)
+                        .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+                        .Columns(col =>
+                        {
+                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+                            col.Add(c => c.Binding("Empresa").Header("Empresa").Width("120").Visible(false));
+                            col.Add(c => c.Binding("Empleado").Header("Empleado").Width("120"));
+                            col.Add(c => c.Binding("EmpleadoNombre").Header("Nombre Empleado").Width("200"));
+                            col.Add(c => c.Binding("Fecha").Header("Fecha").Width("150"));
+                            col.Add(c => c.Binding("HoraEntrada").Header("Hora Entrada").Width("150"));
+                            col.Add(c => c.Binding("HoraSalida").Header("Hora Salida").Width("150"));
+                            col.Add(c => c.Binding("HorasTrabajadas").Header("Horas Trabajadas").Width("170"));
+                            col.Add(c => c.Binding("Cierre").Header("Cierre").Width("100"));
+                            col.Add(c => c.Binding("Observaciones").Header("Observaciones").Width("370"));
+                        })
+
+                        )
+        @(Html.C1().FlexGridSearch("#gridSearch")
+                            .Grid("gridControlHorarioAdmin")
+                            .Delay(50)
+                            .CssMatch("underline-match")
+                            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+                            )
+
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        var searchFields = ['Empleado', 'EmpleadoNombre', 'Fecha'];
+        gridConfig = initializeGrid("gridControlHorarioAdmin", "gridSearch", searchFields);
+
+        // Asignar la función de filtrado usando applyFilters
+        gridConfig.search.hostElement.addEventListener("input", function (e) {
+            if (gridConfig.search.text != "") {
+                applyFilters(gridConfig.grid, gridConfig.search, searchFields);
+                SetCookiesView();
+            }
+        }, true);
+
+        CargaDatos(gridConfig.grid);
+        setupColumnResizeIndicator(gridConfig.grid);
+
+    });
+
+    function BtnDialogControlHorarioAdminNew() {
+        N_DialogControlHorarioAdmin("New").then((res) => {
+            N_Grid_Data_Add(gridConfig.grid, res);
+            setupTooltips(gridConfig.grid);
+        }).catch((error) => {
+            console.error("Error al crear nuevo registro de Control Horario:", error);
+        });
+    }
+
+    function ResetearConfigGrid() {
+        BtnResetConfigGrid(gridConfig.grid);
+        setupTooltips(gridConfig.grid);
+    }
+
+</script>

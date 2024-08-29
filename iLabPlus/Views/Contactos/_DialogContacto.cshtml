@@ -1,0 +1,241 @@
+﻿@model iLabPlus.Models.BDiLabPlus.Contactos
+
+@{
+
+
+}
+
+<!-- Modal para nuevo contacto -->
+<div class="modal " id="modalContacto" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalContactoTitle">Contacto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormContactosCreateEdit" method="post" asp-controller="Contactos" asp-action="CrearEditarContacto" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                @*<input asp-for="Email" class=" form-control" hidden />*@
+                @*<input asp-for="Cliente" class=" form-control" hidden />*@
+
+                <div class="modal-body" id="modal-bodyContactos">
+
+                    <div class="TabsContacto" style="width:100%;height:100%;">
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="NombreLabel">
+                                                Nombre <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Nombre de Contacto" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Nombre" type="text" class="form-control" asp-for="Nombre">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="OrganizacionLabel">Organización</label>
+                                            <input id="Organizacion" type="text" class="form-control" asp-for="Organizacion">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="CargoLabel">Cargo</label>
+                                            <input id="Cargo" type="text" class="form-control" asp-for="Cargo">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="EmailLabel">Email</label>
+                                            <input id="Email" type="email" name="Email" class="form-control" asp-for="Email">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="DireccionLabel">Dirección</label>
+                                            <input id="Direccion" type="text" class="form-control" asp-for="Direccion">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="CPLabel">Código Postal</label>
+                                            <input id="CP" type="text" class="form-control" asp-for="CP">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="PoblacionLabel">Población</label>
+                                            <input id="Poblacion" type="text" class="form-control" asp-for="Poblacion">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="PaisLabel">País</label>
+                                            <input id="Pais" type="text" class="form-control" asp-for="Pais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="TelefonoFijoEmpresaLabel">Teléfono Fijo Empresa</label>
+                                            <input id="TelefonoFijoEmpresa" type="tel" class="form-control" asp-for="TelefonoFijoEmpresa">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="TelefonoMovilEmpresaLabel">Teléfono Móvil Empresa</label>
+                                            <input id="TelefonoMovilEmpresa" type="tel" class="form-control" asp-for="TelefonoMovilEmpresa">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="TelefonoMovilPersonalLabel">Teléfono Móvil Personal</label>
+                                            <input id="TelefonoMovilPersonal" type="tel" class="form-control" asp-for="TelefonoMovilPersonal">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="TelefonoFijoPersonalLabel">Teléfono Fijo Personal</label>
+                                            <input id="TelefonoFijoPersonal" type="tel" class="form-control" asp-for="TelefonoFijoPersonal">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-1">
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="FechaNacimientoLabel">Fecha de Nacimiento</label>
+                                            <input id="FechaNacimiento" type="date" class="form-control" asp-for="FechaNacimiento">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="WebLabel">Web</label>
+                                            <input id="Web" type="text" class="form-control" asp-for="Web">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="TipoLabel">Tipo</label>
+                                            <input id="Tipo" type="text" class="form-control" asp-for="Tipo">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="row mt-1">
+
+                                    <div class="col-12" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="NotasLabel">Notas</label>
+                                            <input id="Notas" type="text" class="form-control" asp-for="Notas">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="row " style="margin-top: 2rem !important;">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+
+                <div class="modal-footer">
+                    <button type="button" id="modalContacto-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" id="modalContacto-ok" class="btn btn-primary">Guardar Contacto</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsContacto"))
+
+
+<script>
+
+    $(document).ready(function () {
+
+    })
+
+
+</script>

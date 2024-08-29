@@ -1,0 +1,147 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Stocks>
+
+@{
+    ViewBag.Title = "Almacenes";
+
+
+    var actions = ViewBag.Actions;
+
+}
+
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-1" style="padding-left:0;">
+        <h3>Ruptura de Stocks</h3>
+    </div>
+
+    <div class="col-11 page_heading_func">
+
+        <button id="BtnVendedorNew" type="button" class="btn btn-default" onclick="BtnDialogStocksNew()"><i class="far fa-fw fa-plus"></i></button>
+
+        @(Html.C1().ComboBox()
+        .Id("ComboFiltroQty")
+        .OnClientGotFocus("ComboGotFocus")
+        .OnClientSelectedIndexChanged("ComboSelectedIndexChanged").
+        Bind(ViewBag.FiltroQty)
+        .Width("200px"))
+
+        <div class="btn-group ">
+            @(Html.C1().ComboBox()
+                .Id("ComboAlmacen")
+                .OnClientGotFocus("ComboGotFocus")
+                .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                .Bind(ViewBag.ListAlmacenes)
+                .Width("200px"))
+
+            <button id="BtnAlmacenNew" type="button" class="btn btn-default btn-xs" onclick="BtnDialogAlmacenNew()" style="top: 8px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="Gestión Almacenes"><i class="far  fa-edit"></i></button>
+        </div>
+
+
+
+
+        <p id="gridSearch" style="width:300px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></p>
+
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 1</a></li>
+                @*<li role="separator" class="divider"></li>*@
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-table"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes Seleccionados Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 3</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 4</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 5</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;Importar Almacenes</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> &nbsp;&nbsp;&nbsp;Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnResetConfigGrid()"><i class="fal fa-fw fa-sd-card"></i> &nbsp;&nbsp;&nbsp;Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row wrapper wrapper-content  ">
+
+    <div class="ibox-content">
+
+        @(Html.C1().FlexGrid()
+                        .Id("gridStocks")
+                        //.AutoGenerateColumns(true)
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AllowPinning(true)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid GridEvents")
+                        .DefaultRowSize(27)
+                        .Filterable(f => {
+                            f.DefaultFilterType(FilterType.Both);
+                            f.Id("theGridFilter");
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        //.IsDisabled(true)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.Row)
+                        //.ShowColumnFooters(true)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model)
+                        .AutoGenerateColumns(false)
+                        //.FrozenColumns(2)
+                        .OrderBy("StkAlmOrden")
+                        .FrozenColumns((int)(ViewBag.ColumnsPinnedUser ?? 3)) // Inserta esta línea aquí
+                        .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+                        .Columns(col =>
+                        {
+
+                            col.Add(c => c.Binding("StkArticulo").Header("Artículo").Width("*"));
+                            col.Add(c => c.Binding("StkFisico").Header("Stock Actual").Width("*").Align("right").Format("n3"));
+                            col.Add(c => c.Binding("StkMinimo").Header("Stock Mínimo").Width("*").Align("right").Format("n3"));
+
+
+                        })
+
+                        )
+        @(Html.C1().FlexGridSearch("#gridSearch")
+                            .Grid("gridStocks")
+                            .Delay(50)
+                            .CssMatch("underline-match")
+                            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+                            )
+
+    </div>
+
+</div>
+
+
+
+@*En Stocks.cshtml esta la definificion de la funcion BtnDialogStocksNew() y BtnDialogAlmacenNew()*@

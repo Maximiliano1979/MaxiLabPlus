@@ -1,0 +1,463 @@
+﻿
+
+@{
+
+
+}
+
+<link href="~/lib/apexcharts/dist/apexcharts.css" rel="stylesheet" />
+<script src="~/lib/apexcharts/dist/apexcharts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+
+<script src="~/js/Dashboard/GraficaDashFechasPedidosEntregas.js"></script>
+<script src="~/js/Dashboard/GraficaDashCargarEntregasSemana.js"></script>
+<script src="~/js/Dashboard/GraficaDashEntregasPendSemana.js"></script>
+<script src="~/js/Dashboard/GraficaVentasPorMes.js"></script>
+<script src="~/js/Dashboard/GraficaVentasPorMesesDelAnio.js"></script>
+<script src="~/js/Dashboard/GraficaDash2Facturacion.js"></script>
+
+<div class="row page-heading-Dash  ">
+    <button id="BtnDash1" type="button" class="btnDashMenu btnMenuDashboard">Producción</button>
+    <button id="BtnDash2" type="button" class="btnDashMenu btnMenuDashboard">Ventas</button>
+    <select id="selectorAnio" class="selectDashAnos ">
+        @for (int year = DateTime.Now.Year; year > DateTime.Now.Year - 5; year--)
+            {
+                <option value="@year">@year</option>
+            }
+    </select>
+</div>
+
+<div id="WrapperDash1" class="row wrapper-contentDash   " style="display:flex">
+
+    <div class="col-6 WappersPageDashIzq">
+
+        <div class="row" style="height: 25%; margin-bottom: 15px; ">
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;">
+
+                <div class="page-Dash" style="display: flex; flex-direction: column; align-items: center;  ">
+                    <div id="leyendaDia" class="text-center DashTitulos">
+                        <!-- La leyenda se actualizará dinámicamente -->
+                    </div>
+                    <div id="entregasHoy" class="text-center" style="position: relative; top: 10%;">
+                        <!-- El número de entregas se actualizará dinámicamente -->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;">
+                <div class="page-Dash">
+                    <div class="text-center DashTitulos" style="margin-bottom: 5px; ">
+                        ENT. REFERENCIAS PEND. SEM.
+                    </div>
+                    <div id="graficoEntregasPendSemana" class=""></div>
+                </div>
+            </div>
+
+            <div class="col-4 " style="padding-left: 0; padding-right: 0; height: 100%;">
+                <div class="page-Dash">
+                    <div class="text-center DashTitulos" style="margin-bottom: 5px; ">
+                        ENTREGAS SEMANALES
+                    </div>
+                    <canvas id="graficoEntregasSemana" class="canvasGrafico canvasGraficoEntregasSemana"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-12 page-Dash  " style="height: calc(75% - 15px); ">
+            <div class="text-center DashTitulos" style="margin-bottom: 35px; ">
+                PEDIDOS MES
+            </div>
+            <canvas id="pedidosPorDiaDashboard" class="canvasGrafico"></canvas>
+        </div>
+    </div>
+
+    <div class="col-6 WappersPageDashDer">
+
+        <div class="col-12 page-Dash" style="height: 50%; padding: 15px 50px; margin-bottom: 15px; max-height: 395px; ">
+            <div class="text-center DashTitulos" style="margin-bottom: 15px;">
+                REFERENCIAS MAS DEMANDADAS - IMPORTE (anual)
+            </div>
+            <div id="contenedor-referencias-mas-demandadas-importe">
+                <!-- El contenido se llenará dinámicamente aquí -->
+            </div>
+        </div>
+
+        <div class="col-12 page-Dash" style="height: calc(50% - 15px); padding: 15px 50px; max-height: 395px; ">
+            <div class="text-center DashTitulos" style="margin-bottom: 15px;">
+                REFERENCIAS MAS DEMANDADAS - UNIDADES (anual)
+            </div>
+            <div id="contenedor-referencias-mas-demandadas-unidades">
+                <!-- El contenido se llenará dinámicamente aquí -->
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="WrapperDash2" class="row wrapper-contentDash   " style="display:none">
+
+    <div class="col-6 WappersPageDashIzq">
+
+        <div class="col-12 page-Dash page-Dash-Ventas-Diarias" style="height: 50%; margin-bottom: 15px; ">
+            @*Ventas por mes (la grafica irá del dia 1 al dia 31 del mes en que me encuentre)*@
+            <canvas id="ventasPorMesCanvas" class="canvasGrafico"></canvas>
+        </div>
+
+        <div class="col-12 page-Dash page-Dash-Ventas-Diarias" style="height: calc(50% - 15px); ">
+            @*Ventas por meses (la gráfica irá del mes de enero a diciembre del año en curso)*@
+            <canvas id="ventasPorMesesCanvas" class="canvasGrafico"></canvas>
+        </div>
+
+    </div>
+
+    <div class="col-6 WappersPageDashDer">
+
+        <div class="row" style="height: 24%; margin-bottom: 15px; ">
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;">
+                <div class="page-Dash" style="display: flex; flex-direction: column; align-items: center;  ">
+                    <div id="leyendaDia" class="text-center DashTitulos">
+                        ALBARANES € (anual)
+                    </div>
+                    <div id="Dash2AlbaranesAnual">
+                        0
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;">
+                <div class="page-Dash" style="display: flex; flex-direction: column; align-items: center;  ">
+                    <div id="leyendaDia" class="text-center DashTitulos">
+                        PEND. COBRO € (anual)
+                    </div>
+                    <div id="Dash2FactPendCobro">
+                        0
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;padding-right:0;">
+                <div class="page-Dash">
+                    <div class="text-center DashTitulos" style="margin-bottom: 5px; ">
+                        REL. COBRADO/TOTAL
+                    </div>
+                    <div id="Dash2GraficoCrobadoTotal" class=""></div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="row" style="height: 24.2%; margin-bottom: 15px; ">
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;">
+                <div class="page-Dash" style="display: flex; flex-direction: column; align-items: center;  ">
+                    <div id="leyendaDia" class="text-center DashTitulos">
+                        FACTURACIÓN € (anual)
+                    </div>
+                    <div id="Dash2FacturacionAnual">
+                        0
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 " style="padding-left: 0; height: 100%;">
+                <div class="page-Dash" style="display: flex; flex-direction: column; align-items: center;  ">
+                    <div id="leyendaDia" class="text-center DashTitulos">
+                        GASTOS € (anual)
+                    </div>
+                    <div id="Dash2GastosAnualContainer">
+                        0
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 " style="padding-left: 0; height: 100%; padding-right: 0;">
+                <div class="page-Dash" style="display: flex; flex-direction: column; align-items: center;  ">
+                    <div id="leyendaDia" class="text-center DashTitulos">
+                        BENEFICIOS € (anual)
+                    </div>
+                    <div id="Dash2BeneficiosAnual">
+                        0
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="col-12 page-Dash  " style="height: calc(50% - 15px); max-height: 400px; padding: 15px 50px; ">
+            <div class="text-center DashTitulos" style="margin-bottom: 15px; ">
+                FACTURACIÓN CLIENTES € (anual)
+            </div>
+
+            <div class="contenedor-facturacion-clientes">
+                <!-- Este contenedor se llenará dinámicamente con JavaScript -->
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        
+        //var ButtonClickedElement = null;
+
+        $(".btnDashMenu").on("click", function () {
+            // Remover la clase de todos los botones
+            $(".btnDashMenu").removeClass("ButDashPanelSelect");
+            $(".btnDashMenu").removeClass("clicked");
+
+            // Agregar la clase al botón clicado
+            $(this).addClass("ButDashPanelSelect");
+            $(this).addClass("clicked");
+            ButtonClickedElement = $(this);
+
+            var IdStr = $(this).attr('id');
+            var Id = IdStr.replace("BtnDash", "");
+
+            $(".wrapper-contentDash").css("display", "none");
+            $("#WrapperDash" + Id).css("display", "flex");
+        });
+
+        //$(".btnDashMenu").hover(
+        //    function () {
+        //        // Añadir clase al hacer hover solo si no está clicado
+        //        if (!$(this).hasClass("ButDashPanelSelect")) {
+        //            $(".btnDashMenu").removeClass("ButDashPanelSelect");
+        //            $(this).addClass("ButDashPanelSelect");
+        //        }
+        //    },
+        //    function () {
+        //        if (!$(this).hasClass("clicked")) {
+        //            $(this).removeClass("ButDashPanelSelect");
+        //            $(this).removeClass("clicked");
+
+        //            ButtonClickedElement.addClass("ButDashPanelSelect");
+        //        }
+        //    }
+        //);
+
+
+        async function actualizarFacturacionClientes(year) {
+            try {
+                const response = await fetch('/Dashboard/ObtenerFacturacionClientesAnual?year=' + year);
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const data = await response.json();
+
+                // Vacío el contenedor actual
+                var contenedor = document.querySelector('.contenedor-facturacion-clientes');
+                contenedor.innerHTML = '';
+
+                $('.contenedor-facturacion-clientes').slimScroll({
+                    height: '35vh',
+                    railOpacity: 0.9
+                });
+
+                // Relleno con nuevos datos
+                data.forEach(function (item) {
+                    var porcentaje = (item.ClienteImporteFact / item.TotalImporteTodosClientes * 100).toFixed(2);
+                    var html = `<div>
+                    <span style="font-weight: bold;">${item.Cliente}</span>
+                    <span> - ${item.CliNombre}</span>
+                    <small class="float-right" style="font-weight: bold;color: #2467ae;">${porcentaje}%</small>
+                    <small class="float-right" style="margin-right: 10px">
+                        <span style="font-weight: bold;">
+                        ${item.ClienteImporteFact.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })} 
+                        </span>
+                        /
+                        ${item.TotalImporteTodosClientes.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
+                    </small>
+                </div>
+                <div class="progress progress-small">
+                    <div style="width: ${porcentaje}%;" class="progress-bar" ></div>
+                </div>`;
+                    contenedor.innerHTML += html;
+                });
+            } catch (error) {
+                console.error("Error al actualizar la facturación de los clientes: ", error);
+                if (error.response) {
+                    console.error("Respuesta del servidor:", await error.response.text());
+                }
+            }
+        }
+
+
+        async function actualizarArtMasPedidosPrecio(year) {
+            try {
+                const response = await fetch(`/Dashboard/ObtenerArtMasPedidosPrecio?year=${year}`);
+                if (!response.ok) throw new Error('Error al obtener datos');
+
+                const artMasPedidos = await response.json();
+                const contenedor = document.getElementById('contenedor-referencias-mas-demandadas-importe');
+                contenedor.innerHTML = ''; 
+
+                $('#contenedor-referencias-mas-demandadas-importe').slimScroll({
+                    height: '32vh',
+                    railOpacity: 0.9
+                });
+
+                artMasPedidos.forEach(item => {
+                    const porcentaje = item.Porcentaje;
+                    const htmlPrecio = `  <div>
+                                        <span style="font-weight: bold;">${item.Articulo}</span>
+                                        <small class="float-right" style="font-weight: bold; color: #2467ae;">(${porcentaje}%)</small>
+                                        <small class="float-right" style="margin-right: 10px">
+                                            <span style="font-weight: bold;">
+                                            ${item.ArticuloPrecioPedido.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })} 
+                                            </span>
+                                            /
+                                            ${item.TotalPrecioTodosArticulos.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
+                                        </small>
+                                    </div>
+                                    <div class="progress progress-small">
+                                        <div style="width: ${porcentaje}%" class="progress-bar"></div>
+                                    </div>`;
+                    contenedor.insertAdjacentHTML('beforeend', htmlPrecio);
+                });
+            } catch (error) {
+                console.error('Error al actualizar las referencias más demandadas:', error);
+            }
+        }
+
+
+        async function actualizarArtMasPedidosQty(year) {
+            try {
+                const response = await fetch(`/Dashboard/ObtenerArtMasPedidosQty?year=${year}`);
+                if (!response.ok) throw new Error('Error al obtener datos');
+
+                const artMasPedidos = await response.json();
+                const contenedor = document.getElementById('contenedor-referencias-mas-demandadas-unidades');
+                contenedor.innerHTML = '';
+
+                $('#contenedor-referencias-mas-demandadas-unidades').slimScroll({
+                    height: '32vh',
+                    railOpacity: 0.9
+                });
+
+                artMasPedidos.forEach(item => {
+                    const porcentaje = item.Porcentaje;
+                    const htmlQty = `  <div>
+                                        <span style="font-weight: bold;">${item.Articulo}</span>
+                                        <small class="float-right" style="font-weight: bold; color: #2467ae;">(${porcentaje}%)</small>
+                                        <small class="float-right" style="margin-right: 10px">
+                                            <span style="font-weight: bold;">
+                                            ${item.ArticuloQtyPedido.toLocaleString()} 
+                                            </span>
+                                            /
+                                            ${item.TotalQtyTodosArticulos.toLocaleString()}
+                                        </small>
+                                    </div>
+                                    <div class="progress progress-small">
+                                        <div style="width: ${porcentaje}%" class="progress-bar"></div>
+                                    </div>`;
+                    contenedor.insertAdjacentHTML('beforeend', htmlQty);
+                });
+            } catch (error) {
+                console.error('Error al actualizar las referencias más demandadas por unidades:', error);
+            }
+        }
+        
+
+        async function obtenerTotalAlbaranesAnual(year) {
+            try {
+                const response = await fetch('/Dashboard/ObtenerTotalAlbaranesAnual?year=' + year);
+                if (!response.ok) {
+                    throw new Error('Error al obtener el total de albaranes');
+                }
+                const totalAlbaranesAnual = await response.json();
+                // console.log(totalAlbaranesAnual)
+                document.getElementById('Dash2AlbaranesAnual').textContent = totalAlbaranesAnual.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+
+        let totalFacturacionAnual;
+
+        async function obtenerTotalFacturacionAnual(year) {
+            try {
+                const response = await fetch('/Dashboard/ObtenerTotalFacturacionAnual?year=' + year);
+                if (!response.ok) throw new Error('Error al obtener facturación anual');
+                totalFacturacionAnual = await response.json();
+                // Luego de obtener la facturación, calculo beneficios
+                document.getElementById('Dash2FacturacionAnual').textContent = totalFacturacionAnual.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+                calcularYMostrarBeneficios();
+            } catch (error) {
+                console.error('Error al obtener facturación anual:', error);
+            }
+        }
+
+        let totalGastosAnuales;
+
+        async function obtenerGastosAnuales(year) {
+            try {
+                const response = await fetch('/Dashboard/ObtenerGastosAnuales?year=' + year);
+                if (!response.ok) throw new Error('Error al obtener gastos anuales');
+                totalGastosAnuales = await response.json();
+                // Luego de obtener los gastos, calculo beneficios
+                document.getElementById('Dash2GastosAnualContainer').textContent = totalGastosAnuales.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+                calcularYMostrarBeneficios();
+            } catch (error) {
+                console.error('Error al obtener gastos anuales:', error);
+            }
+        }
+
+    
+        function calcularYMostrarBeneficios() {
+            if (totalFacturacionAnual != null && totalGastosAnuales != null) {
+                const beneficios = totalFacturacionAnual - totalGastosAnuales;
+                document.getElementById('Dash2BeneficiosAnual').textContent = beneficios.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+            }
+        }
+
+
+        // CARGA INICIAL DE BOTON 1
+        $("#BtnDash1").trigger('click');
+
+        var currentYear = new Date().getFullYear();
+
+        obtenerTotalAlbaranesAnual(currentYear);
+        obtenerTotalFacturacionAnual(currentYear);
+        actualizarFacturacionClientes(currentYear);
+        actualizarArtMasPedidosPrecio(currentYear);
+        actualizarArtMasPedidosQty(currentYear);
+        obtenerGastosAnuales(currentYear);
+        calcularYMostrarBeneficios(currentYear);
+
+
+        $('#selectorAnio').change(function () {
+            var selectedYear = $(this).val();
+            obtenerTotalAlbaranesAnual(selectedYear);
+            obtenerTotalFacturacionAnual(selectedYear);
+            actualizarFacturacionClientes(selectedYear);
+            actualizarArtMasPedidosPrecio(selectedYear);
+            actualizarArtMasPedidosQty(selectedYear);
+            obtenerGastosAnuales(selectedYear);
+            calcularYMostrarBeneficios(selectedYear);
+        });
+
+
+    });
+
+
+</script>

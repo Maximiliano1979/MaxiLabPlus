@@ -1,0 +1,400 @@
+﻿@model iLabPlus.Models.BDiLabPlus.Doctores
+
+@{
+
+
+}
+
+<link href="https://cdn.jsdelivr.net/gh/eliyantosarage/font-awesome-pro@main/fontawesome-pro-6.5.2-web/css/all.min.css" rel="stylesheet">
+
+
+<div class="modal " id="modalDoctor" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDoctorTitle">Doctor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormDoctorCreateEdit" method="post" asp-controller="Doctores" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyDoctor">
+
+                    <div class="TabsDoctor" style="width:100%;height:100%;">
+                        @*ACA DEJE TABSOPERARIO PORQUE CREO QUE SON ESTILOS*@
+
+
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="DoctorLabel">
+                                                Doctor <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Código de Doctor" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Doctor" type="text" class="form-control" asp-for="Doctor">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-7" style="padding-left:0;padding-right:10px;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="NombreLabel">Nombre</label>
+                                            <input id="Nombre" type="text" class="form-control" asp-for="Nombre" required title="Debe escribir un nombre">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="NumColegiadoLabel">Nº Colegiado</label>
+                                            <input id="NumColegiado" type="text" class="form-control" asp-for="NumColegiado" required title="Debe escribir el número de colegiado">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="NIFLabel">Nif</label>
+                                            <input id="NIF" type="text" class="form-control" asp-for="NIF">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="MailLabel">Mail</label>
+                                            <input id="Mail" type="email" class="form-control" asp-for="Mail">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="Telefono1Label">Teléfono</label>
+                                            <input id="Telefono1" type="text" class="form-control" asp-for="Telefono1">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-1">
+
+                                    <div class="col-4" style="padding-left: 0; padding-right: 10px;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="DirDireccionLabel">Dirección</label>
+                                            <input id="DirDireccion" type="text" class="form-control" asp-for="DirDireccion">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left: 10; padding-right: 10px;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="DirDPLabel" style="font-size: 13px;">Distrito Postal</label>
+                                            <input id="DirDP" type="text" class="form-control" asp-for="DirDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 10; padding-right: 10;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="DirPoblacionLabel">Población</label>
+                                            <input id="DirPoblacion" type="text" class="form-control" asp-for="DirPoblacion">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="DirProvincioaLabel">Provincia</label>
+                                            <input id="DirProvincia" type="text" class="form-control" asp-for="DirProvincia">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row ">
+
+                                    <div class="col-10" style="padding-left: 0; padding-right: 10px;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="ObservLabel">Observaciones</label>
+                                            <input id="Observ" type="text" class="form-control" asp-for="Observ">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2 px-0">
+                                        <div class="form-floating mb-3">
+                                            <select id="Activo" name="Activo" class="form-select" aria-label="Selector de activo">
+                                                @foreach (var item in ViewBag.ListActivoTipo as List<SelectListItem>)
+                                                {
+                                                    if (Model.Activo.ToString().ToLower() == item.Value.ToLower())
+                                                    {
+                                                        <option value="@item.Value" selected>@item.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <label for="Activo">Activo</label>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-3" style="padding-left:10px;"></div>
+                                </div>
+
+
+                                <div class="row " style="">
+                                    <div class="col-3" style="padding-left:10px;">
+                                    </div>
+                                </div>
+
+
+                                <div class="row IsoDatBottom" style="margin-top: 2rem !important;">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div>
+                            <a>Clínicas</a>
+                            <div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="ClinicaDropdown">Clínica:</label>
+                                            <select id="ClinicaDropdown" class="form-control">
+                                                @foreach (var clinica in ViewBag.ListaClinicas)
+                                                {
+                                                    <option value="@clinica.Value">@clinica.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button id="btnAsociarDoctor" class="btn btn-primary">Asociar Clinica a Doctor</button>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table id="TablaClinicasDoctor" class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código Doctor</th>
+                                                    <th>Nombre Clínica</th>
+                                                    <th>Razón Social</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @* Las filas se cargarán dinámicamente *@
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+            <div class="modal-footer">
+                <button type="button" id="modalDoctor-cancel" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalDoctor-ok" class="btn btn-primary ">Aceptar</button>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+
+@(Html.C1().TabPanel(".TabsDoctor"))
+
+
+
+<script>
+    $(document).ready(function () {
+        // Configuraciones y eventos existentes
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+        let TabsObj = wijmo.Control.getControl('.TabsDoctor');
+        $('#modalDoctor').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+        $('#DocObserv').summernote({
+            height: 520,
+            focus: true,
+            disableResizeEditor: true
+        });
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+        if ('@Model.Guid' == '00000000-0000-0000-0000-000000000000') {
+            $('#Doctor').val('Automático').prop("disabled", true).parent().addClass("disabled");
+        } else {
+            $("#Doctor").prop("disabled", true).parent().addClass("disabled");
+        }
+
+
+        // Con este evento cargo las clínicas asociadas cuando se accede a la pestaña 'Clínicas'
+        $('a:contains("Clínicas")').on('click', async function () {
+            var numDoctorBBDD = $('#Doctor').val(); // Obtengo el valor del campo 'NumColegiado'
+
+            try {
+                const response = await fetch(`/Doctores/GetClinicasAsociadas?doctorCode=${numDoctorBBDD}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    $('#TablaClinicasDoctor tbody').empty();
+                    data.clinicas.forEach(function (clinica) {
+                                var row = `<tr>
+                           <td>${clinica.DoctorColegiado}</td>
+                           <td>${clinica.NombreClinica}</td>
+                           <td>${clinica.RazonSocial}</td>
+                           <td>
+                                <button type="button" class="btn btn-danger btn-sm eliminar-asociacion" data-guid="${clinica.Guid}"><i class="fa-light fa-trash-arrow-up"></button></td>
+                            </tr>`;
+                         $('#TablaClinicasDoctor tbody').append(row);
+                    });
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error al cargar las clínicas:', error);
+            }
+        });
+
+
+        // Con este evento asocio el doctor con la clínica
+        $('#btnAsociarDoctor').on('click', async function (event) {
+            event.preventDefault();
+
+            var numDoctor = $('#Doctor').val();
+            var clinicaId = $('#ClinicaDropdown').val();
+
+            const formData = new URLSearchParams();
+            formData.append('doctorCode', numDoctor);
+            formData.append('clinicaId', clinicaId);
+
+            try {
+                const response = await fetch('/Doctores/AsociarDoctorClinica', {
+                    method: 'POST',
+                    body: formData,  // URLSearchParams crea una cadena de consulta adecuada para el cuerpo de solicitud POST
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    var newRow = `<tr>
+                      <td>${data.clinica.cliente}</td>
+                      <td>${data.clinica.cliNombre}</td>
+                      <td>${data.clinica.cliRazon}</td>
+                      <td>
+                          <button type="button" class="btn btn-danger btn-sm eliminar-asociacion" data-guid="${data.clinica.guid}"><i class="fa-light fa-trash-arrow-up"></i></button>
+                      </td>
+                  </tr>`;
+                    $('#TablaClinicasDoctor tbody').append(newRow);
+                } else {
+                    await DialogInfo(data.message);
+                }
+            } catch (error) {
+                 //console.error('Error al asociar el doctor con la clínica:', error);
+                await DialogInfo('Error al intentar la operación: ' + error.message);
+            }
+        });
+
+        $('#TablaClinicasDoctor').on('click', '.eliminar-asociacion', function () {
+            var asociacionId = $(this).data('guid');
+
+            console.log("Este es el valor de asociacionId en el eliminar: ", asociacionId);
+            // Aquí, llamar a la función que elimina la asociación en el servidor
+            fetch(`/doctores/EliminarAsociacion?asociacionId=${asociacionId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $(this).closest('tr').remove(); // Elimina la fila de la tabla
+                        // alert('Asociación eliminada con éxito');
+                    } else {
+                         alert('Error al eliminar la asociación: ' + data.message);
+
+                    }
+                })
+                .catch(error => {
+                     alert('Error al eliminar la asociación');
+
+                });
+
+        });
+
+    });
+
+</script>
+

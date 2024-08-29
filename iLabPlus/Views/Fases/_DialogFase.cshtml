@@ -1,0 +1,260 @@
+﻿@model iLabPlus.Models.BDiLabPlus.Fases
+
+@{
+
+
+}
+
+<script src="~/lib/FlexiColorPicker/colorpicker.min.js"></script>
+<link rel="stylesheet" href="~/lib/FlexiColorPicker/themes.css" />
+
+
+<div class="modal " id="modalFase" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFaseTitle">Fase</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormFaseCreateEdit" method="post" asp-controller="Fases" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyFase">
+
+                    <div class="TabsFase" style="width:100%;height:100%;">
+                        @*ACA DEJE TABSOPERARIO PORQUE CREO QUE SON ESTILOS*@
+
+
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label for="IntExt">Tipo IntExt</label>
+                                            <select asp-for="IntExt" asp-items="@(new SelectList(ViewBag.ListIntExtTipo, "Value", "Text"))" class="form-control">
+                                                <option value="">Selecciona un tipo...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="FaseLabel">
+                                                Fase <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Fase" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Fase" type="text" class="form-control" asp-for="Fase">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-5" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="ColorLabel">Color</label>
+                                            <input id="Color" type="text" class="form-control" asp-for="Color">
+                                            <span id="colorError" style="color: red; display: none;">No es un color en hexadecimal.</span>
+                                        </div>
+                                        <div id="colorPickerContainer">
+                                            <div id="slider" style="width: 30px; height: 200px;"></div>
+                                            <div id="picker" style="width: 200px; height: 200px;"></div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                @*Esto lo he puesto para el color picker*@
+
+
+                                <div class="row mt-1">
+
+                                    <div class="col-12" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="DescripcionLabel">Descripción</label>
+                                            <input id="Descripcion" type="text" class="form-control" asp-for="Descripcion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row IsoDatBottom" style="margin-top: 2rem !important;">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+
+
+
+
+
+
+
+                            </div>
+
+
+
+
+
+
+                        </div>
+
+
+                        @*Si coloco el colorPicker aqui puedo elegir el color*@
+                       
+
+
+                    </div>
+
+
+
+
+                </div>
+
+
+            </form>
+
+            <div class="modal-footer">
+                <button type="button" id="modalFase-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalFase-ok" class="btn btn-primary ">Aceptar</button>
+            </div>
+
+
+
+        </div>
+
+
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsFase"))
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        var slider = document.getElementById('slider');
+        var picker = document.getElementById('picker');
+        var colorPickerContainer = document.getElementById('colorPickerContainer');
+        var inputColor = document.getElementById('Color');
+        var isPickerHovered = false;
+
+        var cp = ColorPicker(slider, picker, function (hex, hsv, rgb) {
+            inputColor.value = hex;
+            inputColor.style.backgroundColor = hex;
+        });
+
+        $('#Color').focus(function () {
+            $(colorPickerContainer).css('display', 'flex'); // Muestra el contenedor con disposición flex
+        }).blur(function () {
+            setTimeout(function () {
+                if (!isPickerHovered) {
+                    $(colorPickerContainer).hide();
+                }
+            }, 100);
+        });
+
+        $(colorPickerContainer).hover(function () {
+            isPickerHovered = true;
+        }, function () {
+            isPickerHovered = false;
+        });
+
+        $(document).mousedown(function (event) {
+            if (!$(event.target).closest('#colorPickerContainer').length && !$(event.target).is('#Color')) {
+                $(colorPickerContainer).hide();
+            }
+        });
+
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        // Posiciona en la primera tab
+        let TabsObj = wijmo.Control.getControl('.TabsFase');
+        $('#modalFase').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        let ModelGuid = "@Model.Guid";
+
+    });
+
+
+</script>
+
+
+
+
+
+
+

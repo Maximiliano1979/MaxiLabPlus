@@ -1,0 +1,188 @@
+﻿@model iLabPlus.Models.BDiLabPlus.ValSys
+
+@{
+
+
+}
+
+
+<div class="modal " id="modalValsys" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 700px;">
+        <div class="modal-content" style="height: 600px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalValsysTitle">Valor de sistema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="FormValsysCreateEdit" method="post" asp-controller="Valsys" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyValsys">
+
+                    <div class="row mt-3" style="">
+
+                        <div class="col-6" style="padding-left:0;">
+                            <div class="form-group form-group-default required">
+                                <label id="IndiceLabel">Indice</label>
+                                @(Html.C1().ComboBoxFor(c=> c.Indice).Id("Indice").OnClientGotFocus("ComboGotFocus").SelectedValue(-1).CssStyle("z-index", "90000 !Important").Placeholder("Seleccionar...").Bind(ViewBag.ListIndices).IsDisabled(false).Width("100%"))
+
+                                @*@(Html.C1().ComboBoxFor(c=> c.Indice)
+                                            .Id("Indice")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .SelectedValuePath("Clave")
+                                            .DisplayMemberPath("Valor1")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListIndices)
+                                            .IsDisabled(false)
+                                            .Width("100%"))*@
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row mt-1">
+
+                        <div class="col-6" style="padding-left:0;">
+                            <div class="form-group form-group-default required">
+                                <label id="ClaveLabel">Clave</label>
+                                <input id="Clave" type="text" class="form-control" asp-for="Clave">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-1">
+
+                        <div class="col-6" style="padding-left:0;">
+                            <div class="form-group form-group-default ">
+                                <label id="Valor1Label">Valor 1</label>
+                                <input id="Valor1" type="text" class="form-control" asp-for="Valor1">
+                            </div>
+                        </div>
+
+                        <div class="col-6" style="padding-left:0;padding-right:0;">
+                            <div class="form-group form-group-default required">
+                                <label id="Valor2Label">Valor 2</label>
+                                <input id="Valor2" type="text" class="form-control" asp-for="Valor2">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-1">
+
+                        <div class="col-6" style="padding-left:0;">
+                            <div class="form-group form-group-default ">
+                                <label id="Valor3Label">Valor 3</label>
+                                <input id="Valor3" type="text" class="form-control" asp-for="Valor3">
+                            </div>
+                        </div>
+
+                        <div class="col-6" style="padding-left:0;padding-right:0;">
+                            <div class="form-group form-group-default required">
+                                <label id="Valor4Label">Valor 4</label>
+                                <input id="Valor4" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="Valor4">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-1">
+
+
+                        <div class="col-3" style="padding-left:0;">
+                            <div class="form-group form-group-default disabled">
+                                <label>Fecha Alta</label>
+                                <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" style="font-size: 12px;" disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-3" style="padding-left:0;">
+                            <div class="form-group form-group-default disabled">
+                                <label>Fecha Mod.</label>
+                                <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" style="font-size: 12px;" disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                            <div class="form-group form-group-default disabled">
+                                <label>Usuario</label>
+                                <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" style="font-size: 12px;" disabled>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalValsys-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalValsys-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        // Asegurarte de que el código se ejecuta una vez que el DOM esté completamente cargado
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 5,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        var ModelGuid = "@Model.Guid";
+
+        if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+            //document.getElementById("Cliente").focus();
+        } else {
+            var ComboIndice = wijmo.Control.getControl('#Indice');
+            ComboIndice.isDisabled = true;
+
+            //$("#Indice").prop("disabled", true);
+            $("#Indice").parent().addClass("disabled");
+
+            $("#Clave").prop("disabled", true);
+            $("#Clave").parent().addClass("disabled");
+        }
+
+
+
+
+    });
+
+</script>

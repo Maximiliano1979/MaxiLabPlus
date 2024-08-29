@@ -1,0 +1,147 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Doctores>
+
+@{
+    ViewBag.Title = "Doctores";
+
+
+    var actions = ViewBag.Actions;
+
+}
+
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+
+
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-3" style="padding-left:0;">
+        <h3>Doctores</h3>
+    </div>
+
+    <div class="col-9 page_heading_func">
+
+        <button id="BtnDoctorNew" type="button" class="btn btn-default" onclick="BtnDialogDoctorNew()"><i class="far fa-fw fa-plus"></i></button>
+
+        <p id="gridSearch" style="width:300px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></p>
+
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+        </div>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;Importar Doctores</a></li> @*OJO CON EL DATA-KEY ACA PORQUE DICE CLIENTES*@
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> &nbsp;&nbsp;&nbsp;Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnResetConfigGrid()"><i class="fal fa-fw fa-sd-card"></i> &nbsp;&nbsp;&nbsp;Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row wrapper wrapper-content  ">
+    <div class="ibox-content">
+
+        @(Html.C1().FlexGrid()
+                        .Id("gridDoctores")
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AllowPinning(true)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid GridEvents")
+                        .DefaultRowSize(27)
+                        .Filterable(f => {
+                            f.DefaultFilterType(FilterType.Both);
+                            f.Id("theGridFilter");
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.Row)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model)
+                        .AutoGenerateColumns(false)
+                        .OrderBy("Doctor")
+                        .FrozenColumns((int)@ViewBag.ColumnsPinnedUser)
+                        .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+                        .Columns(col =>
+                        {
+                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+                            col.Add(c => c.Binding("Doctor").Header("Doctor").Width("150"));
+                            col.Add(c => c.Binding("Nombre").Header("Nombre").Width("150"));
+                            col.Add(c => c.Binding("NumColegiado").Header("Nº Colegiado").Width("150"));
+                            col.Add(c => c.Binding("NIF").Header("NIF").Width("150"));
+                            col.Add(c => c.Binding("Mail").Header("Mail").Width("150"));
+                            col.Add(c => c.Binding("DirDireccion").Header("Dirección").Width("150"));
+                            col.Add(c => c.Binding("DirDP").Header("Distrito Postal").Width("150"));
+                            col.Add(c => c.Binding("DirPoblacion").Header("Población").Width("150"));
+                            col.Add(c => c.Binding("DirProvincia").Header("Provincia").Width("150"));
+                            col.Add(c => c.Binding("Telefono1").Header("Teléfono").Width("150"));
+                            col.Add(c => c.Binding("Observ").Header("Observaciones").Width("150"));
+                            col.Add(c => c.Binding("Activo").Header("Activo").Width("150"));
+                        })
+
+                        )
+        @(Html.C1().FlexGridSearch("#gridSearch")
+                            .Grid("gridDoctores")
+                            .Delay(50)
+                            .CssMatch("underline-match")
+                            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+                            )
+
+    </div>
+</div>
+
+
+<script>
+
+
+
+    $(document).ready(function () {
+
+
+    });
+
+    var theGridCus = wijmo.Control.getControl("#gridDoctores");
+    if (theGridCus) {
+        theGridCus.select(-1, -1);
+    }
+
+    function BtnDialogDoctorNew() {
+
+        N_DialogDoctor("New").then((res) => {
+            N_Grid_Data_Add(wijmo.Control.getControl("#gridDoctores"), res);
+        }).catch((error) => {
+        });
+
+    }
+
+    function BtnResetConfigGrid() {
+        N_Grid_Reset_Config_Headers(theGridCus);
+    }
+
+</script>

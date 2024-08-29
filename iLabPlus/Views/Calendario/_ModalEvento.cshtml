@@ -1,0 +1,63 @@
+﻿@{
+    //ViewBag.Title = "Main";
+
+}
+
+<div id="modalFecha" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <h5 class="modal-title">Agregar Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="inputGuid" type="text" class="form-control" hidden />
+                <div class="mb-3">
+                    <input id="inputFecha" type="text" readonly class="form-control fechaInput" />
+                </div>
+                <div class="mb-3">
+                    <input id="inputTitulo" type="text" placeholder="Título del evento" class="form-control tituloInput" />
+                </div>
+                <div class="mb-3">
+                    <textarea id="inputDetalle" placeholder="Detalle del evento" class="form-control detalleInput" rows="4"></textarea>
+                </div>
+                <div class="mb-3">
+                    <input id="inputHoraInicio" type="time" placeholder="Hora de inicio" class="form-control horaInput" />
+                </div>
+                <div class="mb-3">
+                    <input id="inputHoraFin" type="time" placeholder="Hora de fin" class="form-control horaInput" />
+                </div>
+                <div class="mb-3">
+                    <h4>Alcance</h4>
+                    <select id="inputAlcance" class="form-control form-select alcanceInput">
+                        <!-- Opciones del alcance aquí -->
+                        @*
+                        <option value="" disabled selected>Selecciona el alcance</option>*@
+                        <option value="Solo yo">Solo yo</option>
+                        <option value="Todos">Todos</option>
+                        <option value="Varios usuarios">Varios usuarios</option>
+                        <option value="Observador">Observador</option>
+                    </select>
+                </div>
+                <div class="mb-3 selectContainer">
+                    <select id="inputUsuarios" class="form-select usuariosInput" multiple>
+                        <!-- Opciones de usuarios aquí -->
+                    </select>
+                </div>
+                @*<div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="inputRecibirRecordatorios">
+                    <label class="form-check-label" for="inputRecibirRecordatorios">¿Quieres recibir recordatorios por mail para este evento?</label>
+                </div>*@
+            </div>
+            <div class="modal-footer">
+                <button id="btnEliminarEvento" type="button" class="btn btn-danger" style="display:none;">Eliminar</button>
+                <button id="btnCerrarEvento" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button id="btnGuardarEvento" type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

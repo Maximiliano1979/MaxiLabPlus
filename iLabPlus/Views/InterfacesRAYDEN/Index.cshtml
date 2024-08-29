@@ -1,0 +1,173 @@
+﻿
+@{
+    //ViewBag.Title = "Main";
+}
+
+<script>
+    $(document).ready(function () {
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+    });
+</script>
+
+<div class="row wrapper wrapper-content WC-WithoutCab ">
+    <div class="ibox-content">
+        
+        <div class="row">
+
+            <div class="col-6">
+
+                <div class="row" style="min-height:70px;">
+
+                    <div class="col-5">
+                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                            <label>
+                                Empresa <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="right" title="Código de empresa" data-original-title="Tooltip on top"></i>
+                            </label>
+
+                            @(Html.C1().ComboBox()
+                                            .Id("ComboEmpresa")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            //.SelectedValue(3)
+                                            .SelectedValue(ViewBag.UltimaEmpresaId)
+                                            .SelectedValuePath("Empresa")
+                                            .DisplayMemberPath("RazonSocial")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.Empresas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                            @*<input id="Empresa" type="text" class="form-control" value="00001">*@
+                        </div>
+                    </div>
+
+                    <div class="col-7">
+
+                        <div class="form-group">
+                            <label for="Adjuntos">Fichero Excel</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="FicExcel" onchange="actualizarNombreArchivos()">
+                                <label class="custom-file-label" for="FicExcel">Elegir archivo</label>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-default  " onclick="BtnIntRaydenProcesar()" style="width:100%;">PROCESAR</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-4">
+
+            </div>
+
+            <div class="col-4">
+
+
+
+            </div>
+
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+
+    });
+
+
+    function actualizarNombreArchivos() {
+        var input = document.getElementById("FicExcel");
+        var label = document.querySelector('.custom-file-label');
+
+        // Verificar si se seleccionó algún archivo
+        if (input.files && input.files.length > 0) {
+            // Actualizar el texto de la etiqueta con el nombre del primer archivo seleccionado
+            label.textContent = input.files[0].name;
+        } else {
+            // No se seleccionaron archivos, restaurar el texto predeterminado
+            label.textContent = 'Elegir archivos';
+        }
+    }
+
+    function BtnIntRaydenProcesar() {
+
+        var input = document.getElementById("FicExcel");
+        if (input.files && input.files.length > 0) {
+
+            N_ModalConfirmation('¿DESEA PROCESAR ?').then((res) => {
+
+                if (res == true) {
+                    var Spinner = Rats.UI.LoadAnimation.start();
+
+                    var _data = new FormData();
+
+                    var ComboEmpresa = wijmo.Control.getControl('#ComboEmpresa');
+
+                    _data.append("KEYEMP", ComboEmpresa.selectedValue);
+                    _data.append("FicExcel", input.files[0]);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/InterfacesRAYDEN/ProcesareExcelRAYDEN',
+                        async: true,
+                        data: _data,
+                        processData: false,
+                        contentType: false,
+                        success: function (data, textStatus, XmlHttpRequest) {
+
+                            Spinner.stop();
+                            //DialogInfo('PROCESO COMPLETADO');
+                            toastr.success('PROCESO COMPLETADO');
+                        },
+                        always: function (data) { },
+                        error: function (data) { Spinner.stop(); }
+                    });
+
+
+
+
+
+                }
+
+            }).catch((error) => {
+
+            });
+
+        } else {
+            DialogInfo('SE DEBE SELECCIONAR UN FICHERO EXCEL.');
+        }   
+
+
+
+
+
+    }
+
+
+
+
+</script>
+
+

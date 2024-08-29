@@ -1,0 +1,41 @@
+﻿<div class="modal" id="modalClienteRenombrar" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 700px;">
+        <div class="modal-content" style="height: 260px;min-height:unset;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalClienteNewTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="FormClienteRenombrar" style="height:100%;">
+                <div class="modal-body" id="modal-bodyArtMo">
+                    <div class="row mt-3" style="">
+                        <div class="col-6" style="padding-left:0; ">
+                            <div class="form-group form-group-default required disabled">
+                                <label id="ClienteOldLabel">Cliente actual</label>
+                                <input id="ClienteOld" type="text" class="form-control" value="@ViewBag.ClienteOld" disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-6" style="padding-right:0; ">
+                            <div class="form-group form-group-default required">
+                                <label id="ClienteNewLabel">Nuevo nombre</label>
+                                <input id="ClienteNew" type="text" class="form-control" value="@ViewBag.ClienteOld">
+                            </div>
+                            <div class="form-group form-group-defaultxx" style="padding-left: 12px;">
+                                <label id="ClienteStatusLabel" style="color:red;display:none;"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="modal-footer">
+                <button type="button" id="modalClienteNew-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalClienteNew-ok" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

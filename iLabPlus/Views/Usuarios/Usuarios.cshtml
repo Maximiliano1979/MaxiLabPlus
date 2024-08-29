@@ -1,0 +1,789 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Usuarios>
+
+@{
+    ViewBag.Title = "Usuarios";
+}
+
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-lg-12">
+        <h3>
+            Usuarios
+        </h3>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="row wrapper wrapper-content  " style="margin-left: 5px;">
+
+            <div class="ibox-content" style="">
+
+                <div class="row">
+                    <div class="col-auto button-container">
+                        <button id="BtnUserNew" type="button" class="btn btn-default btn-sm me-1" onclick="UsuarioCrear()">
+                            <i class="far fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="col-auto">
+                        <button id="BtnUserDelete" type="button" class="btn btn-default btn-sm" onclick="UsuarioEliminar()">
+                            <i class="far fa-trash-alt"></i> 
+                        </button>
+                    </div>
+                </div>
+
+
+
+                <div class="row UserslistWrapper" style="margin-top: 20px; height: 255px; width: max-content">
+
+                    <div class="table-responsive users-list tabla-usuarios">
+                        <table id="UsersTable" class="table  table-hover">
+                            <tbody>
+
+                                @foreach (var item in Model)
+                                {
+                                    @if (ViewBag.SessionUsuario == item.Usuario)
+                                    {
+                                        <tr class="RowActive" data-id-user="@item.Usuario">
+                                            <td class="client-avatar"><img alt="image" src="~/images/default/Perfil.png"> </td>
+                                            <td class="client-link">@item.UsuarioNombre</td>
+                                            <td class="contact-type"><i class="fa fa-envelope"> </i></td>
+                                            <td class="client-link"> @item.Usuario</td>
+                                            @if (@item.UsuarioTipo == "ADMIN")
+                                            {
+                                                <td class="client-status"><span class="label label-warning" style="font-size: 10px;">@item.UsuarioTipo</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td class="client-status"><span class="label label-primary" style="font-size: 10px;">@item.UsuarioTipo</span></td>
+                                            }
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="" data-id-user="@item.Usuario">
+                                            <td class="client-avatar"><img alt="image" src="~/images/default/Perfil.png"> </td>
+                                            <td class="client-link">@item.UsuarioNombre</td>
+                                            <td class="contact-type"><i class="fa fa-envelope"> </i></td>
+                                            <td class="client-link"> @item.Usuario</td>
+                                            @if (@item.UsuarioTipo == "ADMIN")
+                                            {
+                                                <td class="client-status"><span class="label label-warning" style="font-size: 10px;">@item.UsuarioTipo</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td class="client-status"><span class="label label-primary" style="font-size: 10px;">@item.UsuarioTipo</span></td>
+                                            }
+                                        </tr>
+
+                                    }
+
+                                }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="row rowSpace mt-2">
+                    <button id="BtnUserSave" type="button" class="btn btn-default btn-custom-width" onclick="UsuarioGuardar()">Guardar</button>
+
+                </div>
+
+                <div class="row " style="padding-top: 10px;">
+
+                    <div class="col-5" style="padding-left:0;">
+                        <div class="form-group form-group-default required">
+                            <label id="UsuarioLabel">
+                                Usuario
+                                <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Formato de mail obligatorio, debe incluir el dominio generico de la empresa." data-original-title="Tooltip on top"></i>
+                            </label>
+                            <input id="Usuario" type="text" class="form-control" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="col-7" style="padding-left:0;padding-right:0;">
+                        <div class="form-group form-group-default required">
+                            <label id="UsuarioNombreLabel">Nombre</label>
+                            <input id="UsuarioNombre" type="text" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row " style="padding-top: 0px;">
+
+                    <div class="col-5" style="padding-left:0;">
+                        <div class="form-group form-group-default required">
+                            <label id="PasswordLabel">Contraseña</label>
+                            <input id="Password" type="password" class="form-control" autocomplete="off">
+
+                        </div>
+                    </div>
+
+                    <div class="col-3" style="padding-left:0;">
+                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                            <label id="UsuarioRolLabel">Rol</label>
+                            @(Html.C1().ComboBox().Id("ComboUsuarioTipo").OnClientGotFocus("ComboGotFocus").CssStyle("z-index", "90000 !Important").Bind(ViewBag.UsuariosTipos).Width("100%"))
+                        </div>
+                    </div>
+
+                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                            <label id="UserControllerInitLabel">Pant. Inicial</label>
+                            @(Html.C1().ComboBox().Id("ComboControllerInit").OnClientGotFocus("ComboGotFocus").CssStyle("z-index", "90000 !Important").Bind(ViewBag.ControllersInit).Width("100%"))
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row " style="padding-top: 10px;">
+                    <label id="AccesoMacLabel">*Opcional</label>
+                </div>
+                <div class="row " style="">
+
+
+                    <div class="col-5" style="padding-left:0;">
+                        <div class="form-group form-group-default ">
+                            <label id="AccesoMacLabel">
+                                MAC <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Permitir el acceso al usuario solo a la MAC seleccionada" data-original-title="Tooltip on top"></i>
+                            </label>
+                            <input id="FiltroAccesoMac" type="text" class="form-control">
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-7" style="padding-left: 0; padding-right: 0;">
+                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                            <label id="AccesoHorasLabel">
+                                Horario <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Permitir el acceso al usuario solo al intervalo de horas determinadas (Hora inical - Hora final)" data-original-title="Tooltip on top"></i>
+                            </label>
+                            @Html.C1().InputTime().Id("FiltroHoraInicial").IsEditable(false).Step(15).Width("40%")
+                            @Html.C1().InputTime().Id("FiltroHoraFinal").IsEditable(false).Step(15).Width("40%").CssStyle("margin-left", "15px;")
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="row wrapper wrapper-content  " style="margin-left: 0px;">
+
+            <div class="ibox-content" style="">
+
+                <p class="" style="height: 35px;">
+                    <strong>Menú Usuario</strong> Arrastre y ordene los accesos deseados.
+                </p>
+
+                <div class="dd" id="nestable2" style="margin-left: 10px; margin-right: 10px; overflow-y: scroll; ">
+                    <ol class="dd-list" id="nestable2_List">
+
+                        @*@await Html.PartialAsync("_MenuTest_2")*@
+
+                    </ol>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-4" style="padding-right:0px;">
+        <div class="row wrapper wrapper-content" style="margin-left: 0px;">
+
+            <div class="ibox-content" style="">
+
+                <div class="mb-3 gap-0" style="display:flex; flex-direction:column; height: 35px;">
+                    <strong>Menú estandar de la aplicación</strong>
+
+                    <button id="BtnAccesosReiniciar" type="button" class="btn btn-default btn-xs" onclick="User_Accesos_Reiniciar()" style="margin-right: 10px; float: left; top: 55px; left: 30px;" data-toggle="tooltip" data-placement="left" title="Reiniciar accesos usuario">
+                        <i class="far fa-chevron-double-left"></i>
+                    </button>
+                </div>
+
+                <div class="dd " id="nestable1" style="margin-left: 10px;margin-right:10px;  overflow-y: scroll; ">
+                    <ol class="dd-list" id="nestable1_List">
+                    </ol>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+@section Scripts {
+
+    <script src="~/lib/nestable/jquery.nestable-Roles.js"></script>
+
+ <script type="text/javascript">
+
+     $(document).ready(function () {
+
+         $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+         // carga inicial de menu 2
+
+         //$.ajax({
+         //    type: "GET",
+         //    url: '/Test/GetPartialMenu1',
+         //    contentType: 'application/html; charset=utf-8',
+         //    dataType: 'html',
+         //    success: function (result) {
+         //        $('#nestable2_List').html(result);
+         //        //output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+         //    },
+         //    error: function (xhr, status) {
+         //        console.log(status);
+         //    },
+         //});
+
+
+         var updateOutput1 = function (e) {
+
+             var list = e.length ? e : $(e.target),
+                 output = list.data('output'),
+                 clear = list.data('clear');
+
+
+             //if (window.JSON) {
+             //    output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+             //} else {
+             //    output.val('JSON browser support required for this demo.');
+             //}
+
+             // Para que la lista 1 siempre se mantenga con los mismos registros....
+             // Visualmente un poco chapucero el efecto que genera...
+             $.ajax({
+                 type: "GET",
+                 url: '/Usuarios/GetMenuStandarView',
+                 contentType: 'application/html; charset=utf-8',
+                 dataType: 'html',
+                 success: function (result) {
+                     $('#nestable1_List').html(result);
+                     output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+
+                     $(".itemNestTrash").click(function (e) {
+
+                         var target = $(e.target);
+                         var ItemNode = target.closest(".dd-item");
+                         ItemNode.remove();
+                         $("#nestable1").trigger("change");
+                         $("#nestable2").trigger("change");
+
+                         //console.log($("#nestable2_List").children().length);
+
+                         if ($("#nestable2_List").children().length == 0) {
+                             $("#nestable2_List").append('<div class="dd-empty"></div>');
+                         } else {
+
+                         }
+
+                         // GetValores Lista
+                         //var JsonString = $('.dd').nestable('serialize');
+                         //console.log(window.JSON.stringify($('#nestable1').nestable('serialize')));
+                     });
+
+                 },
+                 error: function (xhr, status) {
+                     console.log(status);
+                 },
+             });
+
+
+         };
+
+         var updateOutput2 = function (e) {
+
+             var list = e.length ? e : $(e.target),
+                 output = list.data('output');
+
+             //if (window.JSON) {
+             //    output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+             //} else {
+             //    output.val('JSON browser support required for this demo.');
+             //}
+
+
+         };
+
+
+
+         // activate Nestable for list 1
+         $('#nestable1').nestable({
+             group: 1,
+             maxDepth: 5
+         }).on('change', updateOutput1);
+
+         // activate Nestable for list 2
+         $('#nestable2').nestable({
+             group: 1,
+             maxDepth: 3
+         }).on('change', updateOutput2);
+
+
+         var ParentAlt = $('#nestable1').parent().outerHeight();
+         $('#nestable1').css("height", ParentAlt - 65 + "px");
+         $('#nestable2').css("height", ParentAlt - 65 + "px");
+         var altxxx = ParentAlt - 65 + "px";
+         $('#nestable1').slimScroll({
+             height: altxxx,
+             railOpacity: 0.2,
+             railDraggable: true,
+             disableFadeOut: true
+         });
+         $('#nestable2').slimScroll({
+             height: altxxx,
+             railOpacity: 0.2,
+             railDraggable: true,
+             disableFadeOut: true
+         });
+
+         // output initial serialised data
+         updateOutput1($('#nestable1').data('output', $('#nestable-output')));
+         updateOutput2($('#nestable2').data('output', $('#nestable2-output')));
+
+
+         $('#nestable-menu').on('click', function (e) {
+             var target = $(e.target),
+                 action = target.data('action');
+             if (action === 'expand-all') {
+                 $('.dd').nestable('expandAll');
+             }
+             if (action === 'collapse-all') {
+                 $('.dd').nestable('collapseAll');
+             }
+         });
+
+
+         //event is fired when items are reordered.
+         $('.dd').on('change', function (e) {
+             /* on change event */
+             //console.log(e);
+         });
+
+         $(".itemNestTrash").click(function (e) {
+
+             var target = $(e.target);
+             var ItemNode = target.closest(".dd-item");
+             ItemNode.remove();
+             $("#nestable1").trigger("change");
+             $("#nestable2").trigger("change");
+
+             //if ($('#nestable2_List').has('.dd-list').length) {
+             //    alert();
+             //}
+
+             //console.log($("#nestable2_List").children().length);
+
+             if ($("#nestable2_List").children().length == 0) {
+                 $("#nestable2_List").append('<div class="dd-empty"></div>');
+             } else {
+                 //console.log($("#nestable2_List").children());
+             }
+
+             // GetValores Lista
+             var JsonString = $('.dd').nestable('serialize');
+             //console.log(window.JSON.stringify($('#nestable1').nestable('serialize')));
+         });
+
+         $('#UsersTable').on('click', 'tbody tr', function (event) {
+             $(this).addClass('RowActive').siblings().removeClass('RowActive');
+             GetDataUser($(this).data("id-user"));
+         });
+
+         $('.UserslistWrapper').slimScroll({
+             height: '275px',
+             railOpacity: 0.2,
+             railDraggable: true,
+             disableFadeOut: true
+         });
+
+         // Carga Usuario Inicial
+         let UserSession = '@ViewBag.SessionUsuario';
+         GetDataUser(UserSession);
+
+     });
+
+     function GetDataUser(Usuario) {
+         //alert(Usuario);
+
+         var data = new FormData();
+         data.append("Usuario", Usuario);
+
+         $("#UsuarioLabel").removeClass("LabelRed");
+         $("#UsuarioNombreLabel").removeClass("LabelRed");
+         $("#PasswordLabel").removeClass("LabelRed");
+
+         $.ajax({
+             type: 'POST',
+             url: "/Usuarios/UserGetInfo",
+             //async: false,
+             data: data,
+             processData: false,
+             contentType: false,
+             success: function (data) {
+
+                 if (data != null) {
+
+                     $("#Usuario").prop("disabled", true);
+                     $("#Usuario").parent().addClass("disabled");
+
+
+                     $("#Usuario").val(data.Usuario);
+                     $("#UsuarioNombre").val(data.UsuarioNombre);
+                     $("#Password").val(data.Password);
+
+                     $("#FiltroAccesoMac").val(data.FiltroAccesoMac);
+
+                     var HoraInicial = wijmo.Control.getControl('#FiltroHoraInicial');
+                     var HoraFinal = wijmo.Control.getControl('#FiltroHoraFinal');
+                     if (data.FiltroAccesoHoraInicial != null) {
+                         HoraInicial.selectedValue = data.FiltroAccesoHoraInicial;
+                     } else {
+                         HoraInicial.selectedValue = "0:00";
+                     }
+                     if (data.FiltroAccesoHoraFinal != null) {
+                         HoraFinal.selectedValue = data.FiltroAccesoHoraFinal;
+                     } else {
+                         HoraFinal.selectedValue = "0:00";
+                     }
+
+                     var ComboRol = wijmo.Control.getControl('#ComboUsuarioTipo');
+                     ComboRol.selectedValue = data.UsuarioTipo;
+
+                     var ComboControllerInit = wijmo.Control.getControl('#ComboControllerInit');
+                     if (data.ControllerInit != null) {
+                         ComboControllerInit.selectedValue = data.ControllerInit;
+                     } else {
+                         ComboControllerInit.selectedValue = "";
+                     }
+
+
+                     var dataM = new FormData();
+                     dataM.append("Usuario", Usuario);
+
+                     $.ajax({
+                         type: 'POST',
+                         url: '/Usuarios/ConvertMenuUserToNestable',
+                         data: dataM,
+                         processData: false,
+                         contentType: false,
+                         success: function (result) {
+
+                             $('#nestable2_List').html(result);
+
+                         },
+                         always: function (data) { },
+                         error: function (xhr, status, error) {
+                             console.log("Error", xhr, xhr.responseText, status, error);
+                         }
+                     });
+
+
+
+                 }
+
+             },
+             always: function (data) { },
+             error: function (xhr, status, error) {
+                 console.log("Error", xhr, xhr.responseText, status, error);
+             }
+         });
+
+     }
+
+
+     function UsuarioGuardar() {
+
+         let Procesar = true;
+
+         var data = new FormData();
+
+         let Tipo = "";
+         if ($(".RowActive").length == 0) {
+             Tipo = "New";
+
+             data.append("Usuario", $("#Usuario").val());
+
+             let UserSession = '@ViewBag.SessionUsuario';
+
+             // Comprobación de campos requeridos
+             if ($("#Usuario").val() == "" || validateEmail($("#Usuario").val(), UserSession) == false) {
+                 $("#UsuarioLabel").addClass("LabelRed");
+                 Procesar = false;
+             }else {
+                 $("#UsuarioLabel").removeClass("LabelRed");
+             }
+
+             if ($("#UsuarioNombre").val() == "" ) {
+                 $("#UsuarioNombreLabel").addClass("LabelRed");
+                 Procesar = false;
+             } else {
+                 $("#UsuarioNombreLabel").removeClass("LabelRed");
+             }
+
+             if ($("#Password").val() == "") {
+                 $("#PasswordLabel").addClass("LabelRed");
+                 Procesar = false;
+             } else {
+                 $("#PasswordLabel").removeClass("LabelRed");
+             }
+
+             if (Procesar == false) {
+                 toastr.error('Datos obligatorios.');
+             }
+
+             let ListUsuarios    = @Html.Raw(Json.Serialize(@Model));
+             let FindUser        = ListUsuarios.find(x => x.Usuario === $("#Usuario").val());
+             if (FindUser != undefined) {
+                 Procesar = false;
+                 $("#UsuarioLabel").addClass("LabelRed");
+                 toastr.error('Usuario ya existe.');
+             }
+
+         } else {
+             Tipo = "Edit";
+
+             let Usuario = $(".RowActive").data("id-user");
+             data.append("Usuario", Usuario);
+         }
+         data.append("Tipo", Tipo);
+
+
+
+         if (Procesar == true) {
+
+             var ComboRol = wijmo.Control.getControl('#ComboUsuarioTipo');
+             var ComboControllerInit = wijmo.Control.getControl('#ComboControllerInit');
+             var HoraInicial = wijmo.Control.getControl('#FiltroHoraInicial');
+             var HoraFinal = wijmo.Control.getControl('#FiltroHoraFinal');
+
+             data.append("UsuarioNombre", $("#UsuarioNombre").val());
+             data.append("Password", $("#Password").val());
+             data.append("FiltroAccesoMac", $("#FiltroAccesoMac").val());
+
+             data.append("UsuarioTipo", ComboRol.selectedValue);
+             data.append("ControllerInit", ComboControllerInit.selectedValue);
+             data.append("HoraInicial", HoraInicial.selectedValue);
+             data.append("HoraFinal", HoraFinal.selectedValue);
+
+             var StringArray = $('#nestable2').nestable('serialize');
+             //console.log(StringArray);
+             //console.log(JSON.stringify(StringArray));
+             data.append("MenuUserJson", JSON.stringify(StringArray));
+
+             $.ajax({
+                 type: 'POST',
+                 url: "/Usuarios/UserSave",
+                 //async: false,
+                 data: data,
+                 processData: false,
+                 contentType: false,
+                 success: function (data) {
+
+
+                     toastr.success('Datos de usuario guardados.');
+
+                     //console.log(data);
+                     if (data != null) {
+
+                         if (Tipo == "New") {
+
+                             var AppendUser = '<tr class="" data-id-user="' + data.Usuario + '">';
+                             AppendUser += '<td class="client-avatar"><img alt="image" src="/images/default/Perfil.png"> </td>';
+                             AppendUser += '<td class="client-link">' + data.UsuarioNombre + '</td>';
+                             AppendUser += '<td class="contact-type"><i class="fa fa-envelope"> </i></td>';
+                             AppendUser += '<td class="client-link">' + data.Usuario + '</td>';
+                             if (data.UsuarioTipo == "ADMIN") {
+                                 AppendUser += '<td class="client-status"><span class="label label-warning" style="font-size: 10px;">' + data.UsuarioTipo + '</span></td>';
+                             } else {
+                                 AppendUser += '<td class="client-status"><span class="label label-primary" style="font-size: 10px;">' + data.UsuarioTipo + '</span></td>';
+                             }
+                             AppendUser += '</tr>';
+
+                             $("#UsersTable").append(AppendUser);
+
+                             $('[data-id-user="' + data.Usuario + '"]').addClass('RowActive');
+
+                             var myDiv = document.getElementById("UsersTable");
+                             myDiv.scrollTop = myDiv.scrollHeight;
+
+                             $("#Usuario").prop("disabled", true);
+                             $("#Usuario").parent().addClass("disabled");
+
+                         }
+
+                     }
+
+                 },
+                 always: function (data) { },
+                 error: function (xhr, status, error) {
+                     console.log("Error", xhr, xhr.responseText, status, error);
+                 }
+             });
+
+         }
+
+
+
+
+     }
+
+
+     function UsuarioCrear() {
+
+         $(".RowActive").removeClass("RowActive");
+
+         $("#Usuario").prop("disabled", false);
+         $("#Usuario").parent().removeClass("disabled");
+
+         $("#Usuario").val("");
+         $("#UsuarioNombre").val("");
+         $("#Password").val("");
+         $("#FiltroAccesoMac").val("");
+
+         var ComboRol            = wijmo.Control.getControl('#ComboUsuarioTipo');
+         var ComboControllerInit = wijmo.Control.getControl('#ComboControllerInit');
+         var HoraInicial         = wijmo.Control.getControl('#FiltroHoraInicial');
+         var HoraFinal           = wijmo.Control.getControl('#FiltroHoraFinal');
+
+         ComboRol.selectedValue              = "USUARIO";
+         ComboControllerInit.selectedValue   = "";
+
+         HoraInicial.selectedValue   = "0:00";
+         HoraFinal.selectedValue     = "0:00";
+
+         $("#Usuario").focus();
+
+
+     }
+
+     function UsuarioEliminar() {
+
+
+         if ($(".RowActive").length != 0) {
+
+             let Usuario = $(".RowActive").data("id-user");
+
+             N_ModalConfirmation('¿ Desea eliminar el usuario:' + Usuario + '?').then((res) => {
+
+                 if (res == true) {
+                     var Spinner = Rats.UI.LoadAnimation.start();
+
+                     var data = new FormData();
+
+                     data.append("Usuario", Usuario);
+
+                     $.ajax({
+                         type: 'POST',
+                         url: "/Usuarios/UserDelete",
+                         //async: false,
+                         data: data,
+                         processData: false,
+                         contentType: false,
+                         success: function (data) {
+
+                             Spinner.stop();
+                             if (data != null) {
+
+                                 toastr.success('Usuario ' + Usuario + ' eliminado.');
+
+                                 $('[data-id-user="' + Usuario + '"]').remove();
+
+                                 let UserSession = '@ViewBag.SessionUsuario';
+                                 GetDataUser(UserSession);
+                                 $('[data-id-user="' + UserSession + '"]').addClass('RowActive');
+
+
+                             }
+
+                         },
+                         always: function (data) { },
+                         error: function (xhr, status, error) {
+                             Spinner.stop();
+                             console.log("Error", xhr, xhr.responseText, status, error);
+                         }
+                     });
+
+                 }
+
+             }).catch((error) => {
+
+             });
+
+
+         }
+
+
+
+     }
+
+     function User_Accesos_Reiniciar() {
+
+         $('#BtnAccesosReiniciar').tooltip('hide');
+         //$("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+         // Clear User nestable2_List
+         $('#nestable2_List').html("");
+
+         // Load default Accesos
+         $.ajax({
+             type: "GET",
+             url: '/Usuarios/GetMenuStandarView',
+             contentType: 'application/html; charset=utf-8',
+             dataType: 'html',
+             success: function (result) {
+                 $('#nestable2_List').html(result);
+                 //output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+
+                 $(".itemNestTrash").click(function (e) {
+
+                     var target = $(e.target);
+                     var ItemNode = target.closest(".dd-item");
+                     ItemNode.remove();
+                     $("#nestable1").trigger("change");
+                     $("#nestable2").trigger("change");
+
+                     if ($("#nestable2_List").children().length == 0) {
+                         $("#nestable2_List").append('<div class="dd-empty"></div>');
+                     } else {
+
+                     }
+
+                 });
+
+             },
+             error: function (xhr, status) {
+                 console.log(status);
+             },
+         });
+
+
+     }
+
+
+ </script>
+
+
+
+}
+

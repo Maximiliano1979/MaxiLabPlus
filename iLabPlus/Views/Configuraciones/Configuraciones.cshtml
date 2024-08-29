@@ -1,0 +1,674 @@
+﻿@model iLabPlus.Models.Clases.EstConfiguraciones
+
+@{
+    ViewBag.Title = "Config.";
+
+
+}
+
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+
+    <div class="col-12" style="padding-left:0;">
+
+        <div class="row" style="display: flex; align-items: center;">
+
+            <div class="col-10" style=" padding-right: 0; display: flex; flex-wrap: wrap; column-gap: 10px; align-items: center; padding-left: 0;">
+                <h3 style="">Configuraciones</h3>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row wrapper wrapper-content  ">
+    <div class="ibox-content">
+
+        <div class="TabsConfiguraciones" style="width:100%;height:100%;">
+
+            <div>
+                <a>Empresa</a>
+                <div style="padding-left: 11px;">
+
+                    <form id="FormEmpresa" method="post" asp-controller="Configuraciones" asp-action="Save_CONFIG_Empresa" enctype="multipart/form-data">
+                        <input type="hidden" id="EmpresasEst.Guid" name="EmpresasEst.Guid" asp-for="EmpresasEst.Guid">
+                        <input type="hidden" id="EmpresasConfigEst.Guid" name="EmpresasConfigEst.Guid" asp-for="EmpresasConfigEst.Guid">
+
+                        <div class="row mt-2" style="padding-top: 10px;">
+                            <div class="col-10" style="padding-left:0;">
+                                <button type="submit" id="ButtonSaveEmpresa" class="btn btn-primary ">Guardar</button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2" style="padding-top: 20px;">
+                            <div class="col-3" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Empresa</label>
+                                    <input id="Emp_Nombre" type="text" class="form-control" asp-for="EmpresasEst.Nombre">
+                                </div>
+                            </div>
+
+                            <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Razon Social</label>
+                                    <input id="Emp_RazonSocial" type="text" class="form-control" asp-for="EmpresasEst.RazonSocial">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1">
+                            <div class="col-3" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Nif/Dni</label>
+                                    <input id="Emp_Nif" type="text" class="form-control" asp-for="EmpresasEst.Nif">
+                                </div>
+                            </div>
+
+                            <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                <div class="form-group form-group-default ">
+                                    <label>EMail</label>
+                                    <input id="Emp_Mail" type="text" class="form-control" asp-for="EmpresasEst.Mail">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-6" style="padding-left: 0; padding-right: 0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Dirección</label>
+                                    <input id="Emp_Direccion" type="text" class="form-control" asp-for="EmpresasEst.Direccion">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1">
+                            <div class="col-1" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Código postal</label>
+                                    <input id="Emp_CodigoPostal" type="text" class="form-control" asp-for="EmpresasEst.CodigoPostal">
+                                </div>
+                            </div>
+                            <div class="col-2" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Población</label>
+                                    <input id="Emp_Poblacion" type="text" class="form-control" asp-for="EmpresasEst.Poblacion">
+                                </div>
+                            </div>
+                            <div class="col-2" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Provincia</label>
+                                    <input id="Emp_Provincia" type="text" class="form-control" asp-for="EmpresasEst.Provincia">
+                                </div>
+                            </div>
+                            <div class="col-1" style="padding-left:0;padding-right:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>País</label>
+                                    <input id="Emp_Pais" type="text" class="form-control" asp-for="EmpresasEst.Pais">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-3" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Teléfono</label>
+                                    <input id="Emp_Telefono" type="text" class="form-control" asp-for="EmpresasEst.Telefono">
+                                </div>
+                            </div>
+                            <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Web</label>
+                                    <input id="Emp_Web" type="text" class="form-control" asp-for="EmpresasEst.Web">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-3" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Persona contacto</label>
+                                    <input id="Emp_Persona" type="text" class="form-control" asp-for="EmpresasEst.Persona">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-3" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Forma de Cobro a clientes</label>
+                                    <input id="Emp_FormaCobroClientes" type="text" class="form-control" asp-for="EmpresasConfigEst.FormaCobroClientes">
+                                </div>
+                            </div>
+                            <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Cuenta Bancaria</label>
+                                    <input id="Emp_CuentaBancariab" type="text" class="form-control" asp-for="EmpresasConfigEst.CuentaBancaria">
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+
+            <div>
+                <a>Contadores</a>
+                <div>
+
+                </div>
+            </div>
+
+            <div>
+                <a>Mail</a>
+                <div style="padding-left: 11px;">
+
+                    <form id="FormMail" method="post" asp-controller="Configuraciones" asp-action="Save_CONFIG_Mail" enctype="multipart/form-data">
+                        <input type="hidden" id="EmpresasConfigEst.Guid" name="EmpresasConfigEst.Guid" asp-for="EmpresasConfigEst.Guid">
+
+                        <div class="row mt-2" style="padding-top: 10px;">
+                            <div class="col-10" style="padding-left:0;">
+                                <button type="submit" id="ButtonSaveMails" class="btn btn-primary ">Guardar</button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2" style="padding-top: 20px;">
+                            <div class="col-10" style="padding-left:0;">
+                                <label>Configuración de cuenta de envio (Facturas, Albaranes, etc)</label>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-10" style="padding-left:0;display: flex; align-items: center;">
+                                <label style="display: flex; align-items: center;">
+                                    <input id="Emp_MailsEnvILabPlus" name="EmpresasConfigEst.MailsEnvILabPlus" type="checkbox" class="i-checks" asp-for="EmpresasConfigEst.MailsEnvILabPlus.Value" style="color: inherit;">
+                                    <span style="margin-top: 1px; margin-left: 8px;">Utilizar servidores iLab+</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4" style="padding-left:0;">
+
+                                <div class="row mt-3">
+                                    <div class="col-12" style="padding-left:0;">
+                                        <label>Correo Saliente</label>
+                                    </div>
+                                </div>
+
+                                <div class="row ">
+                                    <div class="col-md-12 col-xl-12" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Remitente Nombre</label>
+                                            <input id="Emp_MailsEnvNombre" name="EmpresasConfigEst.MailsEnvNombre" type="text" class="form-control" asp-for="EmpresasConfigEst.MailsEnvNombre">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-md-12 col-xl-12" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta de envío</label>
+                                            <input id="Emp_MailsEnvCuenta" name="EmpresasConfigEst.MailsEnvCuenta" type="text" class="form-control" asp-for="EmpresasConfigEst.MailsEnvCuenta">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-md-9 col-xl-9" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Servidor de envío</label>
+                                            <input id="Emp_MailsEnvServidor" name="EmpresasConfigEst.MailsEnvServidor" type="text" class="form-control" asp-for="EmpresasConfigEst.MailsEnvServidor">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-xl-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Puerto</label>
+                                            <input id="Emp_MailsEnvPuerto" type="text" name="EmpresasConfigEst.MailsEnvPuerto" class="form-control InputIntegerMask" oninput="LimitNumbers(this);" asp-for="EmpresasConfigEst.MailsEnvPuerto">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row ">
+                                    <div class="col-md-12 col-xl-12" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección de respuesta</label>
+                                            <input id="Emp_MailsEnvDirRespuesta" name="EmpresasConfigEst.MailsEnvDirRespuesta" type="text" class="form-control" asp-for="EmpresasConfigEst.MailsEnvDirRespuesta">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-5" style="padding-left:20px;">
+
+                                <div class="row mt-3">
+                                    <div class="col-10" style="padding-left:0;">
+                                        <label>Firma Mail</label>
+                                    </div>
+                                </div>
+
+                                <div class="row " style="margin-top: -9px;">
+                                    <textarea id="Emp_TextosFirmaMail" class="form-control" name="EmpresasConfigEst.TextosFirmaMail" asp-for="EmpresasConfigEst.TextosFirmaMail"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                    </form>
+
+
+
+                </div>
+            </div>
+
+            <div>
+                <a>Textos Plantillas</a>
+                <div style="padding-left: 11px;">
+
+                    <form id="FormTextosPlantillas" method="post" asp-controller="Configuraciones" asp-action="Save_CONFIG_TextosPlantillas" enctype="multipart/form-data">
+                        <input type="hidden" id="EmpresasConfigEst.Guid" name="EmpresasConfigEst.Guid" asp-for="EmpresasConfigEst.Guid">
+
+                        <div class="row mt-2" style="padding-top: 10px;">
+                            <div class="col-10" style="padding-left:0;">
+                                <button type="submit" id="ButtonSaveTextosMails" class="btn btn-primary ">Guardar</button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1" style="padding-top: 20px;">
+                            <div class="col-10" style="padding-left:0;">
+                                <label>Albaranes</label>
+                            </div>
+                        </div>
+
+                        <div class="row " style="">
+
+                            <div class="col-10" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Albaranes Pie Página</label>
+                                    <textarea class="form-control" id="EmpCfg_TextosAlbPiePag" style="margin-top: 0px; height: 50px; resize: none;" asp-for="EmpresasConfigEst.TextosAlbPiePag"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row mt-1">
+                            <div class="col-10" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Albaranes Ley RPGD</label>
+                                    <textarea class="form-control" id="EmpCfg_TextosAlbRPGD" style="margin-top: 0px; height: 85px; resize: none;" asp-for="EmpresasConfigEst.TextosAlbRPGD"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1" style="padding-top: 10px;">
+                            <div class="col-10" style="padding-left:0;">
+                                <label>Facturas</label>
+                            </div>
+                        </div>
+
+                        <div class="row " style="">
+                            <div class="col-10" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Facturas Pie Página</label>
+                                    <textarea class="form-control" id="EmpCfg_TextosFacPiePag" style="margin-top: 0px; height: 50px; resize: none;" asp-for="EmpresasConfigEst.TextosFacPiePag"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1">
+                            <div class="col-10" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Facturas Ley RPGD</label>
+                                    <textarea class="form-control" id="EmpCfg_TextosAlbRPGD" style="margin-top: 0px; height: 85px; resize: none;" asp-for="EmpresasConfigEst.TextosFacRPGD"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1">
+                            <div class="col-10" style="padding-left:0;">
+                                <div class="form-group form-group-default ">
+                                    <label>Registro Mercantil</label>
+                                    <textarea class="form-control" id="EmpCfg_TextosRegistroMercantil" style="margin-top: 0px; height: 30px; resize: none;" asp-for="EmpresasConfigEst.RegistroMercantil"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="certificados">
+                <a class="certificados__titulo">Certificado</a>
+                <div class="certificados__contenido">
+                    <form id="FormCertificado" method="post" enctype="multipart/form-data" asp-controller="Configuraciones" asp-action="SubirCertificado" class="certificados__form">
+
+                        <div class="form-group">
+                            <div class="custom-file">
+                                <label class="custom-file-label" for="certificados">Certificado Digital</label>
+                                <input type="file" class="custom-file-input" id="certificado" name="certificado" accept=".pfx,.p12" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-default contenedor-contrasena">
+                            <label for="password" class="certificados__label">Contraseña</label>
+                            <input type="password" class="form-control certificados__input" id="password" name="password" required minlength="4">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary certificados__boton">Subir</button>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <a id="tabDirectorios" class="tab">Directorios</a>
+                <div id="Directorios" class="mt-4" style="padding-left: 11px;">
+                    Contenido de la pestaña Directorios
+                    Puedes agregar aquí el formulario o el contenido que corresponda a esta pestaña
+
+                </div>
+            </div>
+
+            <div>
+                <a>Plantillas Env.</a>
+                <div style="padding-left: 11px;">
+                    <!-- Aquí irá el contenido de la pestaña -->
+                    <div class="row mt-2" style="padding-top: 10px;">
+                        <div class="col-10" style="padding-left:0;">
+                            <form id="FormPlantillasEnv" method="post" asp-controller="Configuraciones" asp-action="Save_CONFIG_PlantillasEnv" enctype="multipart/form-data">
+
+                                <button type="submit" id="ButtonSavePlantillasEnv" class="btn btn-primary mb-3">Guardar</button>
+
+                                <div class="col-4 form-group form-group-default mb-3">
+                                    <label>Tipo de Plantilla</label>
+                                    <select id="TipoPlantilla" class="form-control" name="TipoPlantilla">
+                                        <option value="Envío de Albaranes">Envío de Albaranes</option>
+                                        <option value="Envío de Facturas">Envío de Facturas</option>
+                                        <!-- Aquí agregarás más opciones según necesites -->
+                                    </select>
+                                </div>
+
+                                <div class="col-8" style="padding-left: 0px">
+
+                                    <div class="row ">
+                                        <textarea id="Emp_TextosPlantillas" class="form-control" name="EmpresasConfigEst.TextosFirmaMail" asp-for="EmpresasConfigEst.TextosFirmaMail"></textarea>
+                                    </div>
+
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+@(Html.C1().TabPanel(".TabsConfiguraciones"))
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        function submitForm(formId, successMessage) {
+            var form = $('#' + formId);
+            form.submit(function (e) {
+                e.preventDefault(); // Prevenir el envío del formulario normalmente
+
+                // Realizar la solicitud AJAX
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        toastr.success(successMessage, '', { positionClass: 'toast-top-right-Nemesis' });
+                    },
+                    error: function (xhr, status, error) {
+                        // Manejar errores si es necesario
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        }
+
+        submitForm('FormEmpresa',           'DATOS GUARDADOS');
+        submitForm('FormMail',              'DATOS GUARDADOS');
+        submitForm('FormTextosPlantillas',  'DATOS GUARDADOS');
+
+        
+
+
+        $('#tabDirectorios').click(async function () {
+            try {
+                // Limpiar el contenido previo
+                $('#Directorios').html('');
+
+                // Llamo al servidor
+                const response = await fetch('/Configuraciones/GetDirectoriosEmpresa');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+
+
+                // Construyo los títulos de las columnas
+                let html = '<div class="list-group list-group-margin">';
+                html += `
+                    <div class="list-group-item custom-list-group-item title-row">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="title-directory">Carpeta</h5>
+                            <small class="title-directory">Tamaño</small>
+                        </div>
+                    </div>
+                `;
+
+                // Inicializo la suma total de tamaños
+                let totalSize = 0;
+
+                // Itero sobre cada directorio para construir la lista
+                data.forEach(function (dir) {
+                    totalSize += dir.Tamaño; // Sumo los tamaños
+                    html += `<div class="list-group-item custom-list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">${dir.Nombre}</h5>
+                        <small>${formatBytes(dir.Tamaño)}</small>
+                    </div>
+                </div>`;
+                });
+
+                // Agrego la fila del total al final de la lista
+                html += `
+                <div class="list-group-item custom-list-group-item total-directorios">
+                    <div class="d-flex w-100 justify-content-between">
+                        <strong>Total Directorios</strong>
+                        <small>${formatBytes(totalSize)}</small>
+                    </div>
+                </div>
+            `;
+
+                html += '</div>';
+                $('#Directorios').html(html);
+
+
+            } catch (error) {
+                console.error('Hubo un problema con la peticion Fetch: ', error);
+                $('#Directorios').html(`<p>Hubo un error al cargar los directorios: ${error.message}</p>`);
+
+            }
+        })
+
+        // Función para formatear el tamaño de los archivos
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        // Carga el editor de texto Firmar Mail
+        $('#Emp_TextosFirmaMail').summernote(
+            {
+                height: 190,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+        $('div.note-editable').height(190);
+        $('.note-statusbar').hide();
+
+
+        // Carga el editor de texto Plantillas
+        $('#Emp_TextosPlantillas').summernote(
+            {
+                height: 190,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+        $('div.note-editable').height(190);
+        $('.note-statusbar').hide();
+
+
+        $('.i-checks').iCheck({
+            //checkboxClass: 'icheckbox',
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+        });
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+        // Maneja el cambio de visibilidad de la ventana
+        document.addEventListener("visibilitychange", function () {
+            // Verifica si la ventana está visible
+            if (!document.hidden) {
+                // Oculta el tooltip cuando la ventana se hace visible nuevamente
+                $("#BtnConfigSave").tooltip("hide");
+            }
+        });
+
+        if ($('#Emp_MailsEnvILabPlus').is(':checked')) {
+            $("#Emp_MailsEnvNombre").prop("disabled", true);
+            $("#Emp_MailsEnvNombre").parent().addClass("disabled");
+            $("#Emp_MailsEnvCuenta").prop("disabled", true);
+            $("#Emp_MailsEnvCuenta").parent().addClass("disabled");
+            $("#Emp_MailsEnvServidor").prop("disabled", true);
+            $("#Emp_MailsEnvServidor").parent().addClass("disabled");
+            $("#Emp_MailsEnvPuerto").prop("disabled", true);
+            $("#Emp_MailsEnvPuerto").parent().addClass("disabled");
+            $("#Emp_MailsEnvDirRespuesta").prop("disabled", true);
+            $("#Emp_MailsEnvDirRespuesta").parent().addClass("disabled");
+        }
+
+        $("#Emp_MailsEnvILabPlus").on('ifChanged', function () {
+
+            if ($('#Emp_MailsEnvILabPlus').is(':checked')) {
+
+                $("#Emp_MailsEnvNombre").prop("disabled", true);
+                $("#Emp_MailsEnvNombre").parent().addClass("disabled");
+                $("#Emp_MailsEnvCuenta").prop("disabled", true);
+                $("#Emp_MailsEnvCuenta").parent().addClass("disabled");
+                $("#Emp_MailsEnvServidor").prop("disabled", true);
+                $("#Emp_MailsEnvServidor").parent().addClass("disabled");
+                $("#Emp_MailsEnvPuerto").prop("disabled", true);
+                $("#Emp_MailsEnvPuerto").parent().addClass("disabled");
+                $("#Emp_MailsEnvDirRespuesta").prop("disabled", true);
+                $("#Emp_MailsEnvDirRespuesta").parent().addClass("disabled");
+                
+            } else {
+
+                $("#Emp_MailsEnvNombre").prop("disabled", false);
+                $("#Emp_MailsEnvNombre").parent().removeClass("disabled");
+                $("#Emp_MailsEnvCuenta").prop("disabled", false);
+                $("#Emp_MailsEnvCuenta").parent().removeClass("disabled");
+                $("#Emp_MailsEnvServidor").prop("disabled", false);
+                $("#Emp_MailsEnvServidor").parent().removeClass("disabled");
+                $("#Emp_MailsEnvPuerto").prop("disabled", false);
+                $("#Emp_MailsEnvPuerto").parent().removeClass("disabled");
+                $("#Emp_MailsEnvDirRespuesta").prop("disabled", false);
+                $("#Emp_MailsEnvDirRespuesta").parent().removeClass("disabled");
+
+
+            }
+        });
+
+        cargarCertificadosExistentes();
+
+
+        $('#FormCertificado').submit(function (e) {
+
+            var nombreArchivo = $('#certificado')[0].files.length > 0 ? $('#certificado')[0].files[0].name : '';
+            if (certificadosExistentes.includes(nombreArchivo)) {
+                // Mostrar el modal si el archivo ya existe
+                N_ModalConfirmation('El certificado ya ha sido subido anteriormente. ¿Deseas continuar?').then((res) => {
+                    if (res) {
+                        this.submit(); // Continuar con la subida
+                    }
+                });
+            } else {
+                this.submit(); // Enviar directamente si el archivo no existe
+            }
+
+            e.preventDefault();
+
+
+        });
+     
+
+    });
+
+
+    let certificadosExistentes = [];
+
+    function cargarCertificadosExistentes() {
+        $.ajax({
+            url: '/Configuraciones/GetCertificadosExistentes',
+            type: 'GET',
+            success: function (data) {
+                certificadosExistentes = data;
+            },
+            error: function (error) {
+                console.error('Error al obtener certificados existentes:', error);
+            }
+        });
+    }
+
+
+
+</script>

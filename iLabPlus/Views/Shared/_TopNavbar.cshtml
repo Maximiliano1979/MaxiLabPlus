@@ -1,0 +1,263 @@
+﻿@{
+
+    var identity = (System.Security.Claims.ClaimsIdentity)User.Identity;
+
+    //var ClaimKey_UsuarioNombre = "MAJOFER TREND S.L.";
+    //var ClaimKey_Usuario = "MAJOFER TREND S.L.";
+
+    var ClaimKey_UsuarioNombre = "";
+    var ClaimKey_Usuario = "";
+    var ClaimKey_EmpresaNombre = "";
+
+    if (identity.Claims.Count() > 0)
+    {
+        if (identity.FindFirst("UsuarioNombre") != null)
+        {
+            ClaimKey_UsuarioNombre = identity.FindFirst("UsuarioNombre").Value;
+        }
+        else
+        {
+            ClaimKey_UsuarioNombre = identity.FindFirst("Usuario").Value;
+        }
+
+        ClaimKey_Usuario = identity.FindFirst("Usuario").Value;
+
+        ClaimKey_EmpresaNombre = identity.FindFirst("EmpresaNombre").Value;
+    }
+
+    // var MenuUserList = ViewBag.MenuUserList;
+    var MenuUserList = ViewBag.MenuUserList as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+
+
+}
+
+
+<div class="row border-bottom">
+
+    <nav id="navbarSuper" class="navbar navbar-fixed-top navbar-expand-md navbar-light white-bg" style="margin-bottom: 0;height:60px;">
+
+
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#" style="background-color: #2467ae; border-color: #2467ae;"><i class="fa fa-bars"></i> </a>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavDropdown" style="padding-left: 20px;">
+
+            <ul class="navbar-nav" id="nav">
+
+                @foreach (var item in MenuUserList)
+                {
+
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @item.Menu
+                        </a>
+
+
+                        @if (item.Accesos.Count != 0)
+                        {
+                            <div class="dropdown-menu menuSupSub" aria-labelledby="navbarDropdown">
+                                @foreach (var Acceso in item.Accesos)
+                                {
+                                    @if (@Acceso.Menu_ItemName == "Separator")
+                                    {
+                                        <a class="dropdown-item menu-divider"></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item ItemMenu" asp-controller="@Acceso.Menu_ItemCrontoller" asp-action="@Acceso.Menu_ItemAction">@Acceso.Menu_ItemName</a>
+                                    }
+
+                                }
+                            </div>
+                        }
+                    </li>
+                }
+
+                <li id="MenuSupCollapse" class="nav-item dropdown d-none show-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenu" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        T
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right MenuSupCollapsedropdownmenu" aria-labelledby="navbarDropdownMenu">
+                    </ul>
+                </li>
+
+            </ul>
+
+
+            <!-- PARTE DERECHA -->
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item transparent-background" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Simulador de precios">
+                    <a id="SimuladorPrecios" class="dropdown-item"><i class="fal fa-euro-sign fa-lg"></i></a>
+                </li>
+
+                <li class="nav-item transparent-background" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Contactos">
+                    <a class="dropdown-item" href="@Url.Action("Index", "Contactos")"><i class="fal fa-id-badge fa-lg"></i></a>
+                </li>
+
+                <li class="nav-item transparent-background" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Calendario">
+                    <a class="dropdown-item" href="@Url.Action("Index", "Calendario")"><i class="fal fa-calendar-alt fa-lg"></i></a>
+                </li>
+
+
+                @*<li class="nav-item dropdown transparent-background" style="" >
+                    <a class="dropdown-toggle count-info" data-bs-toggle="dropdown" href="#">
+                        <i class="fal fa-bell fa-lg"></i>  <span id="Top_TrabNotificaciones" class="label label-primary" style="visibility:hidden;background-color:red !important;"></span>
+                    </a>
+                    <form id="FormAvisos" method="post" asp-controller="Trabajos" asp-action="Index">
+                        <ul class="dropdown-menu dropdown-messages dropdown-menu-right ULNotificaciones" id="NotificacionesSection">
+                            <li>
+                                <div class="text-center link-block TotalNavBar" style="padding-left:0;padding-right:0;">
+                                    <a asp-controller="Trabajos" asp-action="Notificaciones">
+                                        <i class="fal fa-bell fa-lg"></i>&nbsp;&nbsp;<strong>Ver Histórico de Notificaciones</strong>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                        </ul>
+                    </form>
+                </li>*@
+
+                <li class="nav-item transparent-background" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hanna">
+                    <a class="dropdown-item"><i class="fal fa-user-headset fa-lg HannaIcon"></i></a>
+                </li>
+
+                <li class="nav-item divider-vertical transparent-background">
+                    <span id="Top_UserName" class="" data-i18n="topnav.welcometext">@ClaimKey_UsuarioNombre (@ClaimKey_EmpresaNombre)</span>
+                </li>
+
+                <li class="nav-itemxx dropdown transparent-background">
+                    <a class="dropdown-toggle count-info PerfilImg" data-bs-toggle="dropdown" href="#">
+                        @*<img id="TopPerfil" alt="Ilab" class="rounded-circle" src="data:image/jpeg;base64,@ViewBag.ImagenPerfil" />*@
+                        <img id="TopPerfil" alt="iCIM" class="rounded-circle" src="~/images/default/Perfil.png" />
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-perfil dropdown-menu-right">
+
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Logout", "Account")" style="width: 95%;"><i class="fal fa-sign-out-alt"></i><span class="ml-3">Desconectar</span></a></li>
+                    </ul>
+
+                </li>
+
+
+
+            </ul>
+
+        </div>
+
+
+
+
+    </nav>
+
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+
+        $(".TopPedSC").on("click", function (event) {
+            var _Id = $(this).attr('id');
+            var _Ped = _Id.replace("TopPedSC_", "");
+
+            window.location.href = "/Entradas/Edit/" + _Ped;
+        });
+
+        $(".TopTrabNoti").on("click", function (event) {
+            var _Id = $(this).attr('id');
+            var _Ped = _Id.replace("TopTrabNoti_", "");
+
+            window.location.href = "/Trabajos/Edit/" + _Ped;
+        });
+
+
+        $(".dropdown-messages-box").click(function () {
+            $('#FormMensajes').append('<input type="hidden" name="Usuario" value="' + $(this).attr('Usuario') + '" />');
+            $("#FormMensajes").submit();
+        });
+
+
+
+        $(document).on('click', '.dropdown-item.ItemMenu[href*="DialogSimuladorPrecios"]', function () {
+            event.preventDefault();
+            CallSimuladorPrecios();
+        });
+
+
+        $("#SimuladorPrecios").on("click", function () {
+
+            CallSimuladorPrecios();
+
+        });
+
+        $('li[data-bs-toggle="tooltip"][title="Hanna"]').click(function () {
+
+            if ($(".HannaIcon").hasClass("HannaIconActive")) {
+                HannaDesconectar();
+            } else {
+                HannaConectar();
+            }
+        });
+
+
+
+        function CallSimuladorPrecios() {
+
+            var GuidArt = null;
+            var SelectArticulo = null;
+            var Url = window.location.href;
+
+            if (Url.includes("Articulos/Ficha")) {
+                GuidArt = Url.substring(Url.lastIndexOf('/') + 1);
+            }
+
+            if (Url.includes("Pedidos/Ficha")) {
+                var Articulo = "";
+                var ComboPedLinArticulo = wijmo.Control.getControl('#ComboPedLinArticulo');
+                if (ComboPedLinArticulo.selectedValue != null && ComboPedLinArticulo.selectedValue != "") {
+                    SelectArticulo = ComboPedLinArticulo.selectedValue;
+                }
+
+                var SelectOroFino = numeral($('#PedOroFino').val()).value();
+                var SelectKilates = "18";
+                var SelectColorOro = "AM";
+                var SelectTarifa = "";
+
+
+                var ComboPedLinKilates = wijmo.Control.getControl('#ComboPedLinKilates');
+                if (ComboPedLinKilates.selectedValue != null && ComboPedLinKilates.selectedValue != "") {
+                    SelectKilates = ComboPedLinKilates.selectedValue;
+                }
+                var ComboPedLinTipoOro = wijmo.Control.getControl('#ComboPedLinTipoOro');
+                if (ComboPedLinTipoOro.selectedValue != null && ComboPedLinTipoOro.selectedValue != "") {
+                    SelectColorOro = ComboPedLinTipoOro.selectedValue;
+                }
+                var ComboPedLinTarifa = wijmo.Control.getControl('#ComboPedLinTarifa');
+                if (ComboPedLinTarifa.selectedValue != null && ComboPedLinTarifa.selectedValue != "") {
+                    SelectTarifa = ComboPedLinTarifa.selectedValue;
+                }
+
+                //console.log(SelectOroFino + "   " + SelectKilates + "   " + SelectColorOro + "   " + SelectTarifa);
+            }
+
+            N_DialogSimuladorPrecios(GuidArt, SelectArticulo, SelectOroFino, SelectKilates, SelectColorOro, SelectTarifa).then((res) => {
+
+            }).catch((error) => {
+
+            });
+        }
+    });
+
+
+
+</script>

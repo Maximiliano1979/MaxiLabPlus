@@ -1,0 +1,35 @@
+﻿<div class="modal" id="modalProveedorNew" tabindex="-1" role="dialog" aria-labelledby="modalProveedorNewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 700px;">
+        <div class="modal-content" style="height: 260px;min-height:unset;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalProveedorNewTitle">Copiar Proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="FormProveedorNewCreateEdit" style="height:100%;">
+                <div class="modal-body" id="modal-bodyProveedorNew">
+                    <div class="row mt-3" style="">
+                        <div class="col-6" style="padding-left:0; ">
+                            <div class="form-group form-group-default required disabled">
+                                <label id="ProveedorOldLabel">Proveedor</label>
+                                <input id="ProveedorOld" type="text" class="form-control" value="@ViewBag.ProveedorOld" disabled>
+                            </div>
+                        </div>
+                        <div class="col-6" style="padding-right:0; ">
+                            <div class="form-group form-group-default required">
+                                <label id="ProveedorNewLabel">Proveedor Nuevo</label>
+                                <input id="ProveedorNew" type="text" class="form-control" value="@ViewBag.ProveedorOld">
+                            </div>
+                            <div class="form-group form-group-defaultxx" style="padding-left: 12px;">
+                                <label id="ProveedorStatusLabel" style="color:red;display:none;"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modalProveedorNew-cancel" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modalProveedorNew-ok">Copiar</button>
+            </div>
+        </div>
+    </div>
+</div>

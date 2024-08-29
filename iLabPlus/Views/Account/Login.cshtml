@@ -1,0 +1,89 @@
+﻿@model iLabPlus.Models.LoginModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>iLabPlus</title>
+
+    <link rel="stylesheet" href="~/css/ilabPlusLogin.css" asp-append-version="true" />
+    <link href="~/lib/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/font-awesome-pro/css/all.min.css" />
+    
+
+    <!-- ==== Favicon ==== -->
+    <link rel="icon" href="~/favicon.png" type="image/png">
+    @*<link rel="icon" href="~/favicon_16.png" type="image/png" sizes="16x16">
+        <link rel="icon" href="~/favicon_32.png" type="image/png" sizes="32x32">
+        <link rel="icon" href="~/favicon_64.png" type="image/png" sizes="64x64">*@
+
+</head>
+<body>
+
+
+    <div class="d-lg-flex half">
+
+        <div class="contents order-2 order-md-1">
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-10 col-sm-10 col-md-8 col-lg-8 col-xl-9">
+
+                        <img src="~/images/login/bg_3.png" class="responsive-image" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="contents order-1 order-md-2">
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-10 col-sm-10 col-md-8 col-lg-7 col-xl-6">
+
+                        <h3><strong>iLabPlus</strong></h3>
+                        <p class="mb-4 LoginSubTitulo">Innovación que impulsa resultados: Tu camino hacia la productividad.</p>
+
+                        <form method="post" id="FormLogin" asp-controller="Account" asp-action="Login">
+
+                            <div class="input-group mb-3 InputsLoginsGroup align-items-center">
+                                <div class="input-group-text"><i class="fas fa-envelope fa-lg"></i></div>
+                                <input asp-for="Usuario" type="text" class="form-control" placeholder="Email">
+                            </div>
+
+                            <div class="input-group mb-4 InputsLoginsGroup align-items-center">
+                                <div class="input-group-text"><i class="fas fa-lock-alt"></i></div>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="Contraseña">
+                            </div>
+
+
+
+                            <input type="submit" value="Iniciar Sesión" class="btn btn-block btn-primary mb-2" id="ButLogin">
+
+                            <span class="ml-auto"><a href="#" class="forgot-pass">¿Has olvidado tu contraseña?</a></span>
+
+                            <div asp-validation-summary="All" class="loginerror mt-3">
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+</body>
+</html>
+
+
+
+
+

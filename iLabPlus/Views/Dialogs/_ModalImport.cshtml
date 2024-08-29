@@ -1,0 +1,132 @@
+﻿
+<div class="modal fade" id="modalImportClientes" tabindex="-1" role="dialog" aria-labelledby="modalImportClientesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modal-importar-clientes">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImportClientesLabel">Importar Clientes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar">
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3 text-center">
+                    <a href="#" class="btn-link btn-sm">Descarga una muestra del archivo XLSX</a> para ver el formato de importación
+                </p>
+                <div class="dashed-border-box" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
+                    <input type="file" id="fileImportClientes" class="form-control-file" onchange="handleFileSelect(event)" hidden />
+                    <label for="fileImportClientes" class="dashed-border-label">
+                        <i class="fa fa-cloud-upload-alt upload-icon"></i>
+                        Selecciona o arrastra el archivo de importación aquí
+                    </label>
+                </div>
+                <div id="fileError" class="file-error">
+                    Solo se permiten archivos .xls o .xlsx
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // Función modificada para verificar el tipo de archivo
+    function validateFileType(file) {
+        const allowedExtensions = /(\.xls|\.xlsx)$/i;
+        if (!allowedExtensions.exec(file.name)) {
+            // Si el archivo no es del tipo permitido, mostrar mensaje de error
+            document.getElementById('fileError').style.display = 'block';
+            return false;
+        } else {
+            // Ocultar mensaje de error si el archivo es válido
+            document.getElementById('fileError').style.display = 'none';
+            return true;
+        }
+    }
+
+    function dragOverHandler(ev) {
+        ev.preventDefault();
+        // Añado la clase drag-over cuando un archivo es arrastrado sobre la zona
+        document.querySelector('.dashed-border-box').classList.add('drag-over');
+    }
+
+    function dragLeaveHandler(ev) {
+        // Remuevo la clase drag-over cuando el archivo deja la zona de drop
+        document.querySelector('.dashed-border-box').classList.remove('drag-over');
+    }
+
+    // Manejador para el evento de arrastrar y soltar
+    function dropHandler(ev) {
+        ev.preventDefault(); // Prevengo el comportamiento por defecto
+        document.querySelector('.dashed-border-box').classList.remove('drag-over'); // También remuevo la clase cuando el archivo es soltado
+
+        if (ev.dataTransfer.items) {
+            if (ev.dataTransfer.items[0].kind === 'file') {
+                var file = ev.dataTransfer.items[0].getAsFile();
+                if (validateFileType(file)) { // Solo llamo a handleFileUpload si el archivo es válido
+                    handleFileUpload(file);
+                }
+            }
+        } else {
+            var file = ev.dataTransfer.files[0];
+            if (validateFileType(file)) { // Solo llamo a handleFileUpload si el archivo es válido
+                handleFileUpload(file);
+            }
+        }
+    }
+
+    function handleFileSelect(event) {
+        var file = event.target.files[0];
+        if (validateFileType(file)) { // Solo proceso el archivo seleccionado si es válido
+            handleFileUpload(file);
+        }
+    }
+
+    function handleFileUpload(file) {
+
+        if (validateFileType(file)) {
+            // Crear un FormData para enviar el archivo
+            var formData = new FormData();
+            formData.append('file', file);
+
+            // Hacer la solicitud al servidor usando fetch
+            fetch('/ImportExport/ImportProcessFile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json()) // Cambio aquí para esperar una respuesta JSON
+                .then(data => {
+                if (data.success) {
+                    // Cierro el modal actual y abro el nuevo modal solo si la carga fue exitosa
+                    $('#modalImportClientes').modal('hide');   
+                    // Cargo y muestro el modal de datos importados
+                    fetch('/ImportExport/ImportDataGetPartial')
+                        .then(response => response.text())
+                        .then(html => {
+                            $('body').append(html); // Agrego el HTML al body
+                            $('#modalImportData').modal('show'); // Muestro el modal
+                        });
+                } else {
+                    // Muestro un mensaje con el error devuelto por el servidor
+                    alert(data.message);
+                }
+            })
+            .catch(e => {
+                // Aquí manejo el error de la solicitud
+                console.error('Error al procesar el archivo:', e);
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        $('body').on('click', '#btnVolver', function () {
+
+            // Cambio el modal _ModalImportData
+            $('#modalImportData').modal('toggle');
+
+            // Cambio _ModalImportClientes después de un breve retraso
+            setTimeout(function () {
+                $('#modalImportClientes').modal('toggle');
+            }, 500); 
+        });
+    });
+
+</script>

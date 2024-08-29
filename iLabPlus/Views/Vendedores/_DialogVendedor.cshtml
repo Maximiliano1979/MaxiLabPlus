@@ -1,0 +1,506 @@
+﻿@model iLabPlus.Models.BDiLabPlus.Vendedores
+
+@{
+
+
+}
+
+<div class="modal " id="modalVendedor" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalVendedorTitle">Vendedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormVendedorCreateEdit" method="post" asp-controller="Vendedores" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyVendedor">
+
+                    <div class="TabsVendedor" style="width:100%;height:100%;">
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="VendedorLabel">
+                                                Vendedor <i class="glyphicon glyphicon-info-sign" data-bs-toggle="tooltip" data-bs-placement="top" title="Código de Vendedor" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Vendedor" type="text" class="form-control" asp-for="Vendedor" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="VenNombreLabel">Nombre</label>
+                                            <input id="VenNombre" type="text" class="form-control" asp-for="VenNombre">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenNIFLabel">Nif</label>
+                                            <input id="VenNIF" type="text" class="form-control" asp-for="VenNIF">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenTelefono1Label">Teléfono</label>
+                                            <input id="VenTelefono1" type="text" class="form-control" asp-for="VenTelefono1">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-8" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenTelefono1DescLabel">Descripción</label>
+                                            <input id="VenTelefono1Desc" type="text" class="form-control" asp-for="VenTelefono1Desc">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenMailLabel">Mail</label>
+                                            <input id="VenMail" type="text" class="form-control" asp-for="VenMail">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IVA</label>
+                                            <input id="VenIVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="VenIVA">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IRPF</label>
+                                            <input id="VenIRPF" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="VenIRPF">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-5" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión Etiqueta</label>
+                                            <input id="VenComisionEtiqueta" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="VenComisionEtiqueta">
+                                        </div>
+                                    </div>
+                                    <div class="col-5" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión Hechura</label>
+                                            <input id="VenComisionHechura" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="VenComisionHechura">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row " style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-5" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión Peso</label>
+                                            <input id="VenComisionPeso" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="VenComisionPeso">
+                                        </div>
+                                    </div>
+                                    <div class="col-5" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Comisión PesoHechura</label>
+                                            <input id="VenComisionPesoHechura" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="VenComisionPesoHechura">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row IsoDatBottom" style="margin-top: 2rem !important;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-1" style="">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Direcciones</a>
+                            <div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label>Dirección</label>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección</label>
+                                            <input id="VenDireccion" type="text" class="form-control" asp-for="VenDireccion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Código postal</label>
+                                            <input id="VenDirDP" type="text" class="form-control" asp-for="VenDirDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Población</label>
+                                            <input id="VenDirPoblacion" type="text" class="form-control" asp-for="VenDirPoblacion">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Provincia</label>
+                                            <input id="VenDirProvincia" type="text" class="form-control" asp-for="VenDirProvincia">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>País</label>
+                                            <input id="VenDirPais" type="text" class="form-control" asp-for="VenDirPais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label>Comunicaciones</label>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenTelefono2Label">Teléfono 2</label>
+                                            <input id="VenTelefono2" type="text" class="form-control" asp-for="VenTelefono2">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-8" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenTelefono2DescLabel">Descripción</label>
+                                            <input id="VenTelefono2Desc" type="text" class="form-control" asp-for="VenTelefono2Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row " style="">
+
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenTelefono3Label">Teléfono 3</label>
+                                            <input id="VenTelefono3" type="text" class="form-control" asp-for="VenTelefono3">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-8" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="VenTelefono3DescLabel">Descripción</label>
+                                            <input id="VenTelefono3Desc" type="text" class="form-control" asp-for="VenTelefono3Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div style="height:100%">
+                            <a>Observaciones</a>
+                            <div>
+                                <textarea class="form-control" id="VenObserv" style="margin-top: 10px;" asp-for="VenObserv"></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <a>Bancos</a>
+                            <div>
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Banco</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Entidad</label>
+                                            <input id="VenBcoBanco" type="text" class="form-control" asp-for="VenBcoBanco">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cod. Entidad</label>
+                                            <input id="VenBcoCtaCte1" maxlength="4" type="text" class="form-control" asp-for="VenBcoCtaCte1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Sucursal</label>
+                                            <input id="VenBcoCtaCte2" maxlength="4" type="text" class="form-control" asp-for="VenBcoCtaCte2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Díg. de control</label>
+                                            <input id="VenBcoCtaCte3" maxlength="2" type="text" class="form-control" asp-for="VenBcoCtaCte3">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta</label>
+                                            <input id="VenBcoCtaCte4" maxlength="10" type="text" class="form-control" asp-for="VenBcoCtaCte4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Iban</label>
+                                            <input id="VenBcoIBAN" type="text" class="form-control" asp-for="VenBcoIBAN">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Swift</label>
+                                            <input id="VenBcoSwift" type="text" class="form-control" asp-for="VenBcoSwift">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Forma de pago</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Pago</label>
+                                            <input id="VenFPago" type="text" class="form-control" asp-for="VenFPago">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Vencimientos</label>
+                                            <input id="VenFPvto" type="text" class="form-control InputIntegerMask" asp-for="VenFPvto">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Intervalo</label>
+                                            <input id="VenFPint" type="text" class="form-control InputIntegerMask" asp-for="VenFPint">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Plazo</label>
+                                            <input id="VenFPlazo" type="text" class="form-control InputIntegerMask" asp-for="VenFPlazo">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 1</label>
+                                            <input id="VenFPdia1" type="text" class="form-control InputIntegerMask" asp-for="VenFPdia1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 2</label>
+                                            <input id="VenFPdia2" type="text" class="form-control InputIntegerMask" asp-for="VenFPdia2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 3</label>
+                                            <input id="VenFPdia3" type="text" class="form-control InputIntegerMask" asp-for="VenFPdia3">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalVendedor-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalVendedor-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsVendedor"))
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        // Posiciona en la primera tab
+        var TabsObj = wijmo.Control.getControl('.TabsVendedor');
+        $('#modalVendedor').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+        // Carga el editor de texto
+        $('#VenObserv').summernote(
+            {
+                height: 520,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        var ModelGuid = "@Model.Guid";
+        if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+            document.getElementById("Vendedor").focus();
+            $('#Vendedor').val('Automático');
+            $("#Vendedor").prop("disabled", true);
+            $("#Vendedor").parent().addClass("disabled");
+        } else {
+            $("#Vendedor").prop("disabled", true);
+            $("#Vendedor").parent().addClass("disabled");
+        }
+
+
+
+
+    });
+
+
+
+
+
+
+</script>

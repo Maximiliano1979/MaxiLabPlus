@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Control Horario";
+}
+
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna Izquierda (Video y Registro Manual) -->
+        <div class="col-lg-6">
+            <!-- Sección de Video -->
+            <h2>Coloque el QR frente a la cámara</h2>
+            <div class="video-wrapper contorno-azul" style="max-height: 400px; overflow: hidden;">
+                <video id="qr-video" class="qr-video"></video>
+                <div id="processing-message">
+                    Procesando QR...
+                </div>
+            </div>
+
+            <!-- Sección de Registro Manual -->
+            <div class="mt-3">
+                <h2>Registro Manual de Empleados</h2>
+                <select id="selectEmpleado" class="form-control">
+                    <option value="">Seleccione un empleado</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+                <button id="btnRegistrarEmpleado" class="btn btn-primary mt-2">Registrar</button>
+            </div>
+        </div>
+
+        <!-- Columna Derecha (Resultado) -->
+        <div class="col-lg-6">
+            <h2>Resultado</h2>
+            <div class="result-container shadow-sm bg-body rounded">
+                <p id="qr-result"><span id="output" class="text-primary"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+@section Scripts {
+    <script src="~/lib/qr-scanner/qr-scanner.umd.min.js"></script>
+    <script src="~/js/scriptsAudio.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            const video = document.getElementById('qr-video');
+            const outputElement = document.getElementById('output');
+            let scanningEnabled = true;
+            let qrScanner;
+            const processingMessage = document.getElementById('processing-message');
+            const colorExito = "#AEF6B3"; // Verde pastel claro para éxito
+            const colorError = "#F9A5A5"; // Rojo pastel claro para error
+
+
+            const camHasPermission = async () => {
+                try {
+                    await navigator.mediaDevices.getUserMedia({ video: true });
+                    return true;
+                } catch {
+                    return false;
+                }
+            };
+
+
+            const guardarRegistroControlHorario = async (mensajeQR) => {
+                try {
+                    const formData = new FormData();
+                    formData.append('mensajeQR', mensajeQR);
+
+                    const response = await fetch('ControlHorario/RegistroControlHorario', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        // Mostrar mensaje de "Hora de Entrada" o "Hora de Salida" con la hora correspondiente
+                        outputElement.parentNode.style.backgroundColor = colorExito;
+                        outputElement.textContent = `${data.message}: ${data.hora}`;
+                        SintetizarMsgToVoz(`${data.message}: ${data.hora}`);
+                        // Limpiar el mensaje después de 5 segundos
+                        setTimeout(() => {
+                            outputElement.textContent = "";
+                            outputElement.parentNode.style.backgroundColor = "";
+                        }, 5000);
+                    } else {
+                        // Mostrar mensaje de error y limpiar después de 5 segundos
+                        outputElement.parentNode.style.backgroundColor = colorError;
+                        outputElement.textContent = "Algo falló en la lectura del QR. Vuelva a intentarlo.";
+                        SintetizarMsgToVoz(`${outputElement.textContent}`);
+                        setTimeout(() => {
+                            outputElement.parentNode.style.backgroundColor = "";
+                            outputElement.textContent = "";
+                        }, 5000);
+                    }
+                } catch (error) {
+                    // Mostrar mensaje de error del sistema y limpiar después de 5 segundos
+                    outputElement.parentNode.style.backgroundColor = colorError;
+                    outputElement.textContent = "Error en el sistema. Vuelva a intentarlo.";
+                    SintetizarMsgToVoz(`${outputElement.textContent}`);
+                    setTimeout(() => {
+                        outputElement.parentNode.style.backgroundColor = "";
+                        outputElement.textContent = "";
+                    }, 5000);
+                }
+            }
+
+
+            const startScanner = async () => {
+
+                if (await camHasPermission()) {
+
+                    const qrScanner = new QrScanner(video, result => {
+
+                        if (scanningEnabled) {
+
+                            let resultadoQR = result.data || result;
+                            let partesQR = resultadoQR.split('%').filter(p => p !== '');
+
+                            if (partesQR.length >= 2 && partesQR[0] === "25") {
+
+                                guardarRegistroControlHorario(resultadoQR);
+
+                            } else {
+                                outputElement.parentNode.style.backgroundColor = colorError;
+                                outputElement.textContent = "No es un empleado registrado por la empresa";
+                                SintetizarMsgToVoz(`${outputElement.textContent}`);
+                                setTimeout(() => {
+                                    outputElement.parentNode.style.backgroundColor = "";
+                                    outputElement.textContent = "";
+                                }, 5000);
+                            }
+
+                            scanningEnabled = false;
+                            qrScanner.stop();
+                            processingMessage.style.display = 'block'; // Mostrar el mensaje de procesamiento
+
+                            setTimeout(() => {
+                                scanningEnabled = true;
+                                qrScanner.start();
+                                processingMessage.style.display = 'none'; // Ocultar el mensaje de procesamiento
+                            }, 3000);
+
+                        }
+
+                    }, {
+
+                        highlightScanRegion: true,
+                        highlightCodeOutline: true,
+
+                    });
+
+                    qrScanner.start();
+                }
+
+            };
+
+          
+            startScanner();
+
+
+            fetch('/ControlHorario/GetEmpleados')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(function (empleado) {
+                        $('#selectEmpleado').append(new Option(empleado.EmpNombre, empleado.Empleado));
+                    });
+                })
+                .catch(error => console.error('Error al obtener los empleados:', error));
+
+            // Lógica para manejar el clic del botón de registro manual
+            $('#btnRegistrarEmpleado').click(function () {
+                var empleadoSeleccionado = $('#selectEmpleado').val();
+                if (empleadoSeleccionado) {
+                    // Construye el mensajeQR manualmente y llama a guardarRegistroControlHorario
+                    var mensajeQR = '25%' + empleadoSeleccionado;
+                    guardarRegistroControlHorario(mensajeQR);
+                } else {
+                    alert("Seleccione un empleado");
+                }
+            });
+
+
+
+        });
+
+
+    </script>
+}

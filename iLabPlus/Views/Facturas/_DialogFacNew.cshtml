@@ -1,0 +1,160 @@
+﻿
+@{
+
+
+}
+
+
+<div class="modal " id="modalFacNew" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" @*data-backdrop="static" data-keyboard="false"*@>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 700px;">
+        <div class="modal-content" style="height: 260px; min-height: unset; ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFacNewTitle">Crear Factura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormFacNewCreateEdit" method="post" asp-controller="Facturas" asp-action="Create_Pedido" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="modal-body" id="modal-bodyArtMo">
+
+                    <div class="row mt-3" style="">
+
+                        <div class="col-8" style="padding-left:0; ">
+                            <div class="form-group form-group-default required">
+                                <label id="CodPedNewClienteLabel">Cliente</label>
+
+                                @(Html.C1().AutoComplete()
+                                .Id("ComboFacNewClientes")
+                                .OnClientGotFocus("ComboGotFocus")
+                                //.OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                .OnClientIsDroppedDownChanged("IsDroppedDownChanged")
+                                .Placeholder("")
+                                .IsDisabled(true)
+                                //.SelectedValue(-1)
+                                .HeaderPath("CalcClienteNombre")
+                                .SelectedValuePath("Cliente")
+                                .DisplayMemberPath("Cliente")
+                                .SearchMemberPath("Cliente,CliNombre")
+                                //.SearchMemberPath("ArtDes")
+                                .MaxItems(10000)
+                                .Width("100%")
+                                )
+
+
+                            </div>
+                        </div>
+
+                        <div class="col-4" style="padding-left:0; padding-right:0;">
+                            <div class="form-group form-group-default required">
+                                <label id="CodPedNewTipoLabel">Tipo</label>
+
+                                @(Html.C1().ComboBox()
+                                        .Id("ComboFacNewTipo")
+                                        .OnClientGotFocus("ComboGotFocus")
+                                        .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                        .SelectedValuePath("Clave")
+                                        .DisplayMemberPath("Clave")
+                                        .CssStyle("z-index", "90000 !Important")
+                                        .Bind(ViewBag.ValsysFacTipos)
+                                        .IsDisabled(false)
+                                        .Width("100%"))
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalFacNew-cancel" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalFacNew-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script id="modalFacNew_js">
+
+    $(document).ready(function () {
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+        $('.InputDecimalMask2').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask2").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputDecimalMask4').inputmask("decimal", {
+            'digits': 4,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask4").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 5,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        /************************************************************************ */
+        /* CARGA C */
+        /************************************************************************ */
+        var ListClientes    = @(Html.Raw(ViewBag.ListClientes));
+        var ComboFacNewClientes = wijmo.Control.getControl('#ComboFacNewClientes');
+
+        var templateClientes =
+            '<table><tr>' +
+            '<td class="string200"  title="Cliente">{Cliente}</td>' +
+            '<td class="string290"  title="Nombre">{CliNombre}</td>'
+        '</td>' +
+            '</tr></table>';
+        ComboFacNewClientes.formatItem.addHandler(function (s, e) {
+            var html = wijmo.format(templateClientes, e.data);
+            e.item.innerHTML = html;
+        });
+
+        ComboFacNewClientes.itemsSource = ListClientes;
+        ComboFacNewClientes.placeholder = "<Seleccionar>";
+
+        ComboFacNewClientes.selectedValue = -1;
+        ComboFacNewClientes.isDisabled = false;
+
+
+    });
+
+
+</script>

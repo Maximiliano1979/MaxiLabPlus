@@ -1,0 +1,494 @@
+﻿
+@model IEnumerable<iLabPlus.Models.BDiLabPlus.FacturasCAB>
+
+@{
+    ViewBag.Title = "Facturas";
+    var actions = ViewBag.Actions;
+}
+
+
+<script src="~/js/gridsFunctions.js"></script>
+
+
+<script type="text/javascript">
+
+    function ComboFacturasClientesLazing(query, max, callback) {
+
+        if (query === "") {
+            callback(null);
+            return;
+        }
+
+        var data = new FormData();
+        data.append("query", query);
+        data.append("max", max);
+
+        $.ajax({
+            type: 'POST',
+            url: "/Clientes/GetClientesLazing",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data != null) {
+                    callback(data);
+                }
+
+            },
+            always: function (data) { },
+            error: function (xhr, status, error) {
+                console.log("Error", xhr, xhr.responseText, status, error);
+            }
+        });
+
+    }
+
+</script>
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+
+
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-1" style="padding-left:0;">
+        <h3>Facturas</h3>
+    </div>
+
+    <div class="col-11 page_heading_func">
+
+        <button id="BtnEfectoNew" type="button" class="btn btn-default" onclick="BtnDialogFacturaNew()"><i class="far fa-fw fa-plus"></i></button>
+
+        @(Html.C1().ComboBox().Id("ComboEmpresa").OnClientGotFocus("ComboGotFocus").OnClientSelectedIndexChanged("ComboSelectedIndexChanged").Bind(ViewBag.Empresas).Width("125px"))
+        @(Html.C1().ComboBox().Id("ComboFacTipo")
+        .OnClientGotFocus("ComboGotFocus").OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+        .SelectedValuePath("Clave").DisplayMemberPath("Valor1")
+        .Bind(ViewBag.ValsysFacTipos)
+        .Width("140px"))
+        @(Html.C1().AutoComplete()
+        .Id("ComboCliente")
+        .OnClientGotFocus("ComboGotFocus")
+        .OnClientIsDroppedDownChanged("IsDroppedDownChanged")
+        .Placeholder("Todos los clientes")
+        .IsDisabled(false)
+        .HeaderPath("CalcClienteNombre")
+        .SelectedValuePath("Cliente")
+        .DisplayMemberPath("CliNombre")
+        .SearchMemberPath("Cliente,CliNombre")
+        .MaxItems(25)
+        .ItemsSourceFunction("ComboFacturasClientesLazing")
+        .Width("350px")
+)
+
+        <input type="text" id="date_range" name="date_range">
+
+        <p id="gridSearch" style="width:300px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></p>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+                @*<li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnPrintOpc('PedEtiquetas3x4_ETQ','SelPedLin','gridFacturas')"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Imprimir Etiquetas (3x4) Etiqueta</a></li>
+                    <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnPrintOpc('PedEtiquetas3x4_PESO','SelPedLin','gridFacturas')"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Imprimir Etiquetas (3x4) Peso</a></li>
+                    <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnPrintOpc('','')"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Imprimir Genérico Facturas</a></li>
+                    <li><hr class="dropdown-divider"></li>*@
+            </ul>
+        </div>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;Importar Factura</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> &nbsp;&nbsp;&nbsp;Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnResetConfigGrid()"><i class="fal fa-fw fa-sd-card"></i> &nbsp;&nbsp;&nbsp;Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row wrapper wrapper-content ">
+    <div class="ibox-content">
+
+        @(Html.C1().FlexGrid()
+                        .Id("gridFacturas")
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid GridEvents truncate")
+                        .DefaultRowSize(27)
+                        .Filterable(f => {
+                            f.DefaultFilterType(FilterType.Both);
+                            f.Id("theGridFilter");
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.ListBox)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model) // cargar por ajax para que se previsualice previamente antes de cargar los datos, sino se ve gris todo hasta que carga los datos y visualiza la grid
+                        .AutoGenerateColumns(false)
+                        .OrderBy("Numero")
+                        .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+                        .Columns(col =>
+                        {
+                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+
+        col.Add(c => c.Binding("Acciones").Header("Ac.").Width("60"));
+
+        col.Add(c => c.Binding("Factura").Header("Factura").Width("120"));
+        col.Add(c => c.Binding("FacRefCliente").Header("Ref. Cliente").Width("120"));
+
+        col.Add(c => c.Binding("FacFecha").Header("Fecha").Width("110").Format("dd-MM-yyyy").Mask("99-99-9999"));
+
+        col.Add(c => c.Binding("FacTipo").Header("Tipo").Width("80"));
+        col.Add(c => c.Binding("FacTipoVenta").Header("TipoVenta").Width("100"));
+
+        col.Add(c => c.Binding("Cliente").Header("Cliente").Width("100"));
+        col.Add(c => c.Binding("ClienteNombre").Header("Nombre").Width("260"));
+
+        col.Add(c => c.Binding("TotalFac").Header("Valor").Width("100").Align("right").Format("n2"));
+
+        col.Add(c => c.Binding("MultiEmpresa").Header("M.Empresa").Align("right").Width("115"));
+        col.Add(c => c.Binding("VendedorNombre").Header("Vendedor").Width("230"));
+
+        col.Add(c => c.Binding("FacOroFino").Header("Oro Fino").Width("100").Align("right").Format("n2"));
+
+        col.Add(c => c.Binding("FacEnviada").Header("Enviada").Width("100").Format("dd-MM-yyyy").Mask("99-99-9999"));
+        col.Add(c => c.Binding("FacFirmada").Header("Firmada").Width("100").Format("dd-MM-yyyy").Mask("99-99-9999"));
+
+        col.Add(c => c.Binding("FacDivisa").Header("Divisa").Width("120*"));
+
+        })
+
+                        )
+        @(Html.C1().FlexGridSearch("#gridSearch")
+                            .Grid("gridFacturas")
+                            .Delay(50)
+                            .CssMatch("underline-match")
+                            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+                            )
+
+    </div>
+</div>
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+
+<script>
+
+    var RepositionGrid = '@ViewBag.RepositionGrid';
+    var gridConfig;
+    var LastDataRangeSelect = "";
+
+    $(document).ready(function () {
+        initializeFacturasGrid();
+        setupDateRangePicker();
+        setupComboBoxes();
+        CargaDatosFacturas();
+    });
+
+    function initializeFacturasGrid() {
+        var searchFields = ['Factura', 'Cliente', 'ClienteNombre'];
+        gridConfig = initializeGrid("gridFacturas", "gridSearch", searchFields);
+
+        if (gridConfig.grid) {
+            setupColumnResizeIndicator(gridConfig.grid);
+            setupGridFormatting(gridConfig.grid);
+        }
+
+        gridConfig.search.searchAllColumns = false;
+    }
+
+    function setupGridFormatting(grid) {
+        grid.formatItem.addHandler(function (s, e) {
+            if (e.panel === s.cells) {
+                var item = s.rows[e.row].dataItem;
+                formatFacturaCell(e, item);
+            }
+        });
+    }
+
+
+    function formatFacturaCell(e, item) {
+        var col = e.getColumn();
+        switch (col.binding) {
+            case 'Acciones':
+                formatAccionesCell(e, item);
+                break;
+            case 'FacFecha':
+            case 'FacEnviada':
+            case 'FacFirmada':
+                formatDateCell(e, item, col.binding);
+                break;
+            case 'FacOroFino':
+            case 'TotalFac':
+            case 'TotalFacPend':
+                formatNumberCell(e, item, col.binding);
+                break;
+        }
+    }
+
+
+    function formatAccionesCell(e, item) {
+        var html = "";
+        if (item.FacFirmada) {
+            var fechaFirmada = moment(item.FacFirmada).format('DD-MM-YYYY');
+            html += '<i class="fal fa-file-certificate FacAcciones" data-toggle="tooltip" data-placement="top" title="Firmada digitalmente: ' + fechaFirmada + '"></i>';
+        }
+        if (item.FacEnviada) {
+            var fechaEnviada = moment(item.FacEnviada).format('DD-MM-YYYY');
+            if (html) html += "&nbsp;";
+            html += '<i class="fal fa-envelope FacAcciones" data-toggle="tooltip" data-placement="top" title="Enviada: ' + fechaEnviada + '"></i>';
+        }
+        e.cell.innerHTML = html;
+    }
+
+
+    function formatDateCell(e, item, binding) {
+        if (item[binding]) {
+            var formattedDate = moment(item[binding]).format('DD-MM-YYYY');
+            e.cell.innerHTML = formattedDate;
+            if (binding !== 'FacFecha') {
+                e.cell.innerHTML = "<span class='CellFac-Color'>" + formattedDate + "</span>";
+            }
+        }
+    }
+
+    function formatNumberCell(e, item, binding) {
+        var value = item[binding];
+        if (value && value > 0) {
+            e.cell.innerHTML = numeral(value).format('0,0.00');
+        } else if (binding === 'TotalFac' || binding === 'TotalFacPend') {
+            formatTotalCell(e, item, binding);
+        }
+    }
+
+
+    function formatTotalCell(e, item, binding) {
+        var value = numeral(item[binding]).format('0,0.00');
+        if (item.TotalFacPend !== 0 && item.PedTipo !== "PR") {
+            var className = item.PedEstado === "FP" ? 'CellPed-bg-FP' : 'CellStk-bg-danger';
+            e.cell.innerHTML = "<span class='" + className + "' style='display: inline-block;width:100%;'>" + value + "</span>";
+        } else {
+            e.cell.innerHTML = value;
+        }
+    }
+
+
+
+
+      function setupDateRangePicker() {
+        $('#date_range').daterangepicker({
+            "autoApply": true,
+            "startDate": moment().dayOfYear(1).subtract(365, 'days'), //moment().dayOfYear(1),
+            "endDate": moment().dayOfYear(365),
+            ranges: {
+                'Inicial 2 años': [moment().dayOfYear(1).subtract(365, 'days'), moment().dayOfYear(365)],
+                'Últimos 5 años': [moment().dayOfYear(1).subtract(1825, 'days'), moment().dayOfYear(365)],
+
+                'Año actual': [moment().dayOfYear(1), moment().dayOfYear(365)],
+                'Año anterior': [moment().dayOfYear(1).subtract(365, 'days'), moment().dayOfYear(365).subtract(365, 'days')],
+                'Trimestre 1': [moment().quarter(1).startOf('quarter'), moment().quarter(1).endOf('quarter')],
+                'Trimestre 2': [moment().quarter(2).startOf('quarter'), moment().quarter(2).endOf('quarter')],
+                'Trimestre 3': [moment().quarter(3).startOf('quarter'), moment().quarter(3).endOf('quarter')],
+                'Trimestre 4': [moment().quarter(4).startOf('quarter'), moment().quarter(4).endOf('quarter')],
+                'Mes actual': [moment().startOf('month'), moment().endOf('month')],
+                'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Últimos 15 días': [moment().subtract(14, 'days'), moment()],
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                'Últimos 6 meses': [moment().subtract(6, 'months'), moment()],
+                'Últimos 12 meses': [moment().subtract(12, 'months'), moment()],
+                'Semana actual': [moment().weekday(1), moment().weekday(7)],
+                'Semana anterior': [moment().weekday(1).subtract(7, 'days'), moment().weekday(7).subtract(7, 'days')],
+            },
+            "locale": {
+                "format": "DD/MM/YYYY",
+                "separator": " - ",
+                "applyLabel": "Aplicar",
+                "cancelLabel": "Cancelar",
+                "fromLabel": "Desde",
+                "toLabel": "Hasta",
+                "customRangeLabel": "Personalizado",
+                "weekLabel": "S",
+                "daysOfWeek": [
+                    "DO",
+                    "LU",
+                    "MA",
+                    "MI",
+                    "JU",
+                    "VI",
+                    "SA"
+                ],
+                "monthNames": [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Setiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+                "firstDay": 1
+            },
+            "opens": "center",
+            "drops": "auto"
+        }, function (start, end, label) {
+            if (LastDataRangeSelect == "Personalizado" || label == "Personalizado" || label == "Inicial 2 años" || label == "Últimos 5 años") {
+                LastDataRangeSelect = "Personalizado";
+                CargaDatosFacturas("Filtrar");
+            } else {
+                LastDataRangeSelect = label;
+                Filtros();
+            }
+        });
+    }
+
+    function setupComboBoxes() {
+        var ComboEmpresa = wijmo.Control.getControl("#ComboEmpresa");
+        var ComboPedTipo = wijmo.Control.getControl("#ComboFacTipo");
+        var ComboCliente = wijmo.Control.getControl("#ComboCliente");
+
+        ComboEmpresa.addEventListener(ComboEmpresa.hostElement, 'change', Filtros);
+        ComboCliente.addEventListener(ComboCliente.hostElement, 'change', Filtros);
+
+    }
+
+
+
+    function Filtros() {
+        let FechaINI = $('#date_range').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        let FechaFIN = $('#date_range').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+        gridConfig.grid.collectionView.filter = function (item) {
+            var ProcesarEMPRESA = true;
+            var ProcesarPEDTIPO = true;
+            var ProcesarFECHA = true;
+            var ProcesarCLIENTE = true;
+
+            // Filtro por fecha
+            if (moment(item.FacFecha).isBetween(moment(FechaINI), moment(FechaFIN), null, '[]')) {
+                ProcesarFECHA = true;
+            } else {
+                ProcesarFECHA = false;
+            }
+
+            // Filtro por empresa
+            var ComboEmpresa = wijmo.Control.getControl("#ComboEmpresa");
+            if (ComboEmpresa.selectedValue !== "Empresa") {
+                ProcesarEMPRESA = (item.MultiEmpresa === ComboEmpresa.selectedValue);
+            }
+
+            // Filtro por tipo de factura
+            var ComboPedTipo = wijmo.Control.getControl("#ComboFacTipo");
+            if (ComboPedTipo.selectedValue !== "Tipo" && ComboPedTipo.selectedValue !== "") {
+                ProcesarPEDTIPO = (item.FacTipo === ComboPedTipo.selectedValue);
+            }
+
+            // Filtro por cliente
+            var ComboCliente = wijmo.Control.getControl("#ComboCliente");
+            if (ComboCliente.text !== "" && ComboCliente.selectedItem !== null) {
+                if (ComboCliente.selectedItem !== null) {
+                    ProcesarCLIENTE = (item.Cliente === ComboCliente.selectedItem.Cliente);
+                }
+            }
+
+
+            return ProcesarEMPRESA && ProcesarPEDTIPO && ProcesarFECHA && ProcesarCLIENTE;
+        };
+
+        // Refrescar la vista del grid para aplicar los filtros
+        gridConfig.grid.collectionView.refresh();
+    }
+
+
+    function CargaDatosFacturas(ExecFiltros) {
+        var Spinner = Rats.UI.LoadAnimation.start();
+
+        let FechaINI = $('#date_range').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        let FechaFIN = $('#date_range').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+        var data = new FormData();
+        data.append("DataRangeSelect", LastDataRangeSelect);
+        data.append("FechaINI", FechaINI);
+        data.append("FechaFIN", FechaFIN);
+
+        $.ajax({
+            type: 'POST',
+            url: "/Facturas/GetDataFacturas",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (Array.isArray(response)) {
+                    var view = new wijmo.collections.CollectionView(response);
+                    gridConfig.grid.itemsSource = view;
+
+                    if (ExecFiltros === "Filtrar") {
+                        Filtros();
+                    }
+
+                    N_Grid_Reposition(gridConfig.grid, RepositionGrid);
+                    setupTooltips(gridConfig.grid);
+                } else {
+                    console.error("La respuesta no es un array:", response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al cargar datos:", error);
+            },
+            complete: function () {
+                Spinner.stop();
+            }
+        });
+    }
+
+    function SetCookiesView() {
+        setCookie("Cook_gridFacturas_Busqueda", gridConfig.search.text);
+    }
+
+    function BtnResetConfigGrid() {
+        N_Grid_Reset_Config_Headers(gridConfig.grid);
+        setupTooltips(gridConfig.grid);
+    }
+
+    function BtnDialogFacturaNew() {
+        N_DialogFacturaNew("New").then((res) => {
+            var Guid = res;
+            window.location.href = "/Facturas/Ficha/" + Guid;
+        }).catch((error) => {
+            console.error("Error al crear nueva factura:", error);
+        });
+    }
+
+
+</script>

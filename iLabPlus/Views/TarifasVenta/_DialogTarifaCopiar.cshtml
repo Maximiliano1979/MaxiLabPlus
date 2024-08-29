@@ -1,0 +1,64 @@
+﻿<div class="modal" id="modalTarifaNew" tabindex="-1" role="dialog" aria-labelledby="modalTarifaNewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 700px;">
+        <div class="modal-content" style="height: 260px;min-height:unset;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTarifaNewTitle">Copiar Tarifa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="FormClienteNewCreateEdit" style="height:100%;">
+                <div class="modal-body" id="modal-bodyArtMo">
+                    <div class="row mt-3" style="">
+                        <div class="col-6" style="padding-left:0; ">
+                            <div class="form-group form-group-default required disabled">
+                                <label id="TarifaOldLabel">Tarifa Original</label>
+                                <input id="TarifaOld" type="text" class="form-control" value="@ViewBag.TarifaOld" disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-6" style="padding-right:0; ">
+                            <div class="form-group form-group-default required">
+                                <label id="TarifaNewLabel">Tarifa Nueva</label>
+                                <input id="TarifaNew" type="text" class="form-control" value="@ViewBag.TarifaOld">
+                            </div>
+                            <div class="form-group form-group-defaultxx" style="padding-left: 12px;">
+                                <label id="TarifaStatusLabel" style="color:red;display:none;"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalTarifaNew-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalTarifaNew-ok" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@*<script id="modalArtNew_js">
+
+    $(document).ready(function () {
+
+        $('#modalClienteNew').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#modalClienteNew-ok').click();
+            }
+        });
+
+        /************************************************************************ */
+        /* CARGA C */
+        /************************************************************************ */
+
+
+    });
+
+
+</script>*@

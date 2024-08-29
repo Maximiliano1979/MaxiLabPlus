@@ -1,0 +1,1016 @@
+﻿@model iLabPlus.Models.BDiLabPlus.Clientes
+
+@{
+
+
+}
+
+
+<div class="modal " id="modalCliente" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalClienteTitle">Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="FormClientesCreateEdit" method="post" asp-controller="Clientes" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+                @*<input asp-for="Cliente" class=" form-control" hidden />*@
+
+                <div class="modal-body" id="modal-bodyClientes">
+
+                    <div class="TabsCliente" style="width:100%;height:100%;">
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="ClienteLabel">
+                                                Cliente <i class="glyphicon glyphicon-info-sign" data-bs-toggle="tooltip" data-bs-placement="top" title="Código de Cliente" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Cliente" type="text" class="form-control" asp-for="Cliente">
+                                            <span asp-validation-for="Cliente" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="CliNombreLabel">Nombre</label>
+                                            <input id="CliNombre" type="text" class="form-control" asp-for="CliNombre">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="CliNIF">Nif</label>
+                                            <input id="CliNIF" type="text" class="form-control" asp-for="CliNIF">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="CliRazonLabel">Razón Social</label>
+                                            <input id="CliRazon" type="text" class="form-control" asp-for="CliRazon">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-4">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="MultiEmpresaLabel">Empresa</label>
+
+                                            @(Html.C1().ComboBoxFor(c=> c.MultiEmpresa)
+                                            .Id("MultiEmpresa")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .SelectedValuePath("Clave")
+                                            .DisplayMemberPath("Clave")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ValsysEmpresas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label>Vendedor</label>
+                                            @(Html.C1().ComboBoxFor(c=> c.CliVendedor)
+                                            .Id("CliVendedor")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            //.SelectedValue(3)
+                                            .SelectedValuePath("Vendedor")
+                                            .DisplayMemberPath("VenNombre")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            //.Placeholder("Seleccionar...")
+                                            .Bind(ViewBag.ListVendedores)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+
+                                        <div class="form-group form-group-default required">
+                                            <label id="CliTarifaVentaLabel">Tarifa Venta</label>
+                                            @(Html.C1().ComboBoxFor(c=> c.CliTarifaVenta)
+                                            .Id("CliTarifaVenta")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            //.SelectedValue(3)
+                                            .SelectedValuePath("Tarifa")
+                                            .DisplayMemberPath("TarDescripcion")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListTarifas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                                        </div>
+
+                                    
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                                            <label id="CliFacturaTipoLabel">Tipo Factura</label>
+                                            @(Html.C1().ComboBoxFor(c => c.CliFacturaTipo)
+                                            .Id("CliFacturaTipo")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListFacturaTipos)
+                                            .IsDisabled(false)
+                                            .SelectedValue(-1)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Grupo</label>
+                                            <input id="CliGrupo" type="text" class="form-control" asp-for="CliGrupo">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default">
+                                            <label>Impreso Factura</label>
+                                            <input id="CliFacturaTipoImp" type="text" class="form-control" asp-for="CliFacturaTipoImp">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descuento Comercial</label>
+                                            <input id="CliDTOCial" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliDTOCial">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descuento Pago</label>
+                                            <input id="CliDTOPpago" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliDTOPpago">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Rappel</label>
+                                            <input id="CliDTORappel" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliDTORappel">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                                            <label>Divisa</label>
+                                            @(Html.C1().ComboBoxFor(c=> c.CliDivisa)
+                                            .Id("CliDivisa")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            //.SelectedValue(3)
+                                            .SelectedValuePath("Divisa")
+                                            .DisplayMemberPath("DivNombre")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListDivisas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default" style="padding-bottom: 0;">
+                                            <label>Idioma</label>
+                                            @(Html.C1().ComboBoxFor(c => c.CliIdioma)
+                                            .Id("CliIdioma")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListIdiomas)
+                                            .IsDisabled(false)
+                                            .SelectedValue(-1)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta Contable</label>
+                                            <input id="CliCuentaContable" type="text" class="form-control" asp-for="CliCuentaContable">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+
+                                <div class="row " style="margin-top: 2rem !important;">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Tab de Doctores -->
+                        <div>
+                            <a>Doctores</a>
+                            <div>
+
+                                <!-- Selector de Doctores con botón de asociación -->
+                                <div class="row mt-3">
+                                    <div class="col-md-6 select-doctores-clinicas">
+                                        <select id="selectDoctores" class="form-control">
+                                            <option value="">Seleccione un Doctor</option>
+                                            <!-- Los doctores se cargarán aquí dinámicamente -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button id="btnAsociarDoctorAClinica" class="btn btn-primary">Asociar Doctor a Clinica</button>
+                                    </div>
+                                </div>
+
+                                <!-- Tabla para mostrar los doctores asociados -->
+                                <table id="tablaDoctores" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Num Colegiado</th>
+                                            <th>Mail</th>
+                                            <th>Teléfono</th>
+                                            <th>Acciones</th> <!-- Columna para desasociar -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Los datos de doctores asociados se cargarán dinámicamente aquí -->
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+
+                        <div>
+                            <a>Direcciones</a>
+                            <div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label>Mercancias</label>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección</label>
+                                            <input id="CliDirMerDireccion" type="text" class="form-control" asp-for="CliDirMerDireccion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Código postal</label>
+                                            <input id="CliDirMerDP" type="text" class="form-control" asp-for="CliDirMerDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Población</label>
+                                            <input id="CliDirMerPoblacion" type="text" class="form-control" asp-for="CliDirMerPoblacion">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Provincia</label>
+                                            <input id="CliDirMerProvincia" type="text" class="form-control" asp-for="CliDirMerProvincia">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>País</label>
+                                            <input id="CliDirMerPais" type="text" class="form-control" asp-for="CliDirMerPais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row " style="margin-top: 3rem !important;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label style="margin-bottom: 0;">Facturación</label>
+
+                                        <button id="BtnCopyDirFac" type="button" class="btn btn-default" onclick="CopyDirFac()"><i class="fal   fa-copy"></i></button>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección</label>
+                                            <input id="CliDirFacDireccion" type="text" class="form-control" asp-for="CliDirFacDireccion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Código postal</label>
+                                            <input id="CliDirFacDP" type="text" class="form-control" asp-for="CliDirFacDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Población</label>
+                                            <input id="CliDirFacPoblacion" type="text" class="form-control" asp-for="CliDirFacPoblacion">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Provincia</label>
+                                            <input id="CliDirFacProvincia" type="text" class="form-control" asp-for="CliDirFacProvincia">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>País</label>
+                                            <input id="CliDirFacPais" type="text" class="form-control" asp-for="CliDirFacPais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row " style="margin-top: 3rem !important;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label style="margin-bottom: 0;">Geo-Localización</label>
+                                        <button id="BtnFindGeoByDirMer" type="button" class="btn btn-default" onclick="FindGeoByDirMer()"><i class="fal   fa-globe"></i></button>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Latitud</label>
+                                            <input id="CliDirLatitud" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliDirLatitud">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Longitud</label>
+                                            <input id="CliDirLongitud" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliDirLongitud">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="height:100%">
+                            <a>Comunicaciones</a>
+                            <div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Contacto</label>
+                                    </div>
+                                    <div class="col-5" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Persona de contacto</label>
+                                            <input id="CliPerContacto" type="text" class="form-control" asp-for="CliPerContacto">
+                                        </div>
+                                    </div>
+                                    <div class="col-5" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Web</label>
+                                            <input id="CliWeb" type="text" class="form-control" asp-for="CliWeb">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mt-2" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Teléfonos</label>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.1</label>
+                                            <input id="CliTelefono1" type="text" class="form-control" asp-for="CliTelefono1">
+                                        </div>
+                                    </div>
+                                    <div class="col-8" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="CliTelefono1Desc" type="text" class="form-control" asp-for="CliTelefono1Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.2</label>
+                                            <input id="CliTelefono2" type="text" class="form-control" asp-for="CliTelefono2">
+                                        </div>
+                                    </div>
+                                    <div class="col-8" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="CliTelefono2Desc" type="text" class="form-control" asp-for="CliTelefono2Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.3</label>
+                                            <input id="CliTelefono3" type="text" class="form-control" asp-for="CliTelefono3">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="CliTelefono3Desc" type="text" class="form-control" asp-for="CliTelefono3Desc">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.4</label>
+                                            <input id="CliTelefono4" type="text" class="form-control" asp-for="CliTelefono4">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="CliTelefono4Desc" type="text" class="form-control" asp-for="CliTelefono4Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mt-2" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Mails</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Mail</label>
+                                            <input id="CliMail" type="text" class="form-control" asp-for="CliMail">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Mail Albaranes</label>
+                                            <input id="CliMailAlbaranes" type="text" class="form-control" asp-for="CliMailAlbaranes">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Mail Facturación</label>
+                                            <input id="CliMailFacturacion" type="text" class="form-control" asp-for="CliMailFacturacion">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div style="height:100%">
+                            <a>Observaciones</a>
+                            <div>
+                                <textarea class="form-control" id="CliFichaObserv" style="margin-top: 10px;" asp-for="CliObserv"></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <a>Bancos</a>
+                            <div>
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Banco</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Entidad</label>
+                                            <input id="CliBcoBanco" type="text" class="form-control" asp-for="CliBcoBanco">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cod. Entidad</label>
+                                            <input id="CliBcoCtaCte1" maxlength="4" type="text" class="form-control" asp-for="CliBcoCtaCte1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Sucursal</label>
+                                            <input id="CliBcoCtaCte2" maxlength="4" type="text" class="form-control" asp-for="CliBcoCtaCte2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Díg. de control</label>
+                                            <input id="CliBcoCtaCte3" maxlength="2" type="text" class="form-control" asp-for="CliBcoCtaCte3">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta</label>
+                                            <input id="CliBcoCtaCte4" maxlength="10" type="text" class="form-control" asp-for="CliBcoCtaCte4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Iban</label>
+                                            <input id="CliBcoIBAN" type="text" class="form-control" asp-for="CliBcoIBAN">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Swift</label>
+                                            <input id="CliBcoSwift" type="text" class="form-control" asp-for="CliBcoSwift">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Forma de pago</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Pago</label>
+                                            <input id="CliDatFPago" type="text" class="form-control" asp-for="CliDatFPago">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Vencimientos</label>
+                                            <input id="CliDatFPvto" type="text" class="form-control InputIntegerMask" asp-for="CliDatFPvto">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Intervalo</label>
+                                            <input id="CliDatFPint" type="text" class="form-control InputIntegerMask" asp-for="CliDatFPint">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Plazo</label>
+                                            <input id="CliDatFPlazo" type="text" class="form-control InputIntegerMask" asp-for="CliDatFPlazo">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 1</label>
+                                            <input id="CliDatFPdia1" type="text" class="form-control InputIntegerMask" asp-for="CliDatFPdia1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 2</label>
+                                            <input id="CliDatFPdia2" type="text" class="form-control InputIntegerMask" asp-for="CliDatFPdia2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 3</label>
+                                            <input id="CliDatFPdia3" type="text" class="form-control InputIntegerMask" asp-for="CliDatFPdia3">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Otros</a>
+                            <div>
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Impuestos</label>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IVA</label>
+                                            <input id="CliIVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliIVA">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IRPF</label>
+                                            <input id="CliIRPF" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliIRPF">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Recargo de equivalencia</label>
+                                            <input id="CliRE" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliRE">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IGIC</label>
+                                            <input id="CliIGIC" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="CliIGIC">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Atributos</label>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Kilates</label>
+                                            <input id="CliKIL" type="text" class="form-control" asp-for="CliKIL">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Color</label>
+                                            <input id="CliCOL" type="text" class="form-control" asp-for="CliCOL">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Acabado</label>
+                                            <input id="CliACB" type="text" class="form-control" asp-for="CliACB">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Baño</label>
+                                            <input id="CliBAN" type="text" class="form-control" asp-for="CliBAN">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Estadisticas</a>
+                            <div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalCliente-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalCliente-ok" class="btn btn-primary">Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+
+@(Html.C1().TabPanel(".TabsCliente"))
+
+
+<script>
+
+$(document).ready(function () {
+    $("body").tooltip({ selector: '[data-bs-toggle=tooltip]' });
+
+    // Posiciona en la primera tab
+    var TabsObj = wijmo.Control.getControl('.TabsCliente');
+    $('#modalCliente').on('show.bs.modal', function () {
+        TabsObj.selectedIndex = 0;
+    });
+
+    // Carga el editor de texto
+    $('#CliFichaObserv').summernote({
+        height: 520,
+        focus: true,
+        disableResizeEditor: true
+    });
+    $('div.note-editable').height(510);
+    $('.note-statusbar').hide();
+
+    $('.InputDecimalMask').inputmask("decimal", {
+        'digits': 2,
+        groupSeparator: ".",
+        radixPoint: ",",
+        autoGroup: true,
+    });
+    $(".InputDecimalMask").on("click", function () {
+        $(this).select();
+    });
+
+    $('.InputIntegerMask').inputmask("integer", {
+        groupSeparator: ".",
+        radixPoint: ",",
+        autoGroup: true,
+    });
+    $(".InputIntegerMask").on("click", function () {
+        $(this).select();
+    });
+
+    var ModelGuid = "@Model.Guid";
+    if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+        document.getElementById("Cliente").focus();
+        $('#Cliente').val('Automático');
+        $("#Cliente").prop("disabled", true);
+        $("#Cliente").parent().addClass("disabled");
+    } else {
+        $("#Cliente").prop("disabled", true);
+        $("#Cliente").parent().addClass("disabled");
+    }
+
+
+});
+
+function CopyDirFac() {
+    $('#CliDirFacDireccion').val($('#CliDirMerDireccion').val());
+    $('#CliDirFacDP').val($('#CliDirMerDP').val());
+    $('#CliDirFacPoblacion').val($('#CliDirMerPoblacion').val());
+    $('#CliDirFacProvincia').val($('#CliDirMerProvincia').val());
+    $('#CliDirFacPais').val($('#CliDirMerPais').val());
+};
+
+function FindGeoByDirMer() {
+
+};
+
+    // Comportamiento para cargar doctores al abrir la pestaña "Doctores"
+
+    $('a:contains("Doctores")').on('click', async function () {
+            fetch('/Clientes/GetDoctores')
+                .then(response => response.json())
+                .then(data => {
+                    // console.log("Esto es data en el codigo para cargar el select de doctores: ", data)
+                    if (data.success) {
+                        const select = document.getElementById('selectDoctores');
+                        data.doctores.forEach(doctor => {
+                            const option = new Option(' (' + doctor.Doctor + ') - ' + doctor.Nombre, doctor.Doctor);
+                            select.add(option);
+                        });
+                    } else {
+                        console.error('Error al cargar los doctores:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error al cargar los doctores:', error));
+
+
+
+        let clinicaNombre = $('#CliNombre').val(); // Obtenemos el nombre de la clínica
+        try {
+            const response = await fetch(`/Clientes/GetDoctoresPorClinica?nombreClinica=${encodeURIComponent(clinicaNombre)}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            const data = await response.json();
+
+
+            if (data.success) {
+                const tbody = $('#tablaDoctores tbody');
+                tbody.empty(); // Limpia los datos antiguos
+                data.doctores.forEach(doc => {
+                    tbody.append(`<tr>
+                        <td>${doc.Nombre}</td>
+                        <td>${doc.NumColegiado}</td>
+                        <td>${doc.Mail}</td>
+                        <td>${doc.Telefono1}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm eliminar-asociacion" data-guid="${doc.Guid}"><i class="fa-light fa-trash-arrow-up"></i></button>
+                        </td>
+                    </tr>`);
+                });
+            } else {
+                throw new Error('Error al cargar los doctores: ' + data.message);
+            }
+        } catch (error) {
+
+            alert('Error al cargar los doctores: ' + error.message);
+        }
+    });
+
+        // Botón de asociación para agregar doctor a la clínica
+    $('#btnAsociarDoctorAClinica').on('click', async function (event) {
+        event.preventDefault();
+
+        let clinicaId = $('#Guid').val();; // Cambia esto para usar un ID numérico o código de clínica en lugar de GUID
+        let doctorId = $('#selectDoctores').val(); // Asumiendo que 'value' de las opciones son los ID numéricos o códigos únicos de los doctores
+
+        const formData = new URLSearchParams();
+        formData.append('doctorCode', doctorId);
+        formData.append('clinicaId', clinicaId);
+
+
+        try {
+            const response = await fetch('/Doctores/AsociarDoctorClinica', {
+                method: 'POST',
+                body: formData,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            const data = await response.json();
+
+
+            if (data.success) {
+
+
+                var newRow = `<tr>
+                                <td>${data.doctor.nombre}</td>
+                                <td>${data.doctor.numColegiado}</td>
+                                <td>${data.doctor.mail}</td>
+                                <td>${data.doctor.telefono1}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm eliminar-asociacion" data-guid="${data.doctor.guid}"><i class="fa-light fa-trash-arrow-up"></i></button>
+                                </td>
+                            </tr>`;
+                $('#tablaDoctores tbody').append(newRow);
+
+
+                // Aquí puedes añadir código para actualizar la tabla de doctores o mostrar una alerta de éxito
+            } else {
+
+                await DialogInfo(data.message);
+            }
+
+        } catch (error) {
+
+            console.error('Error al asociar doctor:', error);
+        }
+    });
+
+
+
+    $('#tablaDoctores').on('click', '.eliminar-asociacion', function () {
+        var asociacionId = $(this).data('guid');
+
+        console.log("Este es el valor de asociacionId en el eliminar: ", asociacionId);
+        // Aquí, llamar a la función que elimina la asociación en el servidor
+        fetch(`/Doctores/EliminarAsociacion?asociacionId=${asociacionId}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $(this).closest('tr').remove(); // Elimina la fila de la tabla
+                    // alert('Asociación eliminada con éxito');
+                } else {
+                    alert('Error al eliminar la asociación: ' + data.message);
+
+                }
+            })
+            .catch(error => {
+                alert('Error al eliminar la asociación');
+
+            });
+
+    });
+
+
+
+</script>

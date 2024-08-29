@@ -1,0 +1,63 @@
+﻿
+
+@{
+    IEnumerable<dynamic> MenuUserList = ViewBag.MenuUserList;
+
+    if (MenuUserList != null && MenuUserList.Any()) // Asegúrate de que MenuUserList no sea null y tenga elementos
+    {
+        MenuUserList = MenuUserList.Where(w => w.Menu == "iLabPlus");
+    }
+    else
+    {
+        // Si MenuUserList es null o está vacío, puedes inicializarlo como una lista vacía para evitar errores al iterar después
+        MenuUserList = Enumerable.Empty<dynamic>();
+    }
+}
+
+
+<nav id="MenuIzq" class="navbar-default navbar-static-side MenuIzqCollapse" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menuV">
+
+
+            <li class=" ">
+
+
+                @foreach (var item in MenuUserList)
+                {
+                    <a asp-controller="@item.Menu" asp-action="Index" class="Menu ">
+                        <span class="SubMenuArrow"><i class="fal fa-angle-left  "></i></span>
+                        <span class="nav-label MenuLabel">@item.Menu</span><span class="nav-label MenuIconW " data-bs-toggle="tooltip" data-bs-placement="right" title="@item.Menu_Tooltip"><i class="fal @item.Menu_Icono"></i></span>
+                    </a>
+
+                    @if (item.Accesos.Count != 0)
+                    {
+                        <ul class="nav submenu">
+
+                            @foreach (var Acceso in item.Accesos)
+                            {
+
+                                <li class="SubMenuAction @Html.IsSelected(controller: (string)Acceso.Menu_ItemCrontoller, action: (string)Acceso.Menu_ItemAction)" data-bs-toggle="tooltip" data-bs-placement="right" title="@Acceso.Menu_ItemTooltip">
+                                    <a asp-controller="@Acceso.Menu_ItemCrontoller" asp-action="@Acceso.Menu_ItemAction" class="SS">
+                                        <span class="nav-label MenuLabel">@Acceso.Menu_ItemName</span>
+                                        <span class="nav-label MenuIconW"><i class="fal @Acceso.Menu_ItemIcono"></i></span>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    }
+
+                }
+
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+
+    // Para que no marque como seleccionadas multiplos items (cuando esta en accesos directos...)
+    $('.SubMenuAction.active:not(:first)').removeClass("active");
+
+</script>

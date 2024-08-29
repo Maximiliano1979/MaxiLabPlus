@@ -1,0 +1,766 @@
+﻿@model iLabPlus.Models.BDiLabPlus.Proveedores
+
+@{
+
+}
+
+<div class="modal modalWrapper" id="modalProveedor" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalProveedorTitle">Proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormProveedorCreateEdit" method="post" asp-controller="Proveedores" asp-action="CreateEdit" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyProveedores">
+
+                    <div class="TabsProveedor" style="width:100%;height:100%;">
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="ProveedorLabel">
+                                                Proveedor <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Código de Proveedor" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Proveedor" type="text" class="form-control" asp-for="Proveedor">
+                                            <span asp-validation-for="Proveedor" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="ProNombreLabel">Nombre</label>
+                                            <input id="ProNombre" type="text" class="form-control" asp-for="ProNombre">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="ProNIF">Nif</label>
+                                            <input id="ProNIF" type="text" class="form-control" asp-for="ProNIF">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="ProRazonLabel">Razón Social</label>
+                                            <input id="ProRazon" type="text" class="form-control" asp-for="ProRazon">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-4">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="CliTarifaVentaLabel">Tipo</label>
+                                            @(Html.C1().ComboBoxFor(c => c.ProTipo)
+                                            .Id("ProTipo")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListProvTipo)
+                                            .IsDisabled(false)
+                                            .SelectedValue(-1)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                                            <label>Divisa</label>
+                                            @(Html.C1().ComboBoxFor(c=> c.ProDivisa)
+                                            .Id("ProDivisa")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            //.SelectedValue(3)
+                                            .SelectedValuePath("Divisa")
+                                            .DisplayMemberPath("DivNombre")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListDivisas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default" style="padding-bottom: 0;">
+                                            <label>Idioma</label>
+                                            @(Html.C1().ComboBoxFor(c => c.ProIdioma)
+                                            .Id("ProIdioma")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListIdiomas)
+                                            .IsDisabled(false)
+                                            .SelectedValue(-1)
+                                            .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta Contable</label>
+                                            <input id="ProCuentaContable" type="text" class="form-control" asp-for="ProCuentaContable">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; ">
+                                        <div class="form-group form-group-default ">
+                                            <label>Merma</label>
+                                            <input id="ProMerma" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProMerma">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; ">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descuento Comercial</label>
+                                            <input id="ProDTOCial" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProDTOCial">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; ;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descuento Ppago</label>
+                                            <input id="ProDTOPpago" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProDTOPpago">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Rappel</label>
+                                            <input id="ProDTORappel" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProDTORappel">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+
+                                <div class="row IsoDatBottom" style="margin-top: 2rem !important;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Alta</label>
+                                            <input id="IsoFecAlt" type="text" class="form-control" asp-for="IsoFecAlt" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Fecha Modificación</label>
+                                            <input id="IsoFecMod" type="text" class="form-control" asp-for="IsoFecMod" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default disabled">
+                                            <label>Usuario</label>
+                                            <input id="IsoUser" type="text" class="form-control" asp-for="IsoUser" disabled>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Direcciones</a>
+                            <div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label>Mercancias</label>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección</label>
+                                            <input id="ProDirMerDireccion" type="text" class="form-control" asp-for="ProDirMerDireccion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Código postal</label>
+                                            <input id="ProDirMerDP" type="text" class="form-control" asp-for="ProDirMerDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Población</label>
+                                            <input id="ProDirMerPoblacion" type="text" class="form-control" asp-for="ProDirMerPoblacion">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Provincia</label>
+                                            <input id="ProDirMerProvincia" type="text" class="form-control" asp-for="ProDirMerProvincia">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>País</label>
+                                            <input id="ProDirMerPais" type="text" class="form-control" asp-for="ProDirMerPais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row " style="margin-top: 3rem !important;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label style="margin-bottom: 0;">Facturación</label>
+
+                                        <button id="BtnCopyDirFac" type="button" class="btn btn-default" onclick="CopyDirFac()"><i class="fal   fa-copy"></i></button>
+                                    </div>
+
+                                    <div class="col-10" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dirección</label>
+                                            <input id="ProDirFacDireccion" type="text" class="form-control" asp-for="ProDirFacDireccion">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-2" style="padding-left:0;">
+
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Código postal</label>
+                                            <input id="ProDirFacDP" type="text" class="form-control" asp-for="ProDirFacDP">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Población</label>
+                                            <input id="ProDirFacPoblacion" type="text" class="form-control" asp-for="ProDirFacPoblacion">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Provincia</label>
+                                            <input id="ProDirFacProvincia" type="text" class="form-control" asp-for="ProDirFacProvincia">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-2" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>País</label>
+                                            <input id="ProDirFacPais" type="text" class="form-control" asp-for="ProDirFacPais">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row " style="margin-top: 3rem !important;">
+
+                                    <div class="col-2" style="padding-left:10px;">
+
+                                        <label style="margin-bottom: 0;">Geo-Localización</label>
+                                        <button id="BtnFindGeoByDirMer" type="button" class="btn btn-default" onclick="FindGeoByDirMer()"><i class="fal   fa-globe"></i></button>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Latitud</label>
+                                            <input id="ProDirLatitud" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProDirLatitud">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Longitud</label>
+                                            <input id="ProDirLongitud" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProDirLongitud">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="height:100%">
+                            <a>Comunicaciones</a>
+                            <div>
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Contacto</label>
+                                    </div>
+                                    <div class="col-5" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Persona de contacto</label>
+                                            <input id="ProPerContacto" type="text" class="form-control" asp-for="ProPerContacto">
+                                        </div>
+                                    </div>
+                                    <div class="col-5" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Web</label>
+                                            <input id="ProWeb" type="text" class="form-control" asp-for="ProWeb">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mt-2" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Teléfonos</label>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.1</label>
+                                            <input id="ProTelefono1" type="text" class="form-control" asp-for="ProTelefono1">
+                                        </div>
+                                    </div>
+                                    <div class="col-8" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="ProTelefono1Desc" type="text" class="form-control" asp-for="ProTelefono1Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.2</label>
+                                            <input id="ProTelefono2" type="text" class="form-control" asp-for="ProTelefono2">
+                                        </div>
+                                    </div>
+                                    <div class="col-8" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="ProTelefono2Desc" type="text" class="form-control" asp-for="ProTelefono2Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.3</label>
+                                            <input id="ProTelefono3" type="text" class="form-control" asp-for="ProTelefono3">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="ProTelefono3Desc" type="text" class="form-control" asp-for="ProTelefono3Desc">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Tel.4</label>
+                                            <input id="ProTelefono4" type="text" class="form-control" asp-for="ProTelefono4">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Descripción</label>
+                                            <input id="ProTelefono4Desc" type="text" class="form-control" asp-for="ProTelefono4Desc">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mt-2" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Mails</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Mail</label>
+                                            <input id="ProMail" type="text" class="form-control" asp-for="ProMail">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Mail Albaranes</label>
+                                            <input id="ProMailAlbaranes" type="text" class="form-control" asp-for="ProMailAlbaranes">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-10" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Mail Facturación</label>
+                                            <input id="ProMailFacturacion" type="text" class="form-control" asp-for="ProMailFacturacion">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div style="height:100%">
+                            <a>Observaciones</a>
+                            <div>
+
+                                <textarea class="form-control" id="ProObserv" style="margin-top: 10px;" asp-for="ProObserv"></textarea>
+
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Bancos</a>
+                            <div>
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Banco</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Entidad</label>
+                                            <input id="ProBcoBanco" type="text" class="form-control" asp-for="ProBcoBanco">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cod. Entidad</label>
+                                            <input id="ProBcoCtaCte1" maxlength="4" type="text" class="form-control" asp-for="ProBcoCtaCte1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Sucursal</label>
+                                            <input id="ProBcoCtaCte2" maxlength="4" type="text" class="form-control" asp-for="ProBcoCtaCte2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Díg. de control</label>
+                                            <input id="ProBcoCtaCte3" maxlength="2" type="text" class="form-control" asp-for="ProBcoCtaCte3">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Cuenta</label>
+                                            <input id="ProBcoCtaCte4" maxlength="10" type="text" class="form-control" asp-for="ProBcoCtaCte4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-6" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Iban</label>
+                                            <input id="ProBcoIBAN" type="text" class="form-control" asp-for="ProBcoIBAN">
+                                        </div>
+                                    </div>
+                                    <div class="col-4" style="padding-left:0;padding-right:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Swift</label>
+                                            <input id="ProBcoSwift" type="text" class="form-control" asp-for="ProBcoSwift">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Forma de pago</label>
+                                    </div>
+                                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Pago</label>
+                                            <input id="ProDatFPago" type="text" class="form-control" asp-for="ProDatFPago">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Vencimientos</label>
+                                            <input id="ProDatFPvto" type="text" class="form-control InputIntegerMask" asp-for="ProDatFPvto">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Intervalo</label>
+                                            <input id="ProDatFPint" type="text" class="form-control InputIntegerMask" asp-for="ProDatFPint">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Plazo</label>
+                                            <input id="ProDatFPlazo" type="text" class="form-control InputIntegerMask" asp-for="ProDatFPlazo">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1" style="">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 1</label>
+                                            <input id="ProDatFPdia1" type="text" class="form-control InputIntegerMask" asp-for="ProDatFPdia1">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 2</label>
+                                            <input id="ProDatFPdia2" type="text" class="form-control InputIntegerMask" asp-for="ProDatFPdia2">
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Dia 3</label>
+                                            <input id="ProDatFPdia3" type="text" class="form-control InputIntegerMask" asp-for="ProDatFPdia3">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Otros</a>
+                            <div>
+                                <div class="row mt-4" style="padding-top: 20px;">
+                                    <div class="col-2" style="padding-left:10px;">
+                                        <label>Impuestos</label>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IVA</label>
+                                            <input id="ProIVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProIVA">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IRPF</label>
+                                            <input id="ProIRPF" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProIRPF">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-2" style="padding-left:10px;">
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>Recargo de equivalencia</label>
+                                            <input id="ProRE" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProRE">
+                                        </div>
+                                    </div>
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label>IGIC</label>
+                                            <input id="ProIGIC" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="ProIGIC">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div>
+                            <a>Estadisticas</a>
+                            <div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalProveedor-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalProveedor-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsProveedor"))
+
+
+<script>
+
+    $(document).ready(function () {
+
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+
+        // Posiciona en la primera tab
+        var TabsObj = wijmo.Control.getControl('.TabsProveedor');
+        $('#modalProveedor').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+        // Carga el editor de texto
+        $('#ProObserv').summernote(
+            {
+                height: 520,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        var ModelGuid = "@Model.Guid";
+        if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+        document.getElementById("Proveedor").focus();
+            $('#Proveedor').val('Automático');
+            $("#Proveedor").prop("disabled", true);
+            $("#Proveedor").parent().addClass("disabled");
+        } else {
+            $("#Proveedor").prop("disabled", true);
+            $("#Proveedor").parent().addClass("disabled");
+        }
+
+
+
+
+    });
+
+
+
+
+
+    function CopyDirFac() {
+        $('#CliDirFacDireccion').val($('#CliDirMerDireccion').val());
+        $('#CliDirFacDP').val($('#CliDirMerDP').val());
+        $('#CliDirFacPoblacion').val($('#CliDirMerPoblacion').val());
+        $('#CliDirFacProvincia').val($('#CliDirMerProvincia').val());
+        $('#CliDirFacPais').val($('#CliDirMerPais').val());
+
+
+    };
+
+    function FindGeoByDirMer() {
+
+
+    };
+
+
+
+
+</script>

@@ -1,0 +1,294 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Articulos>
+
+@{
+    ViewBag.Title = "Artículos";
+    var actions = ViewBag.Actions;
+}
+
+<script src="~/js/gridsFunctions.js"></script>
+
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+<div class="row wrapper page-heading border-bottom white-bg">
+    <div class="col-2" style="padding-left:0;">
+        <h3>Artículos</h3>
+    </div>
+
+    <div class="col-10 page_heading_func">
+        <button id="BtnFiltersInit" type="button" class="btn btn-default btn-xs" onclick="FiltersInit()" data-toggle="tooltip" data-placement="top" title="Resetear filtros seleccionados" style=" position: relative;">
+            <i class="far fa-filter" style=" "></i>
+        </button>
+
+        @(Html.C1().ComboBox().Id("ComboEmpresa").OnClientGotFocus("ComboGotFocus").OnClientSelectedIndexChanged("ComboSelectedIndexChanged").Bind(ViewBag.Empresas).Width("125px"))
+        @(Html.C1().ComboBox().Id("ComboActivo").OnClientGotFocus("ComboGotFocus").OnClientSelectedIndexChanged("ComboSelectedIndexChanged").Bind(ViewBag.ArtActivos).Width("125px"))
+        @(Html.C1().ComboBox().Id("ComboTipoArt").OnClientGotFocus("ComboGotFocus").OnClientSelectedIndexChanged("ComboSelectedIndexChanged").Bind(ViewBag.FartTipos).Width("100px"))
+        @(Html.C1().ComboBox().Id("ComboFamilia").OnClientGotFocus("ComboGotFocus").OnClientSelectedIndexChanged("ComboSelectedIndexChanged").Bind(ViewBag.FartFamilias).Width("125px"))
+
+        <p id="gridSearch" style="width: 300px;">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        </p>
+
+        <button id="BtnClienteNew" type="button" class="btn btn-default" onclick="BtnDialogCustomerNew()" style="margin-left: 40px;">
+            <i class="far fa-fw fa-plus"></i>
+        </button>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-table"></i> Informe de Artículos Seleccionados Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> Informe de Artículos 3</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> Informe de Artículos 4</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> Informe de Artículos 5</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-cloud-upload"></i> Importar Artículos</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="ResetearConfiguracionGrid()"><i class="fal fa-fw fa-sd-card"></i> Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row wrapper wrapper-content">
+    <div class="ibox-content">
+        @(Html.C1().FlexGrid()
+            .Id("gridArticulos")
+            .AlternatingRowStep(0)
+            .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+            .AllowPinning(true)
+            .AutoSizeMode(AutoSizeMode.Both)
+            .AutoScroll(false)
+            .AutoSearch(true)
+            .CssClass("flexgrid GridEvents truncate")
+            .DefaultRowSize(27)
+            //.OnClientFormatItem("onFormatItem")
+            .Filterable(f => {
+                f.DefaultFilterType(FilterType.Both);
+                f.Id("theGridFilter");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .IsReadOnly(true)
+            .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.ListBox)
+            .Bind(Model)
+            .AutoGenerateColumns(false)
+            .OrderBy("Articulo")
+            .FrozenColumns((int)@ViewBag.ColumnsPinnedUser)
+            .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+            .Columns(col =>
+            {
+                col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+                col.Add(c => c.Binding("Articulo").Header("Articulo").Width("*").MinWidth(120));
+                col.Add(c => c.Binding("ArtDes").Header("Descripción").Width("*").MinWidth(320));
+                col.Add(c => c.Binding("MultiEmpresa").Header("Empresa").Width("*").MinWidth(100));
+                col.Add(c => c.Binding("ArtTipo").Header("Tipo").Width("*").MinWidth(100));
+                col.Add(c => c.Binding("ArtPrecioPVP").Header("Pvp").Width("*").MinWidth(120).Format("n2"));
+                col.Add(c => c.Binding("ArtFamilia").Header("Familia").Width("*").MinWidth(100));
+                col.Add(c => c.Binding("ArtColeccion").Header("Colección").Width("*").MinWidth(180));
+                col.Add(c => c.Binding("ArtTipoOro").Header("Tipo Oro").Width("*").MinWidth(180));
+                col.Add(c => c.Binding("ArtTipoMat").Header("Tipo Material").Width("*").MinWidth(180));
+                col.Add(c => c.Binding("ArtCalidades").Header("Calidades").Width("*").MinWidth(180));
+                col.Add(c => c.Binding("ArtObserv").Header("Observaciones").Width("*").MinWidth(180));
+            })
+        )
+        @(Html.C1().FlexGridSearch("#gridSearch")
+            .Grid("gridArticulos")
+            .Delay(50)
+            .CssMatch("underline-match")
+            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+        )
+    </div>
+</div>
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+
+
+<script>
+
+    var gridConfig;
+    var ComboTipoArt, ComboEmpresa, ComboFamilia, ComboActivo;
+    var RepositionArt = '@ViewBag.RepositionArt';
+
+    $(document).ready(function () {
+
+        var searchFields = ['Articulo', 'ArtDes'];
+        gridConfig = initializeGrid("gridArticulos", "gridSearch", searchFields);
+
+        ComboTipoArt = wijmo.Control.getControl("#ComboTipoArt");
+        ComboEmpresa = wijmo.Control.getControl("#ComboEmpresa");
+        ComboFamilia = wijmo.Control.getControl("#ComboFamilia");
+        ComboActivo = wijmo.Control.getControl("#ComboActivo");
+
+        ComboActivo.selectedValue = "Activos";
+        setCookie("Activo", ComboActivo.selectedValue);
+
+        setupComboListeners();
+        CargaDatosArticulos();
+        setupColumnResizeIndicator(gridConfig.grid);
+
+    });
+
+    function setupComboListeners() {
+        ComboEmpresa.hostElement.addEventListener('change', onComboChange);
+        ComboActivo.hostElement.addEventListener('change', onComboActivoChange);
+        ComboTipoArt.hostElement.addEventListener('change', onComboChange);
+        ComboFamilia.hostElement.addEventListener('change', onComboChange);
+    }
+
+    function onComboChange(e) {
+        FiltrosArticulos();
+        SetCookiesView();
+    }
+
+    function onComboActivoChange(e) {
+        CargaDatosArticulos();
+        SetCookiesView();
+    }
+
+    function CargaDatosArticulos() {
+        var Spinner = Rats.UI.LoadAnimation.start();
+        var data = new FormData();
+        data.append("Activo", ComboActivo.selectedValue);
+
+        $.ajax({
+            type: 'POST',
+            url: "/Articulos/GetDataArticulos",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                let view = new wijmo.collections.CollectionView(data);
+                gridConfig.grid.itemsSource = view;
+
+                CargaDatos(gridConfig.grid, function() {
+                    N_Grid_Reposition(gridConfig.grid, RepositionArt);
+
+                    if (RepositionArt != null && RepositionArt != "") {
+                        loadCookieValues();
+                        FiltrosArticulos();
+                    }
+
+                    setupTooltips(gridConfig.grid);
+                    gridConfig.grid.invalidate();
+                });
+
+                Spinner.stop();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al cargar datos:", error);
+                Spinner.stop();
+
+            }
+
+        });
+
+    }
+
+    function loadCookieValues() {
+        ComboEmpresa.selectedValue = getCookie("Cook_Art_Empresa");
+        ComboActivo.selectedValue = getCookie("Cook_Art_Activo");
+        ComboTipoArt.selectedValue = getCookie("Cook_Art_TipoArt");
+        ComboFamilia.selectedValue = getCookie("Cook_Art_Familia");
+        gridConfig.search.text = getCookie("Cook_Art_Busqueda");
+    }
+
+    function SetCookiesView() {
+        setCookie("Cook_Art_Empresa", ComboEmpresa.selectedValue);
+        setCookie("Cook_Art_Activo", ComboActivo.selectedValue);
+        setCookie("Cook_Art_TipoArt", ComboTipoArt.selectedValue);
+        setCookie("Cook_Art_Familia", ComboFamilia.selectedValue);
+        setCookie("Cook_Art_Busqueda", gridConfig.search.text);
+    }
+
+    function FiltersInit() {
+        $('#BtnFiltersInit').tooltip('hide');
+        ComboTipoArt.selectedValue = "Tipo";
+        ComboEmpresa.selectedValue = "Empresa";
+        ComboFamilia.selectedValue = "Familia";
+        ComboActivo.selectedValue = "Activos";
+        gridConfig.search.text = "";
+        SetCookiesView();
+
+        if (ComboActivo.selectedValue == "Activos") {
+            CargaDatosArticulos();
+        } else {
+            gridConfig.search.text = "";
+            setTimeout(function () {
+                gridConfig.search._rxSearch = null;
+                gridConfig.search._rxHighlight = null;
+                gridConfig.search._view.refresh();
+            }, gridConfig.search.delay);
+
+            FiltrosArticulos();
+        }
+    }
+
+    function FiltrosArticulos() {
+        gridConfig.grid.collectionView.filter = function (item) {
+            var ProcesarTipoArt = ComboTipoArt.selectedValue == "Tipo" || item.ArtTipo == ComboTipoArt.selectedValue;
+            var ProcesarTipoFam = ComboFamilia.selectedValue == "Familia" || item.ArtFamilia == ComboFamilia.selectedValue;
+            var ProcesarEmpresa = ComboEmpresa.selectedValue == "Empresa" || item.MultiEmpresa == ComboEmpresa.selectedValue;
+            var ProcesarArt = gridConfig.search.text == "" ||
+                (gridConfig.search.text.length == 1 ?
+                    item.Articulo.toLowerCase().startsWith(gridConfig.search.text.toLowerCase()) :
+                    item.Articulo.toLowerCase().startsWith(gridConfig.search.text.toLowerCase()) ||
+                    item.ArtDes.toLowerCase().includes(gridConfig.search.text.toLowerCase()));
+            var ProcesarActivo = ComboActivo.selectedValue == "Todos" ||
+                (ComboActivo.selectedValue == "Activos" ? item.Activo == true : item.Activo == false);
+
+            return ProcesarTipoArt && ProcesarTipoFam && ProcesarEmpresa && ProcesarArt && ProcesarActivo;
+        };
+    }
+
+    function BtnDialogArtNew() {
+        N_DialogArticuloCrear().then((res) => {
+            window.location.href = "/Articulos/Ficha/" + res.Guid;
+        }).catch((error) => {
+            console.error("Error al crear nuevo artículo:", error);
+        });
+    }
+
+    function ResetearConfiguracionGrid() {
+
+        BtnResetConfigGrid(gridConfig.grid);
+
+        setupTooltips(gridConfig.grid);
+
+    }
+
+    // Función auxiliar para obtener los GUIDs de los artículos seleccionados
+    function getSelectedArticulosGuids() {
+        var selectedGuids = [];
+        var selections = gridConfig.grid.selectedRows;
+        for (var i = 0; i < selections.length; i++) {
+            selectedGuids.push(selections[i].dataItem.Guid);
+        }
+        return selectedGuids;
+    }
+
+</script>
+
+

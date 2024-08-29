@@ -1,0 +1,198 @@
+﻿@model iLabPlus.Models.BDiLabPlus.ControlHorario
+
+@{
+
+
+}
+
+<div class="modal " id="modalControlHorarioAdmin" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalControlHorarioAdminTitle">Control Horario Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormControlHorarioAdminRegistroControlHorario" method="post" asp-controller="ControlHorario" asp-action="RegistroControlHorario" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="modal-body" id="modal-bodyControlHorarioAdmin">
+
+                    <div class="TabsControlHorarioAdmin" style="width:100%;height:100%;"> @*ACA DEJE TABSOPERARIO PORQUE CREO QUE SON ESTILOS*@
+                        <div>
+                            <a>Ficha</a>
+                            <div>
+                                <div class="row mt-3" style="padding-top: 20px;">
+
+                                    <div class="col-2" style="padding-left:0;">
+                                        <div class="form-group form-group-default required">
+                                            <label id="EmpleadoLabel">
+                                                Empleado <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Código de Empleado" data-original-title="Tooltip on top"></i>
+                                            </label>
+                                            <input id="Empleado" type="text" class="form-control" asp-for="Empleado" readonly>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-7" style="padding-left:0;">
+                                        <div class="form-group form-group-default">
+                                            <label id="EmpleadoNombreLabel">Nombre Empleado</label>
+                                            <input id="EmpleadoNombre" type="text" class="form-control" asp-for="EmpleadoNombre" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="FechaLabel">Fecha</label>
+                                            <input id="Fecha" type="text" class="form-control" asp-for="Fecha">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="HoraEntradaLabel">Hora Entrada</label>
+                                            <input id="HoraEntrada" type="text" class="form-control" asp-for="HoraEntrada">
+                                            <span id="errorHoraEntrada" class="text-danger" style="display: none;">La hora de entrada no puede ser posterior a la hora de salida</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="HoraSalidaLabel">Hora Salida</label>
+                                            <input id="HoraSalida" type="text" class="form-control" asp-for="HoraSalida">
+                                            <span id="errorHoraSalida" class="text-danger" style="display: none;">La hora de salida no puede ser anterior a la hora de entrada</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" style="padding-left: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="HorasTrabajadasLabel">Horas Trabajadas</label>
+                                            <input id="HorasTrabajadas" type="text" class="form-control" asp-for="HorasTrabajadas">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-1">
+
+                                    <div class="col-4" style="padding-left:0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="CierreLabel">Cierre</label>
+                                            <input id="Cierre" type="text" class="form-control" asp-for="Cierre" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-8" style="padding-left: 0;">
+                                        <div class="form-group form-group-default ">
+                                            <label id="ObservacionesLabel">Observaciones</label>
+                                            <input id="Observaciones" type="text" class="form-control" asp-for="Observaciones">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                         
+                            </div>
+                        </div>
+                     
+
+                    </div>
+
+
+                </div>
+
+            </form>
+
+
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalControlHorarioAdmin-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalControlHorarioAdmin-ok" class="btn btn-primary " >Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsControlHorarioAdmin"))
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        // Posiciona en la primera tab
+        var TabsObj = wijmo.Control.getControl('.TabsControlHorarioAdmin');
+        $('#modalControlHorarioAdmin').on('show.bs.modal', function () {
+            TabsObj.selectedIndex = 0;
+        });
+
+        // Carga el editor de texto
+        $('#ControlHorarioAdminObserv').summernote(
+            {
+                height: 520,
+                focus: true,
+                disableResizeEditor: true
+            }
+        );
+
+        $('div.note-editable').height(510);
+        $('.note-statusbar').hide();
+
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+
+        var ModelGuid = "@Model.Guid";
+
+        if (ModelGuid == '00000000-0000-0000-0000-000000000000') {
+            document.getElementById("ControlHorarioAdmin").focus();
+        } else {
+            $("#ControlHorarioAdmin").prop("disabled", true);
+            $("#ControlHorarioAdmin").parent().addClass("disabled");
+        }
+
+
+
+
+    });
+
+
+
+
+
+
+</script>

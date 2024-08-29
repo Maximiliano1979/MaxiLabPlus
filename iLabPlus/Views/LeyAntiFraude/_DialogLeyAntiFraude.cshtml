@@ -1,0 +1,122 @@
+﻿@model iLabPlus.Models.BDiLabPlus.LeyAntiFraude112021
+
+@{
+
+
+}
+
+
+<div class="modal " id="modalLA" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" >
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLATitle">Ley AntiFraude 11/2021 (Medidas de prevención y lucha contra el fraude fiscal)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body" id="modal-bodyLA">
+
+                <div class="row">
+                    <div class="col-md-8 pl-0">
+                        <!-- o cualquier otra clase de bootstrap que estés usando -->
+                        <label>Diferencias Documento: @Model.Documento (@Model.FechaReg) </label>
+                    </div>
+                    <div class="col-md-4 text-right pr-0">
+                        <!-- o cualquier otra clase de bootstrap que estés usando -->
+                        @switch (Model.Accion)
+                        {
+                            case "C":
+                                <label class="LALabelTipo">Tipo: Creación (@Model.Tipo)</label>
+                                break;
+                            case "M":
+                                <label class="LALabelTipo">Tipo: Modificación (@Model.Tipo)</label>
+                                break;
+                            case "D":
+                                <label class="LALabelTipo">Tipo: Eliminación (@Model.Tipo)</label>
+                                break;
+                        }
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="col-6 pl-0 LAJsonDifTitle">
+                        <label>Actual</label>                     
+                    </div>
+                    <div class="col-6 pl-0 LAJsonDifTitle">
+                        <label>Anterior</label>                        
+                    </div>
+                </div>
+
+                <div class="row LAJsonDif">
+
+                    <div id="JsonDifIzq" class="col-6 LAJsonDifSub" style="background-color: #F1F8FF;">
+                        @*@Model.RegistroNew*@
+                    </div>
+                    <div id="JsonDifDer" class="col-6 LAJsonDifSub" style="background-color: #c6ffec;">
+                        @*@Model.RegistroOld*@
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="modalLA-cancel" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/json-diff/jdd.js"></script>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+
+        var JsonActual  = '@Html.Raw(ViewBag.RegistroNew)';
+        var JsonAntes   = '@Html.Raw(ViewBag.RegistroOld)';
+
+        if (JsonActual != "{}") {
+            let objActual = JSON.parse(JsonActual);
+
+            delete objActual.Guid;
+            delete objActual.Empresa;
+            let NewObjActual = JSON.stringify(objActual, null, 2); // El tercer argumento (2) especifica la cantidad de espacios para la indentación
+            $('#JsonDifIzq').html('<pre id="jsonformatIzq">' + NewObjActual + '</pre>');
+
+        }
+
+        if (JsonAntes != "{}") {
+            let objAntes = JSON.parse(JsonAntes);
+
+            delete objAntes.Guid;
+            delete objAntes.Empresa;
+            let NewObjAntes = JSON.stringify(objAntes, null, 2);
+            $('#JsonDifDer').html('<pre id="jsonformatDer">' + NewObjAntes + '</pre>'); 
+
+        }
+
+        if (JsonActual != "{}" && JsonAntes != "{}") {
+            leftBlockId = $('#jsonformatIzq').attr('id');
+            rightBlockId = $('#jsonformatDer').attr('id');
+            $(document).jdd(leftBlockId, rightBlockId);
+        }
+        
+
+
+
+
+    });
+
+
+
+
+
+</script>

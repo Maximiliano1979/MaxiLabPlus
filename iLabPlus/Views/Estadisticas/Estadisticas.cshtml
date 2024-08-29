@@ -1,0 +1,539 @@
+﻿
+
+@{
+    ViewBag.Title = "Estadísticas";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+<script src="~/js/Estadisticas/GraficaBarrasGastoTotalClientes.js"></script>
+<script src="~/js/Estadisticas/GraficaPastelGastoClienteAnual.js"></script>
+<script src="~/js/Estadisticas/GraficaAnualGasto.js"></script>
+<script src="~/js/Estadisticas/GraficaBurbujasPedidosClientes.js"></script>
+<script src="~/js/Estadisticas/GraficaProductosMasVendidos.js"></script>
+<script src="~/js/Estadisticas/GraficaProductosMasVendidosImporte.js"></script>
+<script src="~/js/Estadisticas/GraficaStocks.js"></script>
+<script src="~/js/Estadisticas/GraficaRupturaDeStocks.js"></script>
+
+<div class="row page-heading-Dash">
+    <button id="tabClientes" type="button" class="btnDashMenu">Clientes</button>
+    <button id="tabsProveedores" type="button" class="btnDashMenu">Proveedores</button>
+    <button id="tabProductos" type="button" class="btnDashMenu">Productos</button>
+    <button id="tabStocks" type="button" class="btnDashMenu">Stocks</button>
+    <button id="tabsFacturacion" type="button" class="btnDashMenu">Facturación</button>
+    <button id="tabsContabilidad" type="button" class="btnDashMenu">Contabilidad</button>
+</div>
+
+<div class="row wrapper wrapper-content-estadisticas">
+    <div class="ibox-content">
+
+        @*<h1 class="text-center display-5">Estadísticas</h1>*@
+
+        @*((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((TAB CLIENTES))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))*@
+
+        <!-- Sección Clientes / Seccion 1 -->
+        <div id="seccionClientes" class="seccion" style="display: none;">
+            <!-- Aquí iría todo el contenido de la sección de clientes -->
+            <!-- Gráfico de Barras y su Tabla -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <select id="selectClientes" class="form-control"></select>
+
+                        </div>
+                        <div class="col-lg-2">
+                            <select id="selectAnio" class="form-control"></select>
+
+                        </div>
+
+                    </div>
+                    <div class="row h-100">
+                        <div class="col-lg-12 d-flex justify-content-center align-items-center">
+                            <div id="barChartContainer" class="position-relative" style="height: 400px; width: 100%;">
+                                <canvas id="myBarChart" class="canvasGrafico position-absolute top-50 start-50 translate-middle"></canvas>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                @*TABLA DE LA PRIMERA SECCION*@
+                <div class="col-lg-6">
+                    <table id="datosTabla" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mes</th>
+                                <th>Gasto Total de Clientes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr class="custom-hr mt-lg-5 mb-lg-5">
+
+            <!-- Gráfico de Pastel y su Tabla / Seccion 2 -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <!-- Dropdowns y Gráfico de Pastel -->
+                    <div class="d-flex align-items-center">
+                        <select id="selectRangoClientesPastel" class="form-control"></select>
+                        <select id="selectAnioPastel" name="selectAnioPastel" class="form-control"></select>
+                    </div>
+                    <div class="mt-3">
+                        <span class="text-muted">Solo se listarán aquellos clientes que hayan tenido gasto en el periodo seleccionado.</span>
+                    </div>
+                    <canvas id="myPieChart" class="canvasGrafico"></canvas>
+                </div>
+                <div class="col-lg-6">
+                    <!-- Tabla para el Gráfico de Pastel -->
+                    <table id="tablaPastel" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Gasto Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr class="custom-hr mt-lg-5 mb-lg-5">
+
+
+            <!-- Gráfico Anual de Barras / Seccion 3 -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <div id="myAnnualBarChartWrapper" style="height: 400px; width: 100%;">
+                        <!-- El canvas se creará dinámicamente aquí -->
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <!-- Tabla para el Gráfico Anual de Barras -->
+                    <table id="tablaGraficoAnual" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Año</th>
+                                <th>Gasto Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr class="custom-hr mt-lg-5 mb-lg-5">
+
+
+            <!-- Gráfico de Burbujas -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <div class="col-lg-4">
+                        <select id="FiltroAnioBubble" name="FiltroAnioBubble" class="form-control"></select>
+                    </div>
+                    <div class="grafico-container">
+                        <canvas id="bubbleChart" class="canvasGrafico"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <!-- Contenedor Principal para Tabla y Paginación -->
+                    <div class="contenedor-tabla-paginacion">
+                        <!-- Contenedor de la Tabla -->
+                        <div class="contenedor-tabla">
+                            <table id="tablaBurbujas" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Cantidad de Pedidos</th>
+                                        <th>Valor Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Controles de Paginación -->
+                        <div id="controlesPaginacion" class="contenedor-paginacion">
+                            <button id="btnAnterior" onclick="cambiarPaginaBurbujas(-1)" class="btn-custom">Anterior</button>
+                            <button id="btnSiguiente" onclick="cambiarPaginaBurbujas(1)" class="btn-custom">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="custom-hr">
+        </div>
+
+
+
+
+
+
+
+
+
+        <!-- Sección Proveedores -->
+        <div id="seccionProveedores" class="seccion" style="display: none;">
+            <!-- Aquí iría todo el contenido de la sección de proveedores -->
+            <div>
+                Proveedores
+            </div>
+        </div>
+
+
+        <!-- Sección Productos -->
+        <div id="seccionProductos" class="seccion" style="display: none;">
+            <!-- Aquí iría todo el contenido de la sección de productos -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <h2 class="text-center">Productos Más Vendidos (unidades)</h2>
+                    <div class="form-group">
+                        <div class="col-lg-3">
+                            <label for="selectAnioProductos">Seleccione el Año:</label>
+                            <select id="selectAnioProductos" class="form-control">
+                                <!-- Las opciones se llenarán dinámicamente con JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="graficoProductosMasVendidos" class="canvasGrafico"></canvas>
+                </div>
+                <!-- Sección de la Tabla y Paginación -->
+                <div class="col-lg-6">
+                    <!-- Contenedor Principal -->
+                    <div class="contenedor-tabla-paginacion">
+                        <!-- Contenedor de la Tabla -->
+                        <div class="contenedor-tabla">
+                            <table id="tablaProductosMasVendidos" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Total Vendido</th>
+                                        <th>Artículo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Controles de Paginación -->
+                        <div id="controlesPaginacionProductos" class="contenedor-paginacion">
+                            <button id="btnAnteriorProductos" onclick="cambiarPaginaProductos(-1)" class="btn-custom">Anterior</button>
+                            <button id="btnSiguienteProductos" onclick="cambiarPaginaProductos(1)" class="btn-custom">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="custom-hr mt-lg-5 mb-lg-5">
+
+            <!-- Productos Más Vendidos (importe) -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <h2 class="text-center">Productos Más Vendidos (importe)</h2>
+                    <div class="form-group">
+                        <div class="col-lg-3">
+                            <label for="selectAnioProductosImporte">Seleccione el Año:</label>
+                            <select id="selectAnioProductosImporte" class="form-control">
+                                <!-- Las opciones se llenarán dinámicamente con JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="graficoProductosMasVendidosImporte" class="canvasGrafico"></canvas>
+                </div>
+                <!-- Sección de la Tabla y Paginación -->
+                <div class="col-lg-6">
+                    <!-- Contenedor Principal -->
+                    <div class="contenedor-tabla-paginacion">
+                        <!-- Contenedor de la Tabla -->
+                        <div class="contenedor-tabla">
+                            <table id="tablaProductosMasVendidosImporte" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Artículo</th>
+                                        <th>Producto</th>
+                                        <th>Total Vendido (€)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Controles de Paginación -->
+                        <div id="controlesPaginacionProductosImporte" class="contenedor-paginacion">
+                            <button id="btnAnteriorProductosImporte" onclick="cambiarPaginaProductosImporte(-1)" class="btn-custom">Anterior</button>
+                            <button id="btnSiguienteProductosImporte" onclick="cambiarPaginaProductosImporte(1)" class="btn-custom">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Stocks -->
+        <div id="seccionStocks" class="seccion" style="display: none;">
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <h2 class="text-center">Stock Actual vs. Stock Mínimo/Máximo</h2>
+                    <!-- Buscador de Artículos -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="btnBuscarArticulo">Buscar</button>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Buscar Artículo..." aria-label="" aria-describedby="basic-addon1" id="inputBuscarArticulo">
+                    </div>
+                    <div class="form-group">
+                        <label for="selectRangoStocks">Seleccione el Rango:</label>
+                        <select id="selectRangoStocks" class="form-control"></select>
+                    </div>
+
+                    <!-- Input para el Porcentaje de Aviso -->
+                    <div class="form-group">
+                        <label for="inputPorcentajeAviso">Porcentaje de Aviso:</label>
+                        <input type="number" id="inputPorcentajeAviso" class="form-control" placeholder="Ingrese el porcentaje" value="25">
+                    </div>
+
+                    <div class="legendStocks">
+                        <div class="legendStocks_Minimo">
+                            <span>Stock Mínimo</span>
+                            <div class="colorBoxMinimo"></div>
+                        </div>
+                        <div class="legendStocks_Fisico">
+                            <div class="legendStocks_Fisico_Azul">
+                                <span>Físico sobre el % del Mínimo</span>
+                                <div class="colorBoxFisicoAzul"></div>
+
+                            </div>
+                            <div class="legendStocks_Fisico_Amarillo">
+                                <span>Físico al % de llegar al Mínimo</span>
+                                <div class="colorBoxFisicoAmarillo"></div>
+                            </div>
+                            <div class="legendStocks_Fisico_Rojo">
+                                <span>Fisico por debajo del Minimo</span>
+                                <div class="colorBoxFisicoRojo"></div>
+                            </div>
+                        </div>
+                        <div class="legendStocks_Maximo">
+                            <span>Stock Máximo</span>
+                            <div class="colorBoxMaximo"></div>
+                        </div>
+                    </div>
+                    <canvas id="stockMinMaxChart" class="canvasGrafico"></canvas>
+                </div>
+            </div>
+            <hr class="custom-hr">
+
+
+            <!--Gráfica Ruptura de Stocks -->
+            <div class="row row_graficas">
+                <div class="col-lg-6">
+                    <h2 class="text-center">Ruptura de Stocks</h2>
+                    <div class="form-group">
+                        <label for="selectRangoRupturaStocks">Seleccione el Rango:</label>
+                        <select id="selectRangoRupturaStocks" class="form-control"></select>
+                    </div>
+                    <canvas id="rupturaDeStocks" class="canvasGrafico"></canvas>
+                </div>
+            </div>
+            <hr class="custom-hr">
+        </div>
+
+
+        <!-- Sección Facturación -->
+        <div id="seccionFacturacion" class="seccion" style="display: none;">
+            <div>
+                Facturacion
+            </div>
+        </div>
+
+        <!-- Sección Contabilidad -->
+        <div id="seccionContabilidad" class="seccion" style="display: none;">
+            <div>
+                Contabilidad
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@*@(Html.C1().TabPanel(".TabsGraficas"))*@
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', async (event) => {
+
+
+        $(".btnDashMenu").on("click", function () {
+            // Remover la clase de todos los botones
+            $(".btnDashMenu").removeClass("ButDashPanelSelect");
+            $(".btnDashMenu").removeClass("clicked");
+
+            // Agregar la clase al botón clicado
+            $(this).addClass("ButDashPanelSelect");
+            $(this).addClass("clicked");
+            ButtonClickedElement = $(this);
+
+            var IdStr = $(this).attr('id');
+            var Id = IdStr.replace("BtnDash", "");
+
+            //$(".wrapper-contentDash").css("display", "none");
+            //$("#WrapperDash" + Id).css("display", "flex");
+        });
+
+
+        document.getElementById('tabClientes').addEventListener('click', async function () {
+            mostrarSeccion('seccionClientes');
+            await cargarDatosClientes();
+        });
+
+        document.getElementById('tabsProveedores').addEventListener('click', function () {
+            mostrarSeccion('seccionProveedores');
+            cargarDatosProveedores();
+        });
+
+        document.getElementById('tabProductos').addEventListener('click', function () {
+            mostrarSeccion('seccionProductos');
+            cargarDatosProductos();
+        });
+
+        document.getElementById('tabStocks').addEventListener('click', function () {
+            mostrarSeccion('seccionStocks');
+            cargarDatosStocks();
+        });
+
+        document.getElementById('tabsFacturacion').addEventListener('click', function () {
+            mostrarSeccion('seccionFacturacion');
+            cargarDatosFacturacion();
+        });
+
+        document.getElementById('tabsContabilidad').addEventListener('click', function () {
+            mostrarSeccion('seccionContabilidad');
+            cargarDatosContabilidad();
+        });
+
+
+
+        // Mostrar la sección de clientes por defecto al cargar la página
+        document.getElementById('tabClientes').click();
+
+    });
+
+    function mostrarSeccion(idSeccion) {
+        // Oculta todas las secciones
+        var secciones = document.querySelectorAll('.seccion');
+        secciones.forEach(function (seccion) {
+            seccion.style.display = 'none';
+        });
+
+        // Muestra la sección con el id proporcionado
+        var seccionParaMostrar = document.getElementById(idSeccion);
+        seccionParaMostrar.style.display = 'block';
+    }
+
+    //function cargarDatosClientes() {
+    //    cargarAniosDisponibles().then(() => {
+    //        // Seccion 1
+    //        inicioGraficasBarrasGastoTotalClientes();
+
+    //        // Seccion 2
+    //        obtenerClientes();
+    //        inicioGraficaPastelGastoClienteAnual();
+    //        actualizarGraficoPastel(2024, 1, 10);
+
+    //        // Seccion 3
+    //        inicioGraficaAnualGasto();
+
+    //        inicioGraficaBurbujasPedidosClientes();
+    //    });
+    //}
+
+    async function cargarDatosClientes() {
+        try {
+            await cargarAniosDisponibles();
+            await inicioGraficasBarrasGastoTotalClientes();
+            await inicioGraficaPastelGastoClienteAnual();
+            await inicioGraficaAnualGasto();
+            await inicioGraficaBurbujasPedidosClientes();
+        } catch (error) {
+            console.error('Error al cargar datos de clientes:', error);
+        }
+    }
+
+    function cargarDatosProveedores() {
+        console.log("Sin implementar aún Proveedores.");
+    }
+
+    function cargarDatosProductos() {
+        inicioProductosMasVendidosImporte();
+        inicioProductosMasVendidos();
+    }
+
+    function cargarDatosStocks() {
+        inicioRupturaDeStocks();
+        inicioGraficaStocks();
+    }
+
+    function cargarDatosContabilidad() {
+        console.log("Sin implementar aún Contabilidad.");
+    }
+
+    function cargarDatosFacturacion() {
+        console.log("Sin implementar aún Facturacion.");
+    }
+
+    //const cargarAniosDisponibles = async () => {
+    //    try {
+    //        const response = await fetch('/Estadisticas/ObtenerAniosDisponibles');
+    //        if (!response.ok) {
+    //            throw new Error('Ocurrio un error al cargar los años disponibles.');
+    //        }
+    //        const anios = await response.json();
+    //        const selectAnio = document.getElementById('selectAnio');
+    //        const selectAnioPastel = document.getElementById('selectAnioPastel');
+    //        const selectAnioProductos = document.getElementById('selectAnioProductos');
+
+
+    //        selectAnio.innerHTML = ''; // Limpio antes de agregar nuevas opciones;
+    //        selectAnioPastel.innerHTML = '';
+    //        selectAnioProductos.innerHTML = '';
+
+    //        anios.forEach(anio => {
+    //            // Opciones para los selects existentes
+    //            selectAnio.appendChild(new Option(anio, anio));
+    //            selectAnioPastel.appendChild(new Option(anio, anio));
+    //            selectAnioProductos.appendChild(new Option(anio, anio));
+    //        });
+
+    //        selectAnio.value = anios[anios.length - 1];
+
+    //        selectAnio.dispatchEvent(new Event('change'));
+
+    //        return anios;
+
+    //    } catch (error) {
+
+    //        console.error("Hubo un problema al carga los años disponibles: ", error);
+
+    //        return [];
+
+    //    }
+    //};
+
+    // Listener para el evento change del select de años
+    document.getElementById('selectAnio').addEventListener('change', (event) => {
+        const anioSeleccionado = event.target.value;
+        const inicioAnio = `${anioSeleccionado}-01-01`;
+        const finAnio = `${anioSeleccionado}-12-31`;
+        cargarClientesConGastos(inicioAnio, finAnio);
+    });
+
+
+
+</script>
+

@@ -1,0 +1,323 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.CorreosSalientes>
+
+@{
+    ViewBag.Title = "Correos";
+    var actions = ViewBag.Actions;
+    int contadorCorreos = 1;
+
+}
+
+
+
+<div class="row wrapper page-heading border-bottom white-bg correo-lista">
+    <div class="col-3 correo-lista__cabecera">
+        <h3 class="correo-lista__titulo">Correos</h3>
+    </div>
+
+    <div class="col-9 page_heading_func correo-lista__acciones">
+
+        <button id="BtnMailNew" type="button" class="btn btn-default correo-lista__boton-nuevo" onclick="BtnDialogCorreoNew()"><i class="far fa-fw fa-plus"></i></button>
+
+
+    </div>
+
+</div>
+
+<!-- Títulos de Columna -->
+<div id="CorreoSalientesCab" class="row wrapper page-heading-correos border-bottom white-bg mb-md-3">
+    <div class="col-1 correo-lista__numero"><strong>Nº</strong></div>
+    <div class="col-2 d-flex justify-content-start p-0"><strong>Fecha de Envío</strong></div>
+    <div class="col-1 d-flex justify-content-start p-0"><strong>Estado</strong></div>
+    <div class="col-3 d-flex justify-content-start p-0"><strong>Mail de Destino</strong></div>
+    <div class="col-3 d-flex justify-content-start p-0"><strong>Asunto</strong></div>
+    <div class="col-1 d-flex justify-content-start p-0"><strong>Adjuntos</strong></div>
+    <div class="col-1 d-flex justify-content-end"><strong class="columnaBorrarReenviarButton">Borrar / Reenviar</strong></div>
+</div>
+
+
+@foreach (var item in Model)
+{
+    <div class="row wrapper page-heading-correos border-bottom white-bg correo-lista__item">
+        <div class="col-1 correo-lista__numero">
+            <h4>@contadorCorreos</h4>
+        </div>
+        <input type="hidden" name="Guid" value="@item.Guid" />
+
+
+        <div class="col-2 correo-lista__fecha">
+            @if (@item.Tipo == "A")
+            {
+                <h4>@item.FechaEnv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Automático</h4>
+            }
+            else
+            {
+                <h4>@item.FechaEnv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Usuario</h4>
+            }
+
+        </div>
+
+        <div class="col-1 correo-lista__estado">
+            <h4>@item.Estado</h4>
+        </div>
+
+        <div class="col-3 correo-lista__destinatario">
+            <h4>@item.Destinatario</h4>
+        </div>
+
+        <div class="col-3 correo-lista__asunto">
+            <h4>@item.Asunto</h4>
+        </div>
+
+        <div class="col-1 correo-lista__adjuntos">
+            <h4>@item.Adjuntos.Count</h4>
+        </div>
+
+        <!-- Botón de acciones para cada correo -->
+
+        <div class="col-1 correo-lista__acciones d-flex justify-content-end">
+            <div class="dropdown CorreoOpt">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuCorreo@item.Guid" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">
+                    <i class="far fa-fw fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuCorreo@item.Guid" >
+                    <button class="dropdown-item" type="button" onclick="borrarCorreo('@item.Guid')">Borrar</button>
+                    <button class="dropdown-item" type="button" onclick="reenviarCorreo('@item.Guid')">Reenviar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    contadorCorreos++;
+}
+
+<!-- Modal para Detalles del Correo -->
+<div id="modalCorreoDetalle" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle del Correo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- El contenido del correo se cargará aquí -->
+                <!-- Agregar aquí los detalles adicionales del correo -->
+                <p><strong>Remitente:</strong> <span id="correoDetalleRemitente"></span></p>
+                <p><strong>Destinatarios:</strong> <span id="correoDetalleDestinatarios"></span></p>
+                <p><strong>CCO:</strong> <span id="correoDetalleCCO"></span></p>
+                <p><strong>Asunto:</strong> <span id="correoDetalleAsunto"></span></p>
+                <p><strong>Fecha de Envío:</strong> <span id="correoDetalleFechaEnvio"></span></p>
+                <p><strong>Contenido:</strong> <span id="correoDetalleContenido"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+
+    function borrarCorreo(guid) {
+        if (confirm("¿Estás seguro de que quieres borrar este correo?")) {
+            fetch(`/CorreosSalientes/BorrarCorreo?guid=${guid}`, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Esto recarga la página
+                    } else {
+                        alert("Hubo un error al borrar el mensaje.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    }
+
+    function reenviarCorreo(guid) {
+
+        N_DialogCorreo(guid).then((res) => {
+
+            if (!res || !res.FechaEnv || !res.Tipo || !res.Estado) {
+                console.error("La estructura de la respuesta no es la esperada:", res);
+                return;
+            }
+
+            let numeroCorreo = $('.correo-lista__item').length + 1; // Obtiene el número para el nuevo correo
+
+            let fechaFormateada = formatearFecha(res.FechaEnv);
+
+            let fila = `
+            <div class="row wrapper page-heading-correos border-bottom white-bg correo-lista__item">
+                <div class="col-1 correo-lista__numero">
+                    <h4>${numeroCorreo}</h4>
+                </div>
+                    <div class="col-2 correo-lista__fecha">
+                    <h4>${fechaFormateada}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${res.Tipo == "A" ? "Automático" : "Usuario"}</h4>
+                </div>
+                <div class="col-1 correo-lista__estado">
+                    <h4>${res.Estado}</h4>
+                </div>
+                <div class="col-3 correo-lista__destinatario">
+                    <h4>${res.Destinatario}</h4>
+                </div>
+                <div class="col-3 correo-lista__asunto">
+                    <h4>${res.Asunto}</h4>
+                </div>
+                <div class="col-1 correo-lista__adjuntos">
+                    <h4>${res.Adjuntos.length}</h4>
+                </div>
+                <div class="col-1 correo-lista__acciones d-flex justify-content-end">
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuCorreo${res.Guid}" aria-haspopup="true" aria-expanded="false">
+                            <i class="far fa-fw fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuCorreo${res.Guid}">
+                            <button class="dropdown-item" type="button" onclick="borrarCorreo('${res.Guid}')">Borrar</button>
+                            <button class="dropdown-item" type="button" onclick="reenviarCorreo('${res.Guid}')">Reenviar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        `;
+
+            // Añadir la fila al inicio del contenedor de correos
+            $('#CorreoSalientesCab').after(fila);
+
+            // Incrementar el contador para los correos existentes
+            $('.correo-lista__numero h4').each(function () {
+                let numeroActual = parseInt($(this).text());
+                $(this).text(numeroActual + 1);
+            });
+
+
+        }).catch((error) => {
+            console.error('Error al abrir el diálogo de correo saliente:', error);
+        });
+
+
+    }
+
+    function formatearFecha(fechaISO) {
+        const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const fecha = new Date(fechaISO);
+
+        return fecha.toLocaleDateString('es-AR', opciones).replace(',', '');
+    }
+
+    $(document).ready(function () {
+
+        //$(".page-heading-correos").on("click", function () {
+        //    var guid = $(this).find('input[name="Guid"]').val();
+        //    alert(guid);
+        //});
+
+        // Evento clic para mostrar el menú desplegable
+        $('.dropdown-toggle').click(function (e) {
+            var dropdownMenu = $(this).next('.dropdown-menu');
+            dropdownMenu.toggle();
+        });
+
+        $(document).click(function (e) {
+            if (!$(e.target).closest('.dropdown').length) {
+                $('.dropdown-menu').hide();
+            }
+        });
+
+        $('.correo-lista__item').on('dblclick', async function () {
+            var guid = $(this).find('input[name="Guid"]').val();
+
+            try {
+                const response = await fetch(`/CorreosSalientes/DetalleCorreo?guid=${guid}`);
+                const data = await response.json();
+
+                if (data.success) {
+
+                    // Mostrar la información en el modal
+                    $('#correoDetalleRemitente').text(data.remitente);
+                    $('#correoDetalleDestinatarios').text(data.destinatarios);
+                    $('#correoDetalleCCO').text(data.CCO);
+                    $('#correoDetalleAsunto').text(data.asunto);
+                    $('#correoDetalleFechaEnvio').text(data.fechaEnvio);
+                    $('#correoDetalleContenido').html(data.contenido);
+
+                    // Ajustar el tamaño del modal en función del contenido
+                    $('#modalCorreoDetalle .modal-dialog').css('max-width', '600px'); // Ajusta este valor según lo que necesites
+
+                    $('#modalCorreoDetalle').modal('show');
+                } else {
+                    alert(data.message || 'Error al cargar el correo.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+    });
+
+    function BtnDialogCorreoNew() {
+
+        N_DialogCorreo("New").then((res) => {
+/*            console.log("Respuesta recibida:", res);*/
+
+            if (!res || !res.FechaEnv || !res.Tipo || !res.Estado) {
+                console.error("La estructura de la respuesta no es la esperada:", res);
+                return;
+            }
+
+            let numeroCorreo = $('.correo-lista__item').length + 1; // Obtiene el número para el nuevo correo
+
+            let fechaFormateada = formatearFecha(res.FechaEnv);
+
+            let fila = `
+            <div class="row wrapper page-heading-correos border-bottom white-bg correo-lista__item">
+                <div class="col-1 correo-lista__numero">
+                    <h4>${numeroCorreo}</h4>
+                </div>
+                    <div class="col-2 correo-lista__fecha">
+                    <h4>${fechaFormateada}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${res.Tipo == "A" ? "Automático" : "Usuario"}</h4>
+                </div>
+                <div class="col-1 correo-lista__estado">
+                    <h4>${res.Estado}</h4>
+                </div>
+                <div class="col-3 correo-lista__destinatario">
+                    <h4>${res.Destinatario}</h4>
+                </div>
+                <div class="col-3 correo-lista__asunto">
+                    <h4>${res.Asunto}</h4>
+                </div>
+                <div class="col-1 correo-lista__adjuntos">
+                    <h4>${res.Adjuntos.length}</h4>
+                </div>
+                <div class="col-1 correo-lista__acciones d-flex justify-content-end">
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuCorreo${res.Guid}" aria-haspopup="true" aria-expanded="false">
+                            <i class="far fa-fw fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuCorreo${res.Guid}">
+                            <button class="dropdown-item" type="button" onclick="borrarCorreo('${res.Guid}')">Borrar</button>
+                            <button class="dropdown-item" type="button" onclick="reenviarCorreo('${res.Guid}')">Reenviar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        `;
+
+            // Añadir la fila al inicio del contenedor de correos
+            $('#CorreoSalientesCab').after(fila);
+
+            // Incrementar el contador para los correos existentes
+            $('.correo-lista__numero h4').each(function () {
+                let numeroActual = parseInt($(this).text());
+                $(this).text(numeroActual + 1);
+            });
+
+
+        }).catch((error) => {
+            console.error('Error al abrir el diálogo de correo saliente:', error);
+        });
+    }
+
+</script>

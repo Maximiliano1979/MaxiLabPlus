@@ -1,0 +1,129 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.FacturasLIN>
+
+@{
+}
+
+<div class="modal" id="modalSelectFacLin" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSelectFacLinTitle">Selección de líneas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="modal-bodyClientes">
+
+                <div class="row mt-1" style="padding-top: 0px;">
+                    <div class="col-10" style="padding-left: 0; padding-right: 0;">
+                        <div class="form-group form-group-default disabled">
+                            <label id="CadFacturasLabel">Facturas</label>
+                            <input id="CadFacturas" type="text" class="form-control" disabled style="font-weight: 500;" value="@ViewBag.CadFacturas">
+                        </div>
+                    </div>
+
+                    <div class="col-2" style="padding-right: 0;">
+                        <div class="form-group form-group-default">
+                            <label id="InitNumEtqLabel">Inicio Nº Etiq.</label>
+                            <input id="InitNumEtq" type="text" class="form-control InputIntegerMask" oninput="LimitNumbers(this);" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2" style="padding-top: 0px; height:87%;">
+                    @(Html.C1().FlexGrid()
+                        .Id("gridSelectFacLin")
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid")
+                        .DefaultRowSize(27)
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.ListBox)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model)
+                        .AutoGenerateColumns(false)
+                        .Columns(col =>
+                        {
+                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+                            col.Add(c => c.Binding("Facido").Header("Factura").Width("120").CssClass("GridColumnBold"));
+                            col.Add(c => c.Binding("FacLinea").Header("Lín.").Width("60"));
+                            col.Add(c => c.Binding("FacArt").Header("Artículo").Width("150").CssClass("GridColumnBold"));
+                            col.Add(c => c.Binding("FacArtTipoVenta").Header("Tip.").Width("35"));
+                            col.Add(c => c.Binding("FacKIL").Header("Kil.").Width("35"));
+                            col.Add(c => c.Binding("FacOro").Header("Oro").Width("35"));
+                            col.Add(c => c.Binding("FacQty").Header("Cantidad").Width("70").Format("n2"));
+                            col.Add(c => c.Binding("FacPesoTotal").Header("Peso T.").Width("70").Format("n4"));
+                            col.Add(c => c.Binding("FacPrecio").Header("Precio").Width("80").Format("c2"));
+                            col.Add(c => c.Binding("FacDtoLin").Header("Dto.Lin.").Width("70").Format("n2"));
+                            col.Add(c => c.Binding("FacPrecioTotal").Header("Total").Width("80").CssClass("GridColumnBold").Format("c2"));
+                            col.Add(c => c.Binding("FacDesc").Header("Descripción").Width("350"));
+                            col.Add(c => c.Binding("FacMerma").Header("Merma").Width("70").Format("n2"));
+                            col.Add(c => c.Binding("FacPeso").Header("Peso").Width("70").Format("n4"));
+                            col.Add(c => c.Binding("FacObserv").Header("Observaciones").Width("500"));
+                        })
+                    )
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="modalSelectFacLin-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalSelectFacLin-ok" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+        $('.InputIntegerMask').inputmask("integer", {
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+
+        $(".InputIntegerMask").on("click", function () {
+            $(this).select();
+        });
+
+        var theGridFacLin = wijmo.Control.getControl("#gridSelectFacLin");
+        if (theGridFacLin) {
+            theGridFacLin.selectAll();
+
+            // Formato Celdas
+            theGridFacLin.formatItem.addHandler(function (s, e) {
+                if (s.rows.length > 0) {
+                    var item = s.rows[e.row].dataItem;
+
+                    if (e.panel === s.cells && s.columns[e.col].binding === 'FacArtTipoVenta') {
+                        switch (item.FacArtTipoVenta) {
+                            case "Etiqueta": e.cell.innerHTML = "E"; break;
+                            case "Hechura": e.cell.innerHTML = "H"; break;
+                            case "Peso": e.cell.innerHTML = "P"; break;
+                            case "PesoHechura": e.cell.innerHTML = "PH"; break;
+                            default:
+                                e.cell.innerHTML = item.FacArtTipoVenta;
+                        }
+                    }
+                }
+            });
+            GridsFitFullSelFacLin();
+        }
+    });
+
+    function GridsFitFullSelFacLin() {
+        var Objects = $("#gridSelectFacLin");
+        for (var Obj of Objects) {
+            var ObjParent = $(Obj).parent();
+
+            $(Obj).css("max-height", ObjParent.outerHeight() + "px");
+            $(Obj).css("height", ObjParent.outerHeight() + "px");
+        }
+    }
+</script>

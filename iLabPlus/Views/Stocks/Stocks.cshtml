@@ -1,0 +1,483 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Stocks>
+
+@{
+    ViewBag.Title = "Almacenes";
+
+
+    var actions = ViewBag.Actions;
+
+}
+
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-1" style="padding-left:0;">
+        <h3>Almacenes</h3>
+    </div>
+
+    <div class="col-11 page_heading_func">
+
+        <button id="BtnVendedorNew" type="button" class="btn btn-default" onclick="BtnDialogStocksNew()"><i class="far fa-fw fa-plus"></i></button>
+
+        @(Html.C1().ComboBox()
+        .Id("ComboFiltroQty")
+        .OnClientGotFocus("ComboGotFocus")
+        .OnClientSelectedIndexChanged("ComboSelectedIndexChanged").
+        Bind(ViewBag.FiltroQty)
+        .Width("200px"))
+
+        <div class="btn-group ">
+            @(Html.C1().ComboBox()
+                .Id("ComboAlmacen")
+                .OnClientGotFocus("ComboGotFocus")
+                .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                .Bind(ViewBag.ListAlmacenes)
+                .Width("200px"))
+
+            <button id="BtnAlmacenNew" type="button" class="btn btn-default btn-xs" onclick="BtnDialogAlmacenNew()" style="top: 8px; margin-left: 5px;" data-toggle="tooltip" data-placement="top" title="Gestión Almacenes"><i class="far  fa-edit"></i></button>
+        </div>
+
+
+        
+
+        <p id="gridSearch" style="width:300px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></p>
+
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 1</a></li>
+                @*<li role="separator" class="divider"></li>*@
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-table"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes Seleccionados Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 3</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 4</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de Almacenes 5</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;Importar Almacenes</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> &nbsp;&nbsp;&nbsp;Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="BtnResetConfigGrid()"><i class="fal fa-fw fa-sd-card"></i> &nbsp;&nbsp;&nbsp;Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row wrapper wrapper-content  ">
+    <div class="ibox-content">
+
+        @(Html.C1().FlexGrid()
+                        .Id("gridStocks")
+                        //.AutoGenerateColumns(true)
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AllowPinning(true)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid GridEvents")
+                        .DefaultRowSize(27)
+                        .Filterable(f => {
+                            f.DefaultFilterType(FilterType.Both);
+                            f.Id("theGridFilter");
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        //.IsDisabled(true)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.Row)
+                        //.ShowColumnFooters(true)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model)
+                        .AutoGenerateColumns(false)
+                        //.FrozenColumns(2)
+                        .OrderBy("StkAlmOrden")
+                        .FrozenColumns((int)@ViewBag.ColumnsPinnedUser)
+                        .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+                        .Columns(col =>
+                        {
+                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+
+                            col.Add(c => c.Binding("StkAlmacen").Header("Almacen").Width("150"));
+                            col.Add(c => c.Binding("StkArticulo").Header("Artículo").Width("200"));
+                            col.Add(c => c.Binding("ArtDescrip").Header("Descripción").Width("400"));
+
+                            col.Add(c => c.Binding("StkKilates").Header("Kilates").Width("100"));
+                            col.Add(c => c.Binding("StkColor").Header("Color").Width("100"));
+
+
+                            col.Add(c => c.Binding("StkFisico")
+                            //.template = "<span class=${item.StkFisico > 1000 ? 'bg-info' : 'bg-danger'}>${text}</span>"
+                            .Header("Físico").Width("150").Align("right").Format("n3"));
+
+                            col.Add(c => c.Binding("StkMinimo").Header("Mínimo").Width("150").Align("right").Format("n3"));
+                            col.Add(c => c.Binding("StkMaximo").Header("Máximo").Width("150").Align("right").Format("n3"));
+                            col.Add(c => c.Binding("StkReservado").Header("Reservado").Width("150").Align("right").Format("n3"));
+
+                            col.Add(c => c.Binding("StkUbicacion").Header("Ubicación").Align("right").Width("170*"));
+
+                            //col.Add(c => c.Binding("IsoUser").Header("IsoUser").Width("130"));
+                            //col.Add(c => c.Binding("IsoFecAlt").Header("Iso Fecha Alta").Width("200").Format("dd-MM-yyyy HH:mm:ss"));
+                            //col.Add(c => c.Binding("IsoFecMod").Header("Iso fecha Mod.").Width("200").Format("dd-MM-yyyy HH:mm:ss"));
+                        })
+
+                        )
+
+        @(Html.C1().FlexGridSearch("#gridSearch")
+                            .Grid("gridStocks")
+                            .Delay(50)
+                            .CssMatch("underline-match")
+                            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+                            )
+
+    </div>
+</div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+    });
+
+
+
+    var theGridCus = wijmo.Control.getControl("#gridStocks");
+    if (theGridCus) {
+
+        theGridCus.select(-1, -1);
+
+        // Formato Celdas
+        theGridCus.formatItem.addHandler(function (s, e) {
+
+            if (s.rows.length > 0) {
+
+                var row = s.rows[e.row]._data;
+
+                if (e.panel === s.cells && s.columns[e.col].binding === 'StkFisico') {
+                    var item = s.rows[e.row].dataItem;
+
+                    var _StkFisico = numeral(item.StkFisico).format('0,0.000');
+                    //var _StkFisico = numeral(item.StkFisico).format('0.0,000');
+                    //console.log(item.StkFisico + "    " + _StkFisico);
+
+                    if (item.StkFisico < 0) {
+                        var html = "<span class='CellStk-bg-danger' style='display: inline-block;width:100%;'>" + _StkFisico + "</span>";
+                        e.cell.innerHTML = html;
+                    } else {
+                        var html = "<span class='CellStk-bg-info' style='display: inline-block;width:100%;'>" + _StkFisico + "</span>";
+                        e.cell.innerHTML = html;
+                    }
+                }
+
+            }
+
+
+        });
+
+    }
+
+
+    function BtnDialogStocksNew() {
+
+        N_DialogStocks("New").then((res) => {
+
+            N_Grid_Data_Add(wijmo.Control.getControl("#gridStocks"), res);
+            
+        }).catch((error) => {
+
+        });
+
+    }
+
+    function BtnDialogAlmacenNew() {
+
+        N_DialogAlmacenes("New").then((res) => {
+
+            alert("Dentro de Almacenes en Stocks.cshtml")
+            //N_Grid_Data_Add(wijmo.Control.getControl("#gridAlmacenes"), res);
+
+        }).catch((error) => {
+
+        });
+
+    }
+
+    
+
+    function BtnResetConfigGrid() {
+        N_Grid_Reset_Config_Headers(theGridCus);        
+    }
+
+    // FILTROS
+    var ComboAlmacen    = wijmo.Control.getControl("#ComboAlmacen");
+    var ComboFiltroQty  = wijmo.Control.getControl("#ComboFiltroQty");
+
+    ComboAlmacen.hostElement.addEventListener('change', function (e) {
+
+        var filterALM = ComboAlmacen.selectedValue;
+        var filterQTY = ComboFiltroQty.selectedValue;
+
+        theGridCus.collectionView.filter = function (item) {
+            return Filtros(item, filterALM, filterQTY);
+        };
+    });
+
+    ComboFiltroQty.hostElement.addEventListener('change', function (e) {
+
+        var filterALM = ComboAlmacen.selectedValue;
+        var filterQTY = ComboFiltroQty.selectedValue;
+
+        theGridCus.collectionView.filter = function (item) {
+            return Filtros(item, filterALM, filterQTY);
+        };
+    });
+
+    function Filtros(item, filterALM, filterQTY) {
+        var ProcesarALM = true;
+        var ProcesarQTY = true;
+
+        if (filterALM != "Almacen") {
+            if (item.StkAlmacen == filterALM )
+                    { ProcesarALM = true;   }
+            else    { ProcesarALM = false;  }
+        } else {
+            ProcesarALM = true;
+        }
+
+        if (filterQTY == "Filtro Cantidades") {
+            ProcesarQTY = true;
+        } else {
+            switch (filterQTY) {
+                case "Físico +/-":
+                    if (item.StkFisico != 0 && item.StkFisico != null)
+                                                { ProcesarQTY = true;   }
+                    else                        { ProcesarQTY = false;  }
+                    break;
+                case "Físico +":
+                    if (item.StkFisico > 0 && item.StkFisico != null)
+                                                { ProcesarQTY = true;   }
+                    else                        { ProcesarQTY = false;  }
+                    break;
+                case "Físico -":
+                    if (item.StkFisico < 0 && item.StkFisico != null)
+                                                { ProcesarQTY = true;   }
+                    else                        { ProcesarQTY = false;  }
+                    break;
+                case "Mínimo +/-":
+                    if (item.StkMinimo != 0 && item.StkMinimo != null)
+                                                { ProcesarQTY = true;   }
+                    else                        { ProcesarQTY = false;  }
+                    break;
+                case "Máximo +/-":
+                    if (item.StkMaximo != 0 && item.StkMaximo != null)
+                                                { ProcesarQTY = true;   }
+                    else                        { ProcesarQTY = false;  }
+                    break;
+                case "Reservado +/-":
+                    if (item.StkReservado != 0 && item.StkReservado != null)
+                                                { ProcesarQTY = true;   }
+                    else                        { ProcesarQTY = false;  }
+                    break;
+                default:
+                    ProcesarQTY = true;
+                    break;
+            }
+        }
+
+        if (ProcesarALM == true && ProcesarQTY == true) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+    
+
+    function ALM_Eliminar() {
+
+        var theGridALM = wijmo.Control.getControl("#gridAlmacenes");
+        //console.log(theGridALM.collectionView.currentItem);
+
+        if (theGridALM.collectionView.currentItem != null) {
+            
+            var Guid        = theGridALM.collectionView.currentItem.Guid;
+            var StkAlmacen  = theGridALM.collectionView.currentItem.StkAlmacen;
+
+            N_ModalConfirmation('¿ Desea eliminar el Almacen? <br>' + StkAlmacen.toUpperCase()).then((res) => {
+
+                if (res == true) {
+
+                    var Spinner = Rats.UI.LoadAnimation.start();
+
+                    var data = new FormData();
+                    data.append("StkAlmacen", StkAlmacen);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Stocks/Delete_ALMACEN",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            Spinner.stop();
+                            if (data != null) {
+                                $("#StkAlmacen").val("");
+                                $("#StkNombre").val("");
+                                $("#StkDescripcion").val("");
+                                $("#StkOrden").val("");
+
+                                $("#StkAlmacenLabel").removeClass("LabelRed");
+                                $("#StkNombreLabel").removeClass("LabelRed");
+                                $("#StkDescripcionLabel").removeClass("LabelRed");
+                                $("#StkOrdenLabel").removeClass("LabelRed");
+
+                                $("#StkAlmacen").prop("disabled", false);
+                                $("#StkAlmacen").parent().removeClass("disabled");
+
+                                N_Grid_Data_Delete(theGridALM, Guid);
+                            }
+                        },
+                        always: function (data) { },
+                        error: function (xhr, status, error) {
+                            Spinner.stop();
+                            console.log("Error", xhr, xhr.responseText, status, error);
+                        }
+                    });
+
+
+                }
+
+            }).catch((error) => {
+            });
+
+        } else {
+
+            $("#StkAlmacenLabel").addClass("LabelRed");
+
+        }
+
+    }
+    
+    function ALM_Cancelar() {
+        var theGridAlm = wijmo.Control.getControl("#gridAlmacenes");
+        if (theGridAlm) {
+            theGridAlm.select(-1, -1);
+        }
+
+        $("#StkAlmacen").val("");
+        $("#StkNombre").val("");
+        $("#StkDescripcion").val("");
+        $("#StkOrden").val("");
+
+        $("#StkAlmacenLabel").removeClass("LabelRed");
+        $("#StkNombreLabel").removeClass("LabelRed");
+        $("#StkDescripcionLabel").removeClass("LabelRed");
+        $("#StkOrdenLabel").removeClass("LabelRed");
+
+        $("#StkAlmacen").prop("disabled", false);
+        $("#StkAlmacen").parent().removeClass("disabled");
+    }
+
+    function ALM_Guardar() {
+        let Procesar = true;
+
+        var theGridAlm = wijmo.Control.getControl("#gridAlmacenes");
+
+        if ($("#StkAlmacen").val() == "") {
+            Procesar = false;
+            $("#StkAlmacenLabel").addClass("LabelRed");
+        } else {
+            $("#StkAlmacenLabel").removeClass("LabelRed");
+        }
+        if ($("#StkNombre").val() == "") {
+            Procesar = false;
+            $("#StkNombreLabel").addClass("LabelRed");
+        } else {
+            $("#StkNombreLabel").removeClass("LabelRed");
+        }
+
+        if ($("#StkAlmacen").prop("disabled") == false) {
+            // Comprobacion cuando se esta intentando crear...que no exista
+            var rows    = theGridAlm.rows;
+            var index = rows.findIndex(s => s.dataItem.StkAlmacen == $("#StkAlmacen").val());
+            if (index != -1) {
+                Procesar = false;
+                $("#StkAlmacenLabel").addClass("LabelRed");
+            } 
+        }
+
+        if (Procesar == true) {
+            var Spinner = Rats.UI.LoadAnimation.start();
+
+            var data = new FormData();
+            data.append("StkAlmacen",       $("#StkAlmacen").val());
+            data.append("StkNombre",        $("#StkNombre").val());
+            data.append("StkDescripcion",   $("#StkDescripcion").val());
+            data.append("StkOrden",         $("#StkOrden").val());
+
+            CallAsyncAjax("/Stocks/AlmacenesCreateEdit", data).then((res) => {
+                
+                $("#StkAlmacen").val("");
+                $("#StkNombre").val("");
+                $("#StkDescripcion").val("");
+                $("#StkOrden").val("");
+
+                $("#StkAlmacenLabel").removeClass("LabelRed");
+                $("#StkNombreLabel").removeClass("LabelRed");
+                $("#StkDescripcionLabel").removeClass("LabelRed");
+                $("#StkOrdenLabel").removeClass("LabelRed");
+
+                $("#StkAlmacen").prop("disabled", false);
+                $("#StkAlmacen").parent().removeClass("disabled");
+
+                
+
+                var rows    = theGridAlm.rows;
+                var index   = rows.findIndex(s => s.dataItem.Guid == res.Guid);
+                if (index != -1) {
+                    N_Grid_Data_Refresh(theGridAlm, res);                                        
+                } else {
+                    N_Grid_Data_Add(theGridAlm, res);
+                }
+
+                
+                theGridAlm.select(-1, -1);
+
+                Spinner.stop();
+
+            }).catch((error) => {
+                Spinner.stop();
+            });
+        }
+
+
+    }
+
+</script>

@@ -1,0 +1,237 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Clientes>
+
+@{
+    ViewBag.Title = "Clínicas";
+
+
+    var actions = ViewBag.Actions;
+
+}
+
+<script src="~/js/scriptsImport.js"></script>
+<script src="~/js/gridsFunctions.js"></script>
+
+
+
+<script id="template1" type="text/template">
+    <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="glyphicon glyphicon-option-vertical"></i>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenuItems" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Editar</button>
+            <button class="dropdown-item" type="button">Eliminar</button>
+            <button class="dropdown-item" type="button">Imprimir</button>
+        </div>
+    </div>
+</script>
+
+
+
+
+<div class="row wrapper page-heading border-bottom white-bg ">
+    <div class="col-3" style="padding-left:0;">
+        <h3>Clínicas</h3>
+    </div>
+
+    <div class="col-9 page_heading_func">
+
+        <button id="BtnClienteNew" type="button" class="btn btn-default" onclick="BtnDialogClienteNew()"><i class="far fa-fw fa-plus"></i></button>
+
+        <p id="gridSearch" style="width:300px;"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></p>
+
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-bs-toggle="dropdown">
+                <i class="far fa-fw fa-print"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de clientes 1</a></li>
+                @*<li role="separator" class="divider"></li>*@
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-table"></i> &nbsp;&nbsp;&nbsp;Informe de clientes Seleccionados Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de clientes 3</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de clientes 4</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Informe de clientes 5</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group ">
+            <button type="button" class="btn btn-default  dropdown-toggle " data-bs-toggle="dropdown">
+                <i class="far fa-fw fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right ">
+
+                <li><a data-action="import" data-key="clientes" id="btnImportarClientes" onclick="BtnDialogImportClienteNew()"><i class="fal fa-fw fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;Importar clientes</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="btnexportst" data-output="excel" data-esort="0-stringasc"><i class="fal fa-fw fa-share-square"></i> &nbsp;&nbsp;&nbsp;Exportar Excel</a></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc"><i class="fal fa-fw fa-file-pdf"></i> &nbsp;&nbsp;&nbsp;Exportar PDF</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="btnexportst" data-output="pdf" data-esort="0-stringasc" onclick="ResetearConfiguracionGrid()"><i class="fal fa-fw fa-sd-card"></i> &nbsp;&nbsp;&nbsp;Reiniciar configuración grid</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row wrapper wrapper-content  ">
+    <div class="ibox-content">
+
+        @(Html.C1().FlexGrid()
+                        .Id("gridClientes")
+                        //.AutoGenerateColumns(true)
+                        .AlternatingRowStep(0)
+                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                        .AllowPinning(true)
+                        .AutoSizeMode(AutoSizeMode.Both)
+                        .AutoScroll(false)
+                        .AutoSearch(true)
+                        .CssClass("flexgrid GridEvents truncate")
+                        .DefaultRowSize(27)
+                        .Filterable(f => {
+                            f.DefaultFilterType(FilterType.Both);
+                            f.Id("theGridFilter");
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        //.IsDisabled(true)
+                        .IsReadOnly(true)
+                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.Row)
+                        //.ShowColumnFooters(true)
+                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                        .Bind(Model)
+                        .AutoGenerateColumns(false)
+                        //.FrozenColumns(2)
+                        .OrderBy("Cliente")
+                        .FrozenColumns((int)@ViewBag.ColumnsPinnedUser)
+                        .ColumnLayout((string)@ViewBag.ColumnsLayoutUser)
+                        .Columns(col =>
+                        {
+                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+
+                            col.Add(c => c.Binding("Cliente").Header("Cliente").Width("120"));
+                            col.Add(c => c.Binding("CliNombre").Header("Nombre").Width("320"));
+                            col.Add(c => c.Binding("CliRazon").Header("Razón Social").Width("270"));
+                            col.Add(c => c.Binding("CliNIF").Header("Nif").Width("100"));
+                            col.Add(c => c.Binding("CliEmpresa").Header("Empresa").Width("100"));
+
+                            col.Add(c => c.Binding("CliGrupo").Header("Grupo").Width("150"));
+                            col.Add(c => c.Binding("CliTarifaVenta").Header("Tarifa").Width("150"));
+
+                            col.Add(c => c.Binding("CliTelefono1").Header("Teléfono").Width("130"));
+                            col.Add(c => c.Binding("CliMail").Header("Mail").Width("230"));
+                            col.Add(c => c.Binding("CliPerContacto").Header("Contacto").Width("200"));
+                            col.Add(c => c.Binding("CliVendedor").Header("Vendedor").Width("200"));
+                            col.Add(c => c.Binding("CliExpNac").Header("ExpNac").Width("120"));
+
+                            col.Add(c => c.Binding("CliFacturaTipo").Header("Tipo Facturación").Width("150"));
+                            col.Add(c => c.Binding("CliFacturaTipoImp").Header("Impreso Factura").Width("150"));
+
+                            col.Add(c => c.Binding("CliDTOCial").Header("Dto. comercial").Width("150").Align("right").Format("n2"));
+                            col.Add(c => c.Binding("CliDTOPpago").Header("Dto. Ppago").Width("150").Align("right").Format("n2"));
+                            col.Add(c => c.Binding("CliDTORappel").Header("Rappel").Width("150").Align("right").Format("n2"));
+
+                            col.Add(c => c.Binding("CliDatFPago").Header("Forma de pago").Width("200"));
+
+                            col.Add(c => c.Binding("CliWeb").Header("Web").Width("300"));
+                            col.Add(c => c.Binding("CliTelefono2").Header("Teléfono 2").Width("150"));
+                            col.Add(c => c.Binding("CliTelefono3").Header("Teléfono 3").Width("150"));
+                            col.Add(c => c.Binding("CliTelefono4").Header("Teléfono 4").Width("150"));
+
+                            col.Add(c => c.Binding("CliIVA").Header("Iva").Width("150").Align("right").Format("n2"));
+                            col.Add(c => c.Binding("CliRE").Header("Recargo equivalencia").Width("250").Align("right").Format("n2"));
+                            col.Add(c => c.Binding("CliIGIC").Header("IGIC").Width("150").Align("right").Format("n2"));
+                            col.Add(c => c.Binding("CliIRPF").Header("IRPF").Width("150").Align("right").Format("n2"));
+
+                            col.Add(c => c.Binding("CliCuentaContable").Header("Cuenta Contable").Align("left").Width("200"));
+
+                            col.Add(c => c.Binding("CliKIL").Header("Kilates").Width("130"));
+                            col.Add(c => c.Binding("CliCOL").Header("Color").Width("130"));
+                            col.Add(c => c.Binding("CliACB").Header("Acabado").Width("130"));
+                            col.Add(c => c.Binding("CliBAN").Header("Baño").Width("130"));
+
+                            col.Add(c => c.Binding("CliDivisa").Header("Divisa").Width("170"));
+                            col.Add(c => c.Binding("CliIdioma").Header("Idioma").Width("170"));
+
+                            col.Add(c => c.Binding("CliDirMerDireccion").Header("Dirección Mer.").Width("300"));
+                            col.Add(c => c.Binding("CliDirMerDP").Header("Código Postal Mer.").Width("200"));
+                            col.Add(c => c.Binding("CliDirMerPoblacion").Header("Población Mer.").Width("200"));
+                            col.Add(c => c.Binding("CliDirMerProvincia").Header("Provincia Mer.").Width("200"));
+                            col.Add(c => c.Binding("CliDirMerPais").Header("País Mer.").Width("200"));
+
+                            col.Add(c => c.Binding("IsoUser").Header("IsoUser").Width("130"));
+                            col.Add(c => c.Binding("IsoFecAlt").Header("Iso Fecha Alta").Width("200").Format("dd-MM-yyyy HH:mm:ss"));
+                            col.Add(c => c.Binding("IsoFecMod").Header("Iso fecha Mod.").Width("200").Format("dd-MM-yyyy HH:mm:ss"));
+
+                        })
+
+                        )
+        @(Html.C1().FlexGridSearch("#gridSearch")
+                            .Grid("gridClientes")
+                            .Delay(50)
+                            .CssMatch("underline-match")
+                            .Placeholder(string.Format("{0}", Html.Raw("Buscar...")))
+                            )
+
+    </div>
+</div>
+
+
+
+<script>
+
+    var gridConfig;
+
+    $(document).ready(function () {
+
+        var searchFields = ['Cliente', 'CliNombre'];
+        gridConfig = initializeGrid("gridClientes", "gridSearch", searchFields);
+
+        // CargaDatosClientes();
+        CargaDatos(gridConfig.grid, setupTooltips);
+        setupColumnResizeIndicator(gridConfig.grid);
+
+    });
+
+
+    function SetCookiesView() {
+        setCookie("Cook_gridClientes_Busqueda", gridConfig.search.text);
+    }
+
+    function BtnDialogImportClienteNew() {
+
+        N_ModalImport("New").then((res) => {
+
+        }).catch((error) => {
+
+            alert("Algo no fue como debia en Clientes Import")
+
+        });
+
+    }
+
+    function BtnDialogClienteNew() {
+
+        N_DialogCliente("New").then((res) => {
+
+            N_Grid_Data_Add(gridConfig.grid, res);
+
+            setupTooltips();
+
+        }).catch((error) => {
+
+            console.error("Error al crear un nuevo cliente: ", error);
+
+        });
+
+    }
+
+    function ResetearConfiguracionGrid() {
+
+        BtnResetConfigGrid(gridConfig.grid);
+
+        setupTooltips(gridConfig.grid);
+
+    }
+
+</script>

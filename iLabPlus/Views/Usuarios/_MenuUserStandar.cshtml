@@ -1,0 +1,35 @@
+﻿@model IEnumerable<iLabPlus.Models.Clases.MenuUser>
+
+
+@foreach (var item in Model)
+{
+
+    <li class="dd-item" data-id="@item.Menu">
+        <div class="dd-handle">
+            <i class="fal @item.Menu_Icono fa-lg"></i>
+            -&nbsp;&nbsp;@item.Menu
+            <span class="float-right itemNestTrashWrapper"><i class="fal fa-trash-alt itemNestTrash"></i></span>
+        </div>
+
+        @if (item.Accesos.Count != 0)
+        {
+            <ol class="dd-list">
+                @foreach (var Acceso in item.Accesos) { 
+                    <li class="dd-item" data-id="@Acceso.Menu_ItemName">
+                        <div class="dd-handle">
+                            <i class="fal @Acceso.Menu_ItemIcono fa-lg"></i>
+                            &nbsp;&nbsp;@Acceso.Menu_ItemName
+                            <span class="float-right itemNestTrashWrapper"><i class="fal fa-trash-alt itemNestTrash"></i></span>
+                        </div>
+                    </li>                    
+                }
+            </ol>
+        }
+
+    </li>
+
+
+}
+
+
+

@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iLabPlus</title>
+    <c1-styles />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- ==== Favicon ==== -->
+    <link rel="icon" href="~/favicon.png" type="image/png">
+    <link rel="icon" href="~/favicon_16.png" type="image/png" sizes="16x16">
+    <link rel="icon" href="~/favicon_32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="~/favicon_64.png" type="image/png" sizes="64x64">
+
+
+    <!-- Add local styles, mostly for plugins css file -->
+    @if (IsSectionDefined("Styles"))
+    {@RenderSection("Styles", required: false)}
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/moment/min/moment.min.js"></script>
+
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />*@
+
+    @*<link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">*@
+
+
+    <link rel="stylesheet" href="~/lib/bootstrap-5.3.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome-pro/css/all.css" />
+
+    @*<link rel="stylesheet" href="~/css/animate.css" />*@
+    <link rel="stylesheet" href="~/css/template.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/iLabPlus.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/spin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/icheck/skins/all.css" />
+
+    <link rel="stylesheet" href="~/lib/toastr/build/toastr.css" />
+    <script src="~/lib/toastr/build/toastr.min.js"></script>
+    <script src="~/lib/icheck/icheck.min.js"></script>
+
+    @* Date Range Picker *@
+    <script src="~/lib/daterangepicker/daterangepicker.js"></script>
+    <link href="~/lib/daterangepicker/daterangepicker.css" rel="stylesheet" />
+
+
+    @* FORMATEO DE NUMEROS *@
+    <script src="~/lib/numeral/min/numeral.min.js"></script>
+
+    <script asp-append-version="true" src="~/js/scriptsGeneral.js"></script>
+    <script asp-append-version="true" src="~/js/scriptsPrint.js"></script>
+    <script asp-append-version="true" src="~/js/scriptsDialogs.js"></script>
+
+    <script type="text/javascript" src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css" />
+
+
+    <c1-scripts>
+        <c1-basic-scripts />
+    </c1-scripts>
+</head>
+<body class="fixed-nav fixed-sidebar">
+
+    <div id="wrapper" class="@Html.PageClass()">
+
+        <partial name="_Navigation" />
+
+        <div id="page-wrapper" class="gray-bg @ViewBag.SpecialClass">
+            <partial name="_TopNavbar" />
+            @RenderBody()
+        </div>
+    </div>
+
+    @*<script src="~/lib/Popper/popper.min.js"></script>*@
+    @*<script src="~/lib/bootstrap-5.3.3/js/bootstrap.min.js"></script>*@
+    <script src="~/lib/bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+    <script src="~/lib/metisMenu/dist/jquery.metisMenu.js"></script>
+    <script src="~/lib/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="~/lib/spin/spin.js"></script>
+    <script asp-append-version="true" src="~/js/iLabPlusSpinner.js"></script>
+
+    <script asp-append-version="true" src="~/js/gridsFunctions.js"></script>
+    <script asp-append-version="true" src="~/js/gridsRightClick.js"></script>
+    <script asp-append-version="true" src="~/js/gridsDblClick.js"></script>
+
+    <link rel="stylesheet" href="~/lib/summernote-wysiwyg-editor/summernote-bs4.css" />
+    <script src="~/lib/summernote-wysiwyg-editor/summernote-bs4.js"></script>
+    <script src="~/lib/summernote-wysiwyg-editor/lang/summernote-ca-ES.min.js"></script>
+
+    <script src="~/lib/Inputmask-4.x/dist/jquery.inputmask.bundle.js"></script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+    <script asp-append-version="true" src="~/js/HannaInterface.js"></script>
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

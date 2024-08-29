@@ -1,0 +1,157 @@
+﻿﻿
+@{
+    //ViewBag.Title = "Main";
+
+
+
+}
+
+<script>
+    $(document).ready(function () {
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+    });
+</script>
+
+<div class="row wrapper wrapper-content WC-WithoutCab ">
+    <div class="ibox-content">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+
+
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+<partial name="~/Views/Dialogs/_ModalConfirmation.cshtml" />
+
+
+
+
+@section Scripts{
+    <script src="~/lib/fullcalendar-6.1.10/dist/index.global.min.js"></script>
+
+
+    <script type="text/javascript">
+        var sessionUsuario = '@ViewBag.SessionUsuario';
+        var SessionUsuarioNombre = "@ViewBag.SessionUsuarioNombre";
+    </script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+
+            $('#modalFecha').on('hidden.bs.modal', function () {
+                $('#inputHoraInicio').val('');
+                $('#inputHoraFin').val('');
+            });
+
+            $('#modalFecha').on('shown.bs.modal', function () {
+                $('#inputTitulo').focus();
+
+                // Verifica si se está editando un evento (guidEvento tiene valor)
+                if ($('#inputGuid').val() === '') {
+                    // Solo establece el valor por defecto de "Solo yo" si se está creando un nuevo evento
+                    $('#inputAlcance').val('Solo yo');
+                }
+
+            });
+
+            /* initialize the calendar */
+            var date = new Date();
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+            //obtenerEmpresaActual();
+
+            var alturaIboxWrapper = $('.ibox-content').outerHeight();
+
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // Agregamos aquí las vistas
+                },
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    list: 'Agenda'
+                },
+                firstDay: 1,
+                locale: 'es',
+                height: alturaIboxWrapper,
+                initialView: 'dayGridMonth',
+                events: '/Calendario/ObtenerEventos', // Acá especifico la URL para obtener los eventos
+
+                datesSet: function (dateInfo) {
+                    // Refresca los eventos cada vez que cambias de vista o navegas por el calendario
+                    calendar.refetchEvents();
+                },
+
+                eventClick: async function (info) {
+                    const guidEvento = info.event.id;
+
+                    N_DialogCalendarioCrearEvento(guidEvento, info, calendar,null).then((res) => {
+                        //console.log(res);
+                    });
+
+
+                },
+                aspectRatio: 2.3,
+
+                eventContent: function (arg) {
+                    var fechaHoy = new Date();
+                    fechaHoy.setHours(0, 0, 0, 0);
+                    var fechaEvento = new Date(arg.event.start);
+                    fechaEvento.setHours(0, 0, 0, 0);
+                    var clasePasado = fechaEvento < fechaHoy ? "evento-pasado" : "";
+                    return {
+                        html: `<div class="fc-event-title-container" style="background-color: ${arg.event.backgroundColor}; color: ${arg.event.textColor};"><div class="fc-event-title fc-sticky ${clasePasado}">${arg.event.title}</div></div>`
+                    };
+                },
+
+
+                dateClick: async function (info) {
+                    //// Aca voy a impedir que se puedan crear eventos con anterioridad a la fecha del dia de hoy
+                    var fechaHoy = new Date();
+                    fechaHoy.setHours(0, 0, 0, 0); // Setear la hora a medianoche
+                    var ayer = new Date();
+                    ayer.setDate(fechaHoy.getDate() - 1);  // Acá cambiamos de 30 a 1
+                    ayer.setHours(0, 0, 0, 0); // Setear la hora a medianoche
+
+                    var fechaSeleccionada = new Date(info.date);
+                    fechaSeleccionada.setHours(0, 0, 0, 0);
+
+                    if (fechaSeleccionada <= ayer) {
+                        try {
+                            const confirmar = await N_ModalConfirmation("Estás intentando crear un evento en una fecha anterior al día de hoy. ¿Querés hacerlo de todos modos?");
+                            if (!confirmar) {
+                                return;
+                            }
+                        } catch (error) {
+                            DialogInfo("Se produjo un error al pedir la confirmación.");
+                            return;
+                        }
+                    }
+
+                    N_DialogCalendarioCrearEvento("NEW", info, calendar, null).then((res) => {
+                        //console.log(res);
+                    });
+
+                }, // Agregado para que muestre un modal cuando clickee una celda
+            });
+            calendar.render();
+
+
+        });
+
+
+    </script>
+
+
+}

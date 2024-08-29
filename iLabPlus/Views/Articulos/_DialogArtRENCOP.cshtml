@@ -1,0 +1,83 @@
+﻿
+
+<div class="modal " id="modalArtNew" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" @*data-backdrop="static" data-keyboard="false"*@>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 700px;">
+        <div class="modal-content" style="height: 260px;min-height:unset;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalArtNewTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="FormPedNewCreateEdit" method="post" asp-controller="Pedidos" asp-action="Save_PEDLIN" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="modal-body" id="modal-bodyArtMo">
+
+                    <div class="row mt-3" style="">
+
+                        <div class="col-6" style="padding-left:0; ">
+
+                            <div class="form-group form-group-default required disabled">
+                                <label id="ArticuloOldLabel">
+                                    Artículo
+                                </label>
+                                <input id="ArticuloOld" type="text" class="form-control" value="@ViewBag.ArticuloOld" disabled>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6" style="padding-right:0; ">
+
+                            <div class="form-group form-group-default required">
+                                <label id="ArticuloNewLabel">
+                                    Articulo Nuevo
+                                </label>
+                                <input id="ArticuloNew" type="text" class="form-control" value="@ViewBag.ArticuloOld">
+                            </div>
+                            <div class="form-group form-group-defaultxx" style="padding-left: 12px;">
+                                <label id="ArticuloStatusLabel" style="color:red;display:none;"></label>
+                            </div>
+                            
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <div class="modal-footer">
+                <button type="button" id="modalArtNew-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="modalArtNew-ok" class="btn btn-primary ">Aceptar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script id="modalArtNew_js">
+
+    $(document).ready(function () {
+
+        $('#modalArtNew').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#modalArtNew-ok').click();
+            }
+        });
+
+        /************************************************************************ */
+        /* CARGA C */
+        /************************************************************************ */
+
+
+    });
+
+
+</script>

@@ -1,0 +1,225 @@
+﻿@model IEnumerable<iLabPlus.Models.BDiLabPlus.Contactos>
+    
+    @{
+        ViewBag.Title = "Contactos";
+        var letrasIniciales = ViewBag.LetrasIniciales as List<string>;
+    }
+
+
+    <div class="row wrapper page-heading border-bottom white-bg ">
+        <div class="col-lg-12 d-flex justify-content-between align-items-center">
+            <h3>Contactos</h3>
+            <button id="BtnClienteNew" type="button" class="btn btn-default" onclick="BtnDialogContactoNew()"><i class="far fa-fw fa-plus"></i></button>
+        </div>
+    </div>
+
+
+    <div class="row wrapper page-heading border-bottom white-bg buscador-contactos">
+        <div class="filtro-contactos d-flex justify-content-between align-items-center">
+            <!-- Abecedario para filtrar -->
+            <div class="abecedario d-flex flex-wrap">
+                @foreach (char letra in "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+                {
+                    <button class="btn btn-outline-primary m-2 btn-abecedario" onclick="filtrarPorLetra('@letra')">@letra</button>
+                }
+            </div>
+
+            <!-- Campo de búsqueda -->
+            <div class="busqueda-contactos d-flex">
+                <input type="text" id="buscar" class="form-control me-2 flex-grow-1" placeholder="Buscar contacto...">
+                <!-- El botón comentado, por si decides utilizarlo después -->
+                <!-- <button class="btn btn-outline-primary button-buscador-contactos" onclick="buscarContactos()">Buscar</button> -->
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="row wrapper wrapper-content" style="margin-left: 5px;">
+                <div class="ibox-content" style="">
+                    <div class="letras-iniciales">
+                        @foreach (var letra in letrasIniciales)
+                        {
+                            <h3 data-letra="@letra" data-contactoNombre="@letra">@letra</h3>
+                            <ul data-letra="@letra" class="list-group">
+                                @foreach (var contacto in Model.Where(c => c.Nombre.StartsWith(letra, StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    <li data-letra="@letra" data-contactoNombre="@contacto.Nombre" class="list-group-item list-group-item-border">
+                                        <a href="#" onclick="mostrarDetalle('@contacto.Guid')" style="display: block; text-decoration: none; color: inherit;">
+                                            <div class="contact-name" data-contactoNombre="@contacto.Nombre">@contacto.Nombre</div>
+                                            <div class="contact-details">
+                                                <!-- Detalles del contacto aquí -->
+                                                <span class="contact-info"><small>@contacto.TelefonoMovilPersonal</small></span>
+                                                <br>
+                                                <span class="contact-info"><small>@contacto.Email</small></span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8" style=" padding-right: 0px">
+            <div class="row wrapper wrapper-content" style="margin-left: 0px;">
+                <div class="ibox-content" style="" id="detalleContacto">
+                    <!-- Aquí se cargarán los detalles del contacto -->
+                </div>
+                <!-- Botones de Editar y Eliminar, ocultos por defecto -->
+                <button type="button" id="btnEditar" class="btn btn-primary btn-contactosEditar" style="display:none;" onclick="editarContacto()">Editar</button>
+                <button type="button" id="btnEliminar" class="btn btn-danger btn-contactosEliminar" style="display:none;" onclick="eliminarContacto()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            const inputBuscar = document.getElementById('buscar');
+            inputBuscar.addEventListener('focus', quitarActivosAbecedario);
+            inputBuscar.addEventListener('keyup', manejarEnterEnBusqueda);
+
+            function quitarActivosAbecedario() {
+                document.querySelectorAll('.btn-abecedario').forEach(b => b.classList.remove('active'));
+                mostrarTodosLosContactos();
+            }
+
+            function manejarEnterEnBusqueda(e) {
+                buscarContactos();
+
+            }
+
+        });
+
+
+
+        function BtnDialogContactoNew() {
+
+            N_DialogContacto("New").then((res) => {
+
+
+            }).catch((error) => {
+
+            });
+        }
+
+        let contactoSeleccionado = null;
+
+        function mostrarDetalle(guid) {
+            contactoSeleccionado = guid;
+            fetch(`/Contactos/DetallesContacto?id=${guid}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Construye el HTML para mostrar los detalles
+                    const detallesContenedor = document.getElementById('detalleContacto');
+                    detallesContenedor.innerHTML = ''; // Limpia el contenedor
+                    $('#btnEditar').show();
+                    $('#btnEliminar').show();
+
+                    const detallesTexto = [
+                        `Nombre: ${data.Nombre}`,
+                        `Email: ${data.Email}`,
+                        `Teléfono Móvil Personal: ${data.TelefonoMovilPersonal}`,
+                        `Empresa: ${data.Organizacion}`, // Asumiendo que 'Organizacion' es el campo para la empresa
+                        `ID de Empresa: ${data.Empresa}`, // Asumiendo que 'Empresa' es un ID o código único
+                        `Cargo: ${data.Cargo}`,
+                        `Dirección: ${data.Direccion}`,
+                        `CP: ${data.CP}`, // Código Postal
+                        `Población: ${data.Poblacion}`,
+                        `País: ${data.Pais}`,
+                        `Notas: ${data.Notas}`,
+                    ];
+
+
+
+                    // Por cada detalle, crea un párrafo y aplica el efecto de máquina de escribir
+                    detallesTexto.forEach(detalle => {
+                        const p = document.createElement('p');
+                        detallesContenedor.appendChild(p); // Añade el párrafo al contenedor
+                        maquinaDeEscribir(detalle, p, 0, () => {
+                            // Callback opcional para después de escribir el último detalle
+                            if (detalle === detallesTexto[detallesTexto.length - 1]) {
+                                // Después del último detalle, agrega el enlace de la web
+                                const pWeb = document.createElement('p');
+                                pWeb.innerHTML = `Web: <a href="${data.Web}" target="_blank">${data.Web}</a>`;
+                                detallesContenedor.appendChild(pWeb);
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar los detalles del contacto:', error);
+                });
+        }
+
+        function maquinaDeEscribir(texto, elemento, indice, callback) {
+            if (indice < texto.length) {
+                elemento.textContent += texto.charAt(indice);
+                indice++;
+                setTimeout(() => maquinaDeEscribir(texto, elemento, indice, callback), 45); // Ajusto el tiempo para efecto más rápido o más lento
+            } else if (callback) {
+                callback(); // Ejecuta el callback después de terminar de escribir el texto
+            }
+        }
+
+
+        function editarContacto() {
+            if (contactoSeleccionado) {
+                // Lógica para abrir el modal de edición con los datos del contacto
+                N_DialogContacto(contactoSeleccionado).then(res => {
+                    // Aquí manejas la respuesta después de editar el contacto, por ejemplo, actualizar la lista de contactos
+                }).catch(error => console.error('Error al editar el contacto:', error));
+            } else {
+                alert("Por favor, selecciona un contacto para editar.");
+            }
+        }
+
+
+        function eliminarContacto() {
+            if (contactoSeleccionado) {
+                N_ModalConfirmation('¿Estás seguro de querer eliminar este contacto?').then((res) => {
+                    if (res == true) {
+                        var Spinner = Rats.UI.LoadAnimation.start();
+
+                        fetch(`/Contactos/EliminarContacto?id=${contactoSeleccionado}`, {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                Spinner.stop(); // Detener el spinner una vez que se recibe la respuesta
+                                if (data.success) {
+                                    // Eliminar el contacto de la lista
+                                    $(`a[onclick*='${contactoSeleccionado}']`).closest('li.list-group-item').remove();
+                                    // Limpiar detalles y ocultar botones
+                                    $('#detalleContacto').empty();
+                                    $('#btnEditar').hide();
+                                    $('#btnEliminar').hide();
+                                } else {
+                                    alert(data.message); // Mostrar mensaje de error
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error al eliminar el contacto:', error);
+                                Spinner.stop(); // Asegurarse de detener el spinner si hay un error
+                                alert("Hubo un problema al eliminar el contacto.");
+                            });
+                    }
+                }).catch((error) => {
+                    console.error('Error en la confirmación de eliminación:', error);
+                });
+            } else {
+                alert("Por favor, selecciona un contacto para eliminar.");
+            }
+        }
+
+
+
+    </script>

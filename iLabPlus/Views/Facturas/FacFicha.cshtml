@@ -1,0 +1,2414 @@
+﻿@model iLabPlus.Models.Clases.EstFichaFac
+
+@{
+    ViewBag.Title = "Factura";
+
+    var today = DateTime.Now.Date;
+    var minDate = new DateTime(today.Year, 1, 1);
+    var maxDate = new DateTime(today.Year, 12, 31);
+}
+
+
+
+<script type="text/javascript">
+
+    // iLabPlus usando FormData
+    function ComboFacArtLazing(query, max, callback) {
+        if (query === "") {
+            callback(null);
+            return;
+        }
+        var data = new FormData();
+        data.append("query", query);
+        data.append("max", max);
+
+        fetch('/Articulos/GetArticuloLazing', {
+            method: 'POST',
+            body: data
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.Success) {
+                    callback(data.Data);
+                } else {
+                    console.error(data.Message);
+                    callback(null);
+                }
+            })
+            .catch(error => {
+                console.error("Error", error);
+            });
+    }
+
+
+    //function ComboFacArtLazing(query, max, callback) {
+
+    //    if (query === "") {
+    //        callback(null);
+    //        return;
+    //    }
+
+    //    var data = new FormData();
+    //    data.append("query", query);
+    //    data.append("max", max);
+
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: "/Articulos/GetArticuloLazing",
+    //        data: data,
+    //        processData: false,
+    //        contentType: false,
+    //        success: function (data) {
+    //            if (data != null) {
+    //                callback(data);
+    //            }
+    //        },
+    //        always: function (data) { },
+    //        error: function (xhr, status, error) {
+    //            console.log("Error", xhr, xhr.responseText, status, error);
+    //        }
+    //    });
+
+    //}
+
+</script>
+
+<form id="FormCabEdit" method="post" asp-controller="Facturas" asp-action="Save_FACTURA" enctype="multipart/form-data">
+
+    <div class="row wrapper page-heading border-bottom white-bg ">
+
+        <div class="col-12" style="padding-left:0;">
+
+            <div class="row" style="display: flex; align-items: center;">
+
+                <a class="arrowBack" asp-controller="Facturas" asp-action="Index" asp-route-Guid="@Model.FacturaEst.Guid" style="margin-right: 10px;"><i class="far fa-arrow-left fa-fw"></i></a>
+
+                <div class="col-10" style=" padding-right: 0; display: flex; flex-wrap: wrap; column-gap: 10px; align-items: center;">
+                    <button id="BtnArtSave" type="button" class="btn btn-default btn-xs" onclick="FAC_Salvar()" style="position: relative;" data-toggle="tooltip" data-placement="top" title="Guardar Factura"><i class="far  fa-save"></i></button>
+                    <button id="BtnArtDelete" type="button" class="btn btn-default btn-xs" onclick="FAC_Eliminar()" style=" position: relative;" data-toggle="tooltip" data-placement="top" title="Eliminar Factura"><i class="far  fa-trash-alt" style="color: red; font-weight: 100;"></i></button>
+                    <h3 style="color:black;margin-left:10px;"> @Model.FacturaEst.Factura : @Model.FacturaEst.ClienteNombre</h3>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row wrapper wrapper-content  " style="padding-top: 5px;">
+        <div class="ibox-content">
+
+            <div class="TabsFactura" style="width:100%;height:100%;">
+
+
+                <div style="">
+                    <a>Factura</a>
+                    <div>
+
+                        <div class="row mt-3" style="padding-top: 0px;">
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label id="EmpresaLabel">Fecha</label>
+
+                                @(Html.C1().InputDateFor(c => c.FacturaEst.FacFecha)
+                                                        .Id("FacFecha")
+                                                        //.Placeholder("Fecha")
+                                                        //.OnClientGotFocus("ComboGotFocus")
+                                                        .OnClientValueChanged("ComboSelectedIndexChangedFechas")
+                                                        .Format("dd-MM-yyyy")
+                                                        .Mask("99-99-9999")
+                                                        .IsRequired(false))
+
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label id="EmpresaLabel">Tipo</label>
+
+                                @(Html.C1().ComboBoxFor(c => c.FacturaEst.FacTipo)
+                                                        .Id("Tipo")
+                                                        .OnClientGotFocus("ComboGotFocus")
+                                                        .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                                        .SelectedValuePath("Clave")
+                                                        .DisplayMemberPath("Clave")
+                                                        .CssStyle("z-index", "90000 !Important")
+                                                        .Bind(ViewBag.ValsysFacTipos)
+                                                        .IsDisabled(false)
+                                                        .Width("100%"))
+
+
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 45px;">
+                                <label id="EmpresaLabel">Entrega</label>
+
+                                @*@(Html.C1().InputDateFor(c => c.FacturaEst.FacFechaEnt)
+                                                        .Id("FacFechaEnt")
+                                                        //.Placeholder("Fecha Entrega")
+                                                        .OnClientValueChanged("ComboSelectedIndexChangedFechas")
+                                                        .Format("dd-MM-yyyy")
+                                                        .Mask("99-99-9999")
+                                                        .IsRequired(false))*@
+
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Factura Cliente</label>
+                                <input id="FacRefCliente" type="text" class="form-control" asp-for="FacturaEst.FacRefCliente">
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Tipo Venta</label>
+                                @(Html.C1().ComboBoxFor(c=> c.FacturaEst.FacTipoVenta)
+                                            .Id("FacTipoVenta")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.TipoVenta)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                            </div>
+
+
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px; ">
+                                <label id="EmpresaLabel">Tarifa</label>
+
+                                @(Html.C1().ComboBoxFor(c=> c.FacturaEst.FacTarifaVenta)
+                                            .Id("FacTarifaVenta")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            //.SelectedValue(3)
+                                            .SelectedValuePath("Tarifa")
+                                            .DisplayMemberPath("TarDescripcion")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListTarifas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+
+                            </div>
+
+
+                        </div>
+
+                        <div class="row mt-2" style="padding-top: 0px;">
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Dto. Comercial</label>
+                                <input id="FacDTOCial" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.FacDTOCial">
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Dto. Ppago</label>
+                                <input id="FacDTOPpago" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.FacDTOPpago">
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 45px;">
+                                <label>Dto. Rappel</label>
+                                <input id="FacDTORappel" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.FacDTORappel">
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Oro Fino</label>
+                                <input id="FacOroFino" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.FacOroFino">
+                            </div>
+
+                        </div>
+
+                        <div class="row mt-2" style="padding-top: 0px;">
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 315px; margin-right: 210px;">
+                                <label id="EmpresaLabel">Vendedor</label>
+
+                                @(Html.C1().ComboBoxFor(c => c.FacturaEst.FacVendedor)
+                                                        .Id("FacVendedor")
+                                                        .OnClientGotFocus("ComboGotFocus")
+                                                        .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                                        .SelectedValuePath("Vendedor")
+                                                        .DisplayMemberPath("VenNombre")
+                                                        .CssStyle("z-index", "90000 !Important")
+                                                        .Bind(ViewBag.ListVendedores)
+                                                        .IsDisabled(false)
+                                                        .Width("100%"))
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Iva %</label>
+                                <input id="FacIVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.FacIVA">
+                            </div>
+
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Divisa</label>
+                                @(Html.C1().ComboBoxFor(c=> c.FacturaEst.FacDivisa)
+                                            .Id("FacDivisa")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                            .SelectedValuePath("Divisa")
+                                            .DisplayMemberPath("DivNombre")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListDivisas)
+                                            .IsDisabled(false)
+                                            .Width("100%"))
+                            </div>
+                            <div class="form-group form-group-default " style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Idioma</label>
+                                @(Html.C1().ComboBoxFor(c => c.FacturaEst.FacIdioma)
+                                            .Id("CliIdioma")
+                                            .OnClientGotFocus("ComboGotFocus")
+                                            .CssStyle("z-index", "90000 !Important")
+                                            .Bind(ViewBag.ListIdiomas)
+                                            .IsDisabled(false)
+                                            .SelectedValue(-1)
+                                            .Width("100%"))
+                            </div>
+
+                        </div>
+
+                        @*<div class="row mt-3" style="padding-top: 0px;">
+                                <div class="col-3" style="padding-left:10px;">
+                                    <label style="text-decoration: underline;">IMPORTES</label>
+                                </div>
+                            </div>*@
+
+                        <div class="row mt-4" style="padding-top: 0px;">
+
+                            <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>BRUTO</label>
+                                <input id="BI" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.TotalFacBI" disabled style="font-weight: 500; font-size: 16px; ">
+                            </div>
+
+                            <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>DTOs</label>
+                                <input id="DTO" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.TotalFacDTOs" disabled style="font-weight: 500; font-size: 16px; ">
+                            </div>
+
+                            <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 150px; margin-right: 45px;">
+                                <label>IVA</label>
+                                <input id="IVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.TotalFacIVA" disabled style="font-weight: 500; font-size: 16px; ">
+                            </div>
+
+                            <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>TOTAL</label>
+                                <input id="TOTAL" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" asp-for="FacturaEst.TotalFac" disabled style="font-weight: 500; font-size: 16px; ">
+                            </div>
+
+
+
+                            <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Coste</label>
+                                <input id="COSTE" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style=" font-size: 16px; ">
+                            </div>
+
+                            <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 150px; margin-right: 15px;">
+                                <label>Beneficio</label>
+                                <input id="BENEFICIO" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style=" font-size: 16px; ">
+                            </div>
+
+
+                        </div>
+
+                        <div class="row mt-4" style="padding-top: 0px; height: 15px;">
+                            <div class="col-3" style="padding-left:10px;">
+                                <label style="text-decoration: underline;">Observaciones</label>
+                            </div>
+                        </div>
+
+                        <textarea class="form-control" id="FacObserv" style="margin-top: 0px;" asp-for="FacturaEst.FacObserv"></textarea>
+
+                    </div>
+                </div>
+
+                <div style="">
+                    <a>Líneas</a>
+                    <div>
+
+
+                        <div class="row wrapper-pedlin" style="">
+
+                            <div class="col-6 wrapper-pedlin" style="padding-left: 0px; padding-right: 0px; border-right: 3px solid #f3f3f4; padding: 15px 15px 10px 15px; ">
+
+                                <div class="row " style="padding-top: 0px;">
+
+                                    <button id="BtnFacLinNewEdit" type="button" class="btn btn-default btn-xs" onclick="FACLIN_NewEdit()"
+                                            style="top: -5px; position: relative; font-size: 14px;width:70px; height: 30px; font-weight: 500;">
+                                        Guardar
+                                    </button>
+
+                                    <button id="BtnFacLinNewEditCancel" type="button" class="btn btn-default btn-xs" onclick="FACLIN_NewEdit_Cancel()"
+                                            style="top: -5px; position: relative; margin-left: 15px; visibility: hidden; height: 30px; width: 35px; font-weight: 500; font-size: 1rem; ">
+                                        <i class="far  fa-times"></i>
+                                    </button>
+
+                                </div>
+
+                                <div class="row " style="padding-top: 0px;">
+
+                                    <div class="col-3" style="padding-left:0;">
+                                        <div class="form-group form-group-default " style="padding-bottom: 0;">
+                                            <label id="ArtLabel">Artículo</label>
+                                            @(Html.C1().AutoComplete()
+                                                        .Id("ComboFacLinArticulo")
+                                                        //.OnClientGotFocus("ComboGotFocus")
+                                                        //.OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                                        .Placeholder("")
+                                                        .HeaderPath("Articulo")
+                                                        //.IsDisabled(true)
+                                                        //.SelectedValuePath("Articulo")
+                                                        //.DisplayMemberPath("Articulo")
+
+                                                        .IsDisabled(false)
+                                                        .SelectedValuePath("Articulo")
+                                                        .DisplayMemberPath("CalcArticuloDesc")
+                                                        .SearchMemberPath("Articulo,ArtDes")
+                                                        .MaxItems(10000)
+                                                        .ItemsSourceFunction("ComboFacArtLazing")
+                                                        .CssStyle("z-index", "90000 !Important")
+                                                        .Width("100%")
+                                                        )
+
+                                            <input id="FacLinGuidHidden" class=" form-control" hidden />
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-9" style="padding-left:0;">
+                                        <div class="form-group form-group-default " style="">
+                                            <label id="TipoLabel">Descripción</label>
+                                            <input id="FacLinArtDescrip" type="text" class="form-control " style="position: relative; top: 4px; ">
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+
+                                <div class="row mt-2" style="padding-top: 0px;">
+
+                                    <div class="col-3" style="padding-left: 0; ">
+                                        <div class="form-group form-group-default " style="padding-bottom: 0; ">
+                                            <label>Tipo Venta</label>
+                                            @(Html.C1().ComboBox()
+                                                .Id("ComboFacLinTipo")
+                                                .OnClientGotFocus("ComboGotFocus")
+                                                .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                                .CssStyle("z-index", "90000 !Important")
+                                                .Bind(ViewBag.TipoVenta)
+                                                .IsDisabled(false)
+                                                .Width("100%"))
+                                        </div>
+                                    </div>
+
+                                    <div class="col-9" style="padding-left: 0;padding-right:0; ">
+                                        <div class="row">
+
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default " style="padding-bottom: 0; ">
+                                                    <label id="KilatesLabel">Cantidad</label>
+                                                    <input id="FacLinQty" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="1,00">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default " style="padding-bottom: 0; ">
+                                                    <label id="OroLabel">Peso</label>
+                                                    <input id="FacLinPeso" type="text" class="form-control InputDecimalMask4" oninput="LimitNumbers(this);" value="0,00">
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default " style="padding-bottom: 0; ">
+                                                    <label id="OroLabel">Merma</label>
+                                                    <input id="FacLinMerma" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default " style="padding-bottom: 0; ">
+                                                    <label id="OroLabel">Tarifa</label>
+
+                                                    @(Html.C1().ComboBox()
+                                                     .Id("ComboFacLinTarifa")
+                                                     .OnClientGotFocus("ComboGotFocus")
+                                                     .OnClientSelectedIndexChanged("ComboSelectedIndexChanged")
+                                                     .SelectedValuePath("Tarifa")
+                                                     //.DisplayMemberPath("TarDescripcion")
+                                                     .DisplayMemberPath("Tarifa")
+                                                     .CssStyle("z-index", "90000 !Important")
+                                                     .Bind(ViewBag.ListTarifas)
+                                                     .IsDisabled(false)
+                                                     .Width("100%"))
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row mt-2" style="padding-top: 0px;">
+                                    <div class="col-3" style="padding-left: 0;">
+
+                                        <div class="wrapper-pedlin-Imagenes" style="visibility: hidden;">
+                                            <img class="PedLinImgView" id="FacLinImgView" src="" alt="" />
+
+                                            <div class="wrapper-pedlin-Imagenes-Others" style="margin-top: 10px; float: left;">
+                                                @*<img id="SIMArtImgView-2" src="https://docs.nemesis365.com//00001/Articulos/1A03680BL-PF.JPG" alt="" class="FichaArtImgOther" data-sec="2">*@
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-9" style="padding-left: 0;padding-right:0; ">
+
+                                        <div class="row">
+                                          
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default " style="padding-bottom: 0; height: 52px; ">
+                                                    <label id="KilatesLabel">Precio</label>
+                                                    <input id="FacLinPrecio" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" style="width:80%;">
+                                                    <span class="float-right PedLinPrecioAct" style="top: -22px; position: relative;"><i class="fal fa-search itemFindPrice"></i></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default" style="padding-bottom: 0; ">
+                                                    <label id="OroLabel">Dto. Lin.</label>
+                                                    <input id="FacLinDto" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-3" style="padding-left:0;">
+                                                <div class="form-group form-group-default disabled" style="padding-bottom: 0; ">
+                                                    <label id="OroLabel">TOTAL</label>
+                                                    <input id="FacLinTOTAL" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style="font-weight: 500; ">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-12" style="padding-left:0;">
+                                                <div class="form-group form-group-default " style="padding-bottom: 0; height: 75px; ">
+                                                    <label id="KilatesLabel">Observaciones</label>
+                                                    @*<input id="PedLinArtDescrip" type="text" class="form-control " style="position: relative; top: 4px; ">*@
+                                                    <textarea class="form-control" id="FacLinObserv" style="margin-top: 0px; height: calc(100% - 25px); resize: none; "></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row mt-3 wrapper-pedlin-Componentes" style="visibility: hidden;">
+
+                                            <div class="col-12" style="padding-left:0;padding-right:0;height:25px;">
+                                                <h4 class="h3_Fichaxx"> Componentes </h4>
+                                            </div>
+
+                                            <div class="col-12 table-responsive" style="padding-left:0;padding-right:0;">
+
+                                                <table class="ListLinCOMP_Mods tablexx table-hoverxx" style="">
+                                                    <thead style="">
+                                                        <tr class="d-flex">
+                                                            <th class="CompDetailTableTD" style="width:20px;">C</th>
+
+                                                            <th class="CompDetailTableTD" style="width:180px;">&nbsp;Componente</th>
+                                                            <th class="CompDetailTableTD" style="width:25px;">Tipo</th>
+                                                            <th class="CompDetailTableTD th_right" style="width:45px;">Qty</th>
+                                                            <th class="CompDetailTableTD th_right" style="width:80px;">Precio</th>
+                                                            <th class="CompDetailTableTD th_right" style="width:90px;">Valor</th>
+                                                            <th class="CompDetailTableTD th_right" style="width:55px;">Peso</th>
+
+                                                            <th class="CompDetailTableTD" style="width: 500px; margin-left: 15px;">Descripcion</th>
+
+                                                            <th class="CompDetailTableTD" style="width: 100px; margin-left: 15px;">Tipo Precio</th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="BodyTabletFacLinCompMod">
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                            <div class="col-6 wrapper-pedlin" style=" padding-left: 0px; padding-right: 0px; ">
+
+                                @*LINEAS PARTE GRID*@
+                                <div class="row" style="height: 87%; border-bottom: 3px solid #f3f3f4; padding: 20px 0px 10px 15px; ">
+
+                                    @(Html.C1().FlexGrid()
+                                        .Id("gridFacLineas")
+                                        .AlternatingRowStep(0)
+                                        .AllowDragging(C1.Web.Mvc.Grid.AllowDragging.Columns)
+                                        .AutoSizeMode(AutoSizeMode.Both)
+                                        .AutoScroll(false)
+                                        .AutoSearch(true)
+                                        .CssClass("flexgrid GridEvents")
+                                        .DefaultRowSize(27)
+                                        .HeadersVisibility(HeadersVisibility.Column)
+                                        .IsReadOnly(true)
+                                        .SelectionMode(C1.Web.Mvc.Grid.SelectionMode.Row)
+                                        .SortingType(C1.Web.Mvc.Grid.AllowSorting.SingleColumn)
+                                        .Bind(Model.ListFacturaLIN)
+                                        .AutoGenerateColumns(false)
+                                        .OrderBy("FacLinea")
+                                        .Columns(col =>
+                                        {
+                                            col.Add(c => c.Binding("Guid").Header("Guid").Width("100").Visible(false));
+
+                                            col.Add(c => c.Binding("IconDel").Header(" ").Width("35"));
+
+                                            col.Add(c => c.Binding("FacArt").Header("Artículo").Width("150").CssClass("GridColumnBold"));
+
+                                            col.Add(c => c.Binding("FacArtTipoVenta").Header("Tip.").Width("35"));
+
+                                            col.Add(c => c.Binding("FacKIL").Header("Kil.").Width("35"));
+                                            col.Add(c => c.Binding("FacOro").Header("Oro").Width("35"));
+
+                                            col.Add(c => c.Binding("FacQty").Header("Cantidad").Width("70").Format("n2"));
+                                            col.Add(c => c.Binding("FacPesoTotal").Header("Peso T.").Width("70").Format("n4"));
+
+                                            col.Add(c => c.Binding("FacPrecio").Header("Precio").Width("80").Format("c2"));
+                                            col.Add(c => c.Binding("FacDtoLin").Header("Dto.Lin.").Width("70").Format("n2"));
+
+                                            col.Add(c => c.Binding("FacPrecioTotal").Header("Total").Width("80").CssClass("GridColumnBold").Format("c2"));
+
+                                            col.Add(c => c.Binding("FacDesc").Header("Descripción").Width("350"));
+
+                                            col.Add(c => c.Binding("FacMerma").Header("Merma").Width("70").Format("n2"));
+                                            col.Add(c => c.Binding("FacPeso").Header("Peso").Width("70").Format("n4"));
+
+                                            col.Add(c => c.Binding("FacMRP").Header("FacMRP").Width("150").Format("s"));
+
+                                            col.Add(c => c.Binding("FacObserv").Header("Observaciones").Width("500"));
+                                        })
+
+                                        )
+                                </div>
+
+
+
+                                @*LINEAS PARTE TOTALES*@
+                                <div class="row" style="padding: 15px 15px 10px 15px;">
+
+                                    <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 95px; margin-right: 10px;">
+                                        <label>Cantidad</label>
+                                        <input id="FacLinTotQty" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style="font-weight: 500; font-size: 16px; ">
+                                    </div>
+
+                                    <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 95px; margin-right: 35px; ">
+                                        <label>Peso</label>
+                                        <input id="FacLinTotPeso" type="text" class="form-control InputDecimalMask4" oninput="LimitNumbers(this);" value="0,00" disabled style="font-weight: 500; font-size: 16px; ">
+                                    </div>
+
+                                    <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 95px; margin-right: 10px; ">
+                                        <label>BRUTO</label>
+                                        <input id="FacLinTotBRUTO" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style=" font-size: 16px; ">
+                                    </div>
+
+                                    <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 100px; margin-right: 10px;">
+                                        <label>DTOs CAB.</label>
+                                        <input id="FacLinTotDTOsCAB" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style=" font-size: 16px; ">
+                                    </div>
+
+                                    <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 95px; margin-right: 10px; ">
+                                        <label>IVA</label>
+                                        <input id="FacLinTotIVA" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style=" font-size: 16px; ">
+                                    </div>
+
+                                    <div class="form-group form-group-default disabled" style="padding-bottom: 0; width: 100px; ">
+                                        <label>TOTAL</label>
+                                        <input id="FacLinTotTOTAL" type="text" class="form-control InputDecimalMask" oninput="LimitNumbers(this);" value="0,00" disabled style="font-weight: 500; font-size: 16px; ">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div style="">
+                    <a>Direcciones</a>
+                    <div>
+
+                    </div>
+                </div>
+
+                <div style="">
+                    <a>Otros</a>
+                    <div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+</form>
+
+
+
+
+
+
+@(Html.C1().TabPanel(".TabsFactura"))
+
+
+<partial name="~/Views/Dialogs/_ModalInfo.cshtml" />
+
+
+
+<script>
+
+
+    var Factura          = '@Model.FacturaEst.Factura';
+    var FacturaCAB       = @Html.Raw(Json.Serialize(@Model.FacturaEst));
+    var FacturaLINEAS    = @Html.Raw(Json.Serialize(@Model.ListFacturaLIN));
+    var RutaImg         = '@ViewBag.RutaArtImg';
+
+    //console.log(PedidoCAB);
+    //console.log(PedidoLINEAS);
+
+    var ComboFacLinArticulo = wijmo.Control.getControl('#ComboFacLinArticulo');
+    var ListVaciaArticulos  = @(Html.Raw(ViewBag.ListVaciaArticulos));
+    var ComboFacLinTipo     = wijmo.Control.getControl('#ComboFacLinTipo');
+    var ComboFacLinKilates  = wijmo.Control.getControl('#ComboFacLinKilates');
+    var ComboFacLinTipoOro  = wijmo.Control.getControl('#ComboFacLinTipoOro');
+    var ComboFacLinTarifa   = wijmo.Control.getControl('#ComboFacLinTarifa');
+    var ComboFacTarifaVenta = wijmo.Control.getControl('#FacTarifaVenta');
+
+    var GlobalListArticuloPIE       = null;
+    var GlobalListArticuloCOMP      = null;
+    var GlobalListArticuloCOMP_Edit = false;
+
+    @*var RutaImg     = '@ViewBag.RutaArtImg';
+    var RutaImg3D   = '@ViewBag.RutaArtImg3D';
+
+    var ListaImagenes   = @Html.Raw(Json.Serialize(@Model.ListArticuloIMG));
+
+    var Imagenes        = ListaImagenes.filter(x => x.Tipo === '');
+    var Imagenes3D      = ListaImagenes.filter(x => x.Tipo === '3D');*@
+
+    /*********************************************** */
+    /* DEBUG XAVI */
+    /*********************************************** */
+    var tPanel = wijmo.Control.getControl('.TabsFactura');
+    tPanel.selectedIndex = 1;
+    /*********************************************** */
+
+
+    var theGridFacLin = wijmo.Control.getControl("#gridFacLineas");
+
+    $(document).ready(function () {
+
+        $('.InputDecimalMask').inputmask("decimal", {
+            'digits': 2,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask").on("click", function () {
+            $(this).select();
+        });
+        $('.InputDecimalMask4').inputmask("decimal", {
+            'digits': 4,
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+        });
+        $(".InputDecimalMask4").on("click", function () {
+            $(this).select();
+        });
+
+        // Carga el editor de texto
+        $('#FacObserv').summernote(
+            {
+                //height: 50,
+                //focus: true,
+                disableResizeEditor: true
+            }
+        );
+        //var xxx = $('#modal-bodyClientes').outerHeight();
+        $('div.note-editable').height(275);
+        $('.note-statusbar').hide();
+
+
+
+        /****************************************************** */
+        /* INIT TAB PEDLIN                                      */
+        /****************************************************** */
+
+        ComboFacLinTarifa.selectedValue = ComboFacTarifaVenta.selectedValue;
+
+        //ComboPedLinKilates.selectedValue    = "18";
+        //ComboPedLinTipoOro.selectedValue          = "AM";
+
+        if (theGridFacLin) {
+            theGridFacLin.select(-1, -1);
+
+
+            // Formato Celdas
+            theGridFacLin.formatItem.addHandler(function (s, e) {
+
+                if (s.rows.length > 0) {
+
+                    var row     = s.rows[e.row]._data;
+                    var item    = s.rows[e.row].dataItem;
+                    var itemMRP = s.rows[e.row].dataItem.FacMRP;
+                    //console.log(s.rows[e.row].dataItem.PedArt);
+                    //console.log(e.rowType);
+
+                    // Control de visualizacion para las lineas que ya tienen MRP asociado
+                    if (e.panel === s.cells ) {
+                        if (itemMRP != null) {
+                            e.cell.style.color = '#1b6ec2';
+                        }
+                    }
+
+
+                    if (e.panel === s.cells && s.columns[e.col].binding === 'FacArtTipoVenta') {
+                        switch (item.FacArtTipoVenta) {
+                            case "Etiqueta":    e.cell.innerHTML = "E"; break;
+                            case "Hechura":     e.cell.innerHTML = "H"; break;
+                            case "Peso":        e.cell.innerHTML = "P"; break;
+                            case "PesoHechura": e.cell.innerHTML = "PH"; break;
+                            default:
+                                e.cell.innerHTML = item.FacArtTipoVenta;
+                        }
+                    }
+
+                    if (e.panel === s.cells && s.columns[e.col].binding === 'IconDel') {
+                        let Guid = item.Guid;
+                        //e.cell.innerHTML = '<button id="PedLinDel-' + Guid + '" type="button" class="btn btn-default btn-xxs PedLin_Del" style="position: relative; top: 0px; "><i class="far  fa-trash-alt"></i></button>';
+                        e.cell.innerHTML = '<span id="FacLinDel-' + Guid + '" class="PedLin_Del"><i class="fal fa-trash-alt itemNestTrash"></i></span>';
+
+                        $("#FacLinDel-" + Guid).on("click", function () {
+                            var Id = $(this).attr('id');
+                            FACLIN_Delete(Id.replace("FacLinDel-", ""));
+                        });
+
+                    }
+
+
+                }
+            });
+
+            /***********************************************/
+            /* EVENTO GRID - MOUSEOVER DE PEDLINEAS*/
+            /***********************************************/
+            theGridFacLin.addEventListener(theGridFacLin.hostElement, 'mouseover', function (e) {
+                var ht = theGridFacLin.hitTest(e);
+                if (ht.panel === theGridFacLin.cells) {
+
+                    var dataItem = theGridFacLin.rows[ht.row].dataItem;
+                    //console.log(dataItem);
+                    let Guid    = dataItem.Guid;
+                    let FacMRP  = dataItem.FacMRP;
+
+                    if (FacMRP == null) {
+                        $("#FacLinDel-" + Guid).css("visibility", "visible");
+                    }
+
+                }
+            });
+
+            /***********************************************/
+            /* EVENTO GRID - MOUSEOVER DE PEDLINEAS*/
+            /***********************************************/
+            theGridFacLin.addEventListener(theGridFacLin.hostElement, 'mouseout', function (e) {
+                $(".PedLin_Del").css("visibility", "hidden");
+            });
+
+            /***********************************************/
+            /* EVENTO GRID - CLICK DE PEDLINEAS*/
+            /***********************************************/
+            theGridFacLin.addEventListener(theGridFacLin.hostElement, 'click', function (e) {
+
+                var ht = theGridFacLin.hitTest(e);
+                if (ht.panel === theGridFacLin.cells) {
+                    var dataItem    = theGridFacLin.rows[ht.row].dataItem;
+                    let Guid        = dataItem.Guid;
+                    let FacMRP      = dataItem.FacMRP;
+
+                    if (FacMRP != null) {
+                        $("#BtnFacLinNewEdit").prop("disabled", true);
+                    }else{
+                        $("#BtnFacLinNewEdit").prop("disabled", false);
+                    }
+
+
+
+                    // Se comprueba que no estemos encima del boton de eliminar, sino = Proceso Editar Linea
+                    if ($("#FacLinDel-" + Guid + ":hover").length == 0) {
+                        var FacArt          = dataItem.FacArt;
+                        var FacDesc         = dataItem.FacDesc;
+                        var FacLinTipo      = dataItem.FacArtTipoVenta;
+                        var FacLinObserv    = dataItem.FacObserv;
+
+                        var FacQty          = dataItem.FacQty;
+                        var FacPeso         = dataItem.FacPeso;
+                        var FacMerma        = dataItem.FacMerma;
+                        var FacPrecio       = dataItem.FacPrecio;
+                        var FacDtoLin       = dataItem.FacDtoLin;
+                        var FacLinTOTAL     = dataItem.FacPrecioTotal;
+                        var FacLinMedidas   = dataItem.FacMedidas;
+                        var FacImgSelect    = dataItem.FacImageSelect;
+
+
+                        $("#FacLinGuidHidden").val(Guid);
+
+                        //console.log(dataItem);
+
+
+                        ComboFacLinArticulo.itemsSource = null;
+
+                        ListVaciaArticulos[0].Articulo  = FacArt;
+                        ListVaciaArticulos[0].ArtDes    = FacDesc;
+
+                        ComboFacLinArticulo.itemsSource     = ListVaciaArticulos;
+                        ComboFacLinArticulo.selectedValue = FacArt;
+
+                        $("#FacLinArtDescrip").val(FacDesc);
+                        $('#FacLinObserv').val(FacLinObserv);
+                        $('#FacLinMedidas').val(FacLinMedidas);
+
+                        ComboFacLinTipo.selectedValue = FacLinTipo;
+
+                        $("#FacLinQty").val(numeral(FacQty).format('0,0.00'));
+                        $("#FacLinPeso").val(numeral(FacPeso).format('0,0.0000'));
+                        $("#FacLinMerma").val(numeral(FacMerma).format('0,0.00'));
+                        $("#FacLinPrecio").val(numeral(FacPrecio).format('0,0.00'));
+                        $("#FacLinDto").val(numeral(FacDtoLin).format('0,0.00'));
+                        $("#FacLinTOTAL").val(numeral(FacLinTOTAL).format('0,0.00'));
+
+                        $("#ArtLabel").css("color", "black");
+                        $("#BtnFacLinNewEditCancel").css("visibility", "visible");
+                        $(".wrapper-pedlin-Componentes").css("visibility", "visible");
+                        $(".wrapper-pedlin-Imagenes").css("visibility", "visible");
+
+                        //Get_PEDLIN_ART_COMPONENTES();
+                        Call_Articulo_Find_Precios();
+                        Get_PEDLIN_ART_COMPONENTES();
+                    }
+
+                }
+            });
+
+            Calculo_FacLin_TOTALES();
+        }
+
+
+        var templateCombFacLinArt =
+            '<table><tr>' +
+            '<td style="width: 11vw;text-align: Left;"  title="Articulo">{Articulo}</td>' +
+            '<td style="width: 30vw;text-align: Left;"  title="Descripción">{ArtDes}</td>' +
+            '</td>' +
+            '</tr></table>';
+        ComboFacLinArticulo.formatItem.addHandler(function (s, e) {
+            //e.data.ArtPrecioPVP = numeral(e.data.ArtPrecioPVP).format('0,0.0000');
+            var html = wijmo.format(templateCombFacLinArt, e.data);
+            e.item.innerHTML = html;
+        });
+
+
+
+        ComboFacLinArticulo.itemsSource = ListVaciaArticulos;
+        //ComboFacLinArticulo.placeholder = "<Seleccionar>";
+        ComboFacLinArticulo.selectedValue = -1;
+        ComboFacLinArticulo.isDisabled = false;
+
+        /***********************************************/
+        /* EVENTO COMBO ARTICULO, SELECCION DE ARTICULO*/
+        /***********************************************/
+        ComboFacLinArticulo.isDroppedDownChanging.addHandler(function (s, e) {
+            if (ComboFacLinArticulo.selectedItem != null) {
+                //console.log(ComboFacLinArticulo.selectedItem);
+
+                var Artdesc = ComboFacLinArticulo.selectedItem.ArtDes;
+                var ArtTipoVenta = ComboFacLinArticulo.selectedItem.ArtTipoVenta;
+
+                $("#FacLinArtDescrip").val(Artdesc);
+                ComboFacLinTipo.selectedValue = ArtTipoVenta;
+
+                $("#ArtLabel").css("color", "black");
+                $("#BtnFacLinNewEditCancel").css("visibility", "visible");
+                $(".wrapper-pedlin-Componentes").css("visibility", "visible");
+                $(".wrapper-pedlin-Imagenes").css("visibility", "visible");
+
+                setTimeout(function () {
+                    selectAllText($("#FacLinQty"));
+                }, 10);
+
+
+                Call_Articulo_Find_Precios();
+                // Get_FACLIN_ART_COMPONENTES();
+            }
+        });
+
+
+    });
+
+
+
+
+    window.onpopstate = function () {
+        var Guid = '@Model.FacturaEst.Guid';
+        window.location.href = "/Facturas?Guid=@Model.FacturaEst.Guid";
+        //history.pushState({}, '');
+    };
+    history.pushState({}, '');
+
+
+    /****************************************************** */
+    /* FUNCIONES ALTERNATIVAS */
+    /****************************************************** */
+
+
+
+    /****************************************************** */
+    /* FUNCIONES GENERALES */
+    /****************************************************** */
+    @*function FAC_Salvar() {
+
+        var Spinner = Rats.UI.LoadAnimation.start();
+
+        var Guid        = '@Model.FacturaEst.Guid';
+        var FacturaEst   = @Html.Raw(Json.Serialize(@Model.FacturaEst));
+
+        var data = new FormData();
+
+        /*****************************************************************************************************************************************/
+        /* SE CARGA EN FormData LOS VALORES DEL MODELO (que vienen de entrada, para que tb actualice los que no existen en el formulario)        */
+        /*****************************************************************************************************************************************/
+        for (var key in FacturaEst) {
+            var value = FacturaEst[key];
+            if (value != null) {
+                //console.log(key + "   " + value);
+                data.append(key, value);
+            }
+        }
+
+        /*****************************************************************************************************************************************/
+        /* SE ACTUALIZA EN FormData LOS VALORES MODIFICADOS DE LOS OBJETOS DEL FORMULARIO                                                        */
+        /*****************************************************************************************************************************************/
+        var form = $("#FormCabEdit");
+        $.each(form.serializeArray(), function (key, input) {
+            //data.append(input.name, input.value);
+            //data.set(input.name, input.value);
+            //console.log(input.name.replace("PedidoEst.", "") + "  :  " + input.value);
+            data.set(input.name.replace("FacturaEst.", ""), input.value);
+        });
+        //console.log("***************************************************************************");
+        //console.log(data);
+
+        $.ajax({
+            type: 'POST',
+            url: "/Facturas/Save_FACTURA",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                Spinner.stop();
+                if (data != null) {
+                    window.location.href = "/Facturas?Guid=" + Guid;
+                } else {
+                    DialogInfo("Error: Contacte con servicio técnico");
+                }
+            },
+            always: function (data) { },
+            error: function (xhr, status, error) {
+                Spinner.stop();
+                console.log("Error", xhr, xhr.responseText, status, error);
+            }
+        });
+
+    }*@
+
+
+    // iLabPlus
+    function FAC_Salvar() {
+
+        var Spinner = Rats.UI.LoadAnimation.start();
+
+        var Guid = '@Model.FacturaEst.Guid';
+        var FacturaEst = @Html.Raw(Json.Serialize(@Model.FacturaEst));
+
+        var data = {};
+
+        for (var key in FacturaEst) {
+            var value = FacturaEst[key];
+            if (value != null) {
+                data[key] = value;
+            }
+        }
+
+        var form = $("#FormCabEdit").serializeArray();
+        form.forEach(function (input) {
+            data[input.name.replace("FacturaEst.", "")] = input.value;
+        });
+
+        fetch('/Facturas/Save_FACTURA', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            Spinner.stop();
+            if (data != null) {
+                window.location.href = "/Facturas?Guid=" + Guid;
+            } else {
+                DialogInfo("Error: Contacte con servicio técnico");
+            }
+        })
+        .catch(error => {
+            Spinner.stop();
+            console.error("Error", error);
+        });
+
+    }
+
+
+
+
+    @*function FAC_Eliminar() {
+
+        N_ModalConfirmation('¿ Desea eliminar el pedido seleccionado?').then((res) => {
+
+            if (res == true) {
+
+                var Spinner = Rats.UI.LoadAnimation.start();
+
+                var Guid = '@Model.FacturaEst.Guid';
+
+                var data = new FormData();
+                data.append("Guid", Guid);
+
+                $.ajax({
+                    type: 'POST',
+                    url: "/Facturas/Delete_FACTURA",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        Spinner.stop();
+                        if (data != null) {
+                            window.location.href = "/Facturas";
+                        }
+                    },
+                    always: function (data) { },
+                    error: function (xhr, status, error) {
+                        Spinner.stop();
+                        console.log("Error", xhr, xhr.responseText, status, error);
+                    }
+                });
+            }
+
+        }).catch((error) => {
+
+        });
+
+
+    }*@
+
+
+    // iLabPlus
+    function FAC_Eliminar() {
+
+        N_ModalConfirmation('¿ Desea eliminar el pedido seleccionado?').then((res) => {
+
+            if (res == true) {
+
+                var Spinner = Rats.UI.LoadAnimation.start();
+
+                var Guid = '@Model.FacturaEst.Guid';
+
+                fetch('/Facturas/Delete_FACTURA', {
+                    method: 'POST',
+                    body: JSON.stringify({ Guid: Guid }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Spinner.stop();
+                    if (data != null) {
+                        window.location.href = "/Facturas";
+                    }
+                })
+                .catch(error => {
+                    Spinner.stop();
+                    console.error("Error", error);
+                });
+
+            }
+
+        }).catch((error) => {
+
+        });
+
+    }
+
+
+
+    /****************************************************** */
+    /* FUNCIONES PEDLIN */
+    /****************************************************** */
+    function Calculo_FacLin_TOTALES() {
+        var TotQTY      = 0;
+        var TotPESO     = 0;
+
+        var TotBRUTO    = 0;
+        var TotDTOCAB   = 0;
+        var TotIVA      = 0;
+        var TOTAL       = 0;
+
+        for (var i = 0; i < FacturaLINEAS.length; i++) {
+
+            var Lin = FacturaLINEAS[i];
+            TotQTY  = TotQTY    + Lin.FacQty;
+            TotPESO = TotPESO + Lin.FacPesoTotal;
+
+            TotBRUTO = TotBRUTO + Lin.FacPrecioTotal;
+        }
+        $("#FacLinTotQty").val(numeral(TotQTY).format('0,0.00'));
+        $("#FacLinTotPeso").val(numeral(TotPESO).format('0,0.0000'));
+
+        var ValorFacDTOCial     = $("#FacDTOCial").val().replace(",", ".");
+        var ValorFacDTOPpago    = $("#FacDTOPpago").val().replace(",", ".");
+        var ValorFacDTORappel   = $("#FacDTORappel").val().replace(",", ".");
+
+
+        var TmpDto1 = TotBRUTO * ValorFacDTOCial    / 100;
+        var TmpDto2 = TotBRUTO * ValorFacDTOPpago   / 100;
+        var TmpDto3 = TotBRUTO * ValorFacDTORappel  / 100;
+
+        TotDTOCAB = TmpDto1 + TmpDto2 + TmpDto3;
+
+
+        var ValorIVA = $("#FacIVA").val().replace(",", ".");
+        TotIVA = (TotBRUTO - TotDTOCAB) * ValorIVA / 100;
+
+        /*TotDTOCAB   = parseFloat($("#DTO").val().replace(",", "."));*/
+        /*TotIVA      = parseFloat($("#IVA").val().replace(",", "."));*/
+
+
+        $("#FacLinTotBRUTO").val(numeral(TotBRUTO).format('0,0.00'));
+        $("#FacLinTotDTOsCAB").val(numeral(TotDTOCAB).format('0,0.00'));
+        $("#FacLinTotIVA").val(numeral(TotIVA).format('0,0.00'));
+
+        TOTAL = TotBRUTO - TotDTOCAB + TotIVA;
+        $("#FacLinTotTOTAL").val(numeral(TOTAL).format('0,0.00'));
+
+        /********************************************************/
+        /*  Actualizacion de campos tab Facido                  */
+        /********************************************************/
+        $("#BI").val($("#FacLinTotBRUTO").val());
+        $("#DTO").val($("#FacLinTotDTOsCAB").val());
+        $("#IVA").val($("#FacLinTotIVA").val());
+
+        $("#TOTAL").val($("#FacLinTotTOTAL").val());
+
+    }
+
+
+
+    function FACLIN_Delete(Guid) {
+
+
+        N_ModalConfirmation('¿ Desea eliminar la linea seleccionada?').then((res) => {
+
+            if (res == true) {
+
+                var Spinner = Rats.UI.LoadAnimation.start();
+
+                var data = new FormData();
+                data.append("Guid", Guid);
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: "/Facturas/Delete_FACTURA_LINEA",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        Spinner.stop();
+                        if (data != null) {
+                            N_Grid_Data_Delete(theGridFacLin, Guid);
+                            Calculo_FacLin_TOTALES();
+                            FacLin_Limpiar_Campos();
+                        }
+                    },
+                    always: function (data) { },
+                    error: function (xhr, status, error) {
+                        Spinner.stop();
+                        console.log("Error", xhr, xhr.responseText, status, error);
+                    }
+                });
+            }
+
+        }).catch((error) => {
+
+        });
+
+    }
+
+    function FacLin_Limpiar_Campos() {
+
+        ComboFacLinArticulo.itemsSource     = null;
+        ListVaciaArticulos[0].Articulo      = "";
+        ListVaciaArticulos[0].ArtDes        = "";
+        ComboFacLinArticulo.itemsSource     = ListVaciaArticulos;
+        ComboFacLinArticulo.selectedValue   = "";
+
+
+        ComboFacLinTipo.selectedIndex = 0;
+        $("#FacLinArtDescrip").val("");
+
+        ComboFacLinTarifa.selectedValue = ComboFacTarifaVenta.selectedValue;
+
+        $("#FacLinQty").val(numeral(1).format('0,0.00'));
+        $("#FacLinPeso").val(numeral(0).format('0,0.0000'));
+        $("#FacLinMerma").val(numeral(0).format('0,0.00'));
+        $("#FacLinPrecio").val(numeral(0).format('0,0.00'));
+        $("#FacLinDto").val(numeral(0).format('0,0.00'));
+        $("#FacLinTOTAL").val(numeral(0).format('0,0.00'));
+
+
+        $("#ArtLabel").css("color", "black");
+        $("#BtnFacLinNewEditCancel").css("visibility", "hidden");
+        $(".wrapper-pedlin-Componentes").css("visibility", "hidden");
+        $(".wrapper-pedlin-Imagenes").css("visibility", "hidden");
+        $("#FacLinImgView").attr("src", "");
+
+
+        $('#FacLinObserv').val("");
+        $('#FacLinMedidas').val("");
+
+        $("#FacLinGuidHidden").val("");
+
+    }
+
+
+    function FACLIN_NewEdit() {
+    if (ComboFacLinArticulo.selectedValue == null || ComboFacLinArticulo.selectedValue == "") {
+        $("#ArtLabel").css("color", "red");
+    } else {
+        $("#ArtLabel").css("color", "black");
+
+        var Spinner = Rats.UI.LoadAnimation.start();
+
+        var GuidFac = '@Model.FacturaEst.Guid';
+        var GuidFacLin = $("#FacLinGuidHidden").val();
+
+        // Valor predeterminado para Pedido
+        var pedidoValor = "DEFAULT_PEDIDO"; // Estoy hay que poner el valor que corresponda
+
+        var data = new FormData();
+        data.append('Guid', GuidFacLin || '');
+        data.append('Empresa', "@Model.FacturaEst.Empresa");
+        data.append('Cliente', "@Model.FacturaEst.Cliente");
+        data.append('Factura', "@Model.FacturaEst.Factura");
+        data.append('Albaran', "DEFAULT_ALBARAN");
+        data.append('Pedido', pedidoValor);
+        data.append('FacLinea', 1);
+        data.append('FacArt', ComboFacLinArticulo.selectedValue);
+        data.append('FacDesc', $("#FacLinArtDescrip").val());
+        data.append('FacOro', ComboFacLinTipoOro ? ComboFacLinTipoOro.selectedValue : null);
+        data.append('FacTarifa', ComboFacLinTarifa ? ComboFacLinTarifa.selectedValue : null);
+        data.append('FacKIL', ComboFacLinKilates ? ComboFacLinKilates.selectedValue : null);
+        data.append('FacArtTipoVenta', ComboFacLinTipo.selectedValue || "Etiqueta");
+        data.append('FacQty', parseFloat($("#FacLinQty").val().replace(",", ".")));
+        data.append('FacPeso', parseFloat($("#FacLinPeso").val().replace(",", ".")));
+        data.append('FacMerma', parseFloat($("#FacLinMerma").val().replace(",", ".")));
+        data.append('FacPrecio', parseFloat($("#FacLinPrecio").val().replace(",", ".")));
+        data.append('FacDtoLin', parseFloat($("#FacLinDto").val().replace(",", ".")));
+        data.append('FacObserv', $('#FacLinObserv').val());
+        data.append('FacMedidas', $('#FacLinMedidas').val() || null);
+        data.append('FacImageSelect', parseInt($(".ArtImgViewImgSelect").attr('data-sec')) || null);
+        data.append('IsoUser', "@User.Identity.Name");
+
+        fetch('/Facturas/Save_FACLIN', {
+            method: 'POST',
+            body: data
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
+        .then(res => {
+            Spinner.stop();
+            if (res != null) {
+                if (GuidFacLin != null && GuidFacLin != "") {
+                    N_Grid_Data_Refresh(theGridFacLin, res);
+                    theGridFacLin.select(-1, -1);
+                } else {
+                    N_Grid_Data_Add(theGridFacLin, res);
+                }
+                var NewItemsLineas = theGridFacLin.itemsSource.items;
+                FacturaLINEAS = NewItemsLineas;
+                Calculo_FacLin_TOTALES();
+                FacLin_Limpiar_Campos();
+                $("#BtnFacLinNewEditCancel").css("visibility", "hidden");
+                $(".wrapper-pedlin-Componentes").css("visibility", "hidden");
+                $(".wrapper-pedlin-Imagenes").css("visibility", "hidden");
+                $("#FacLinImgView").attr("src", "");
+                $("#ComboFacLinArticulo").focus();
+            } else {
+                DialogInfo("Error: Contacte con servicio técnico");
+            }
+        })
+        .catch(error => {
+            Spinner.stop();
+            console.error("Error:", error);
+            DialogInfo("Error: " + error.message);
+        });
+    }
+}
+
+
+
+
+
+    @*function FACLIN_NewEdit() {
+
+        if (ComboFacLinArticulo.selectedValue == null || ComboFacLinArticulo.selectedValue == "") {
+
+            $("#ArtLabel").css("color", "red");
+        } else {
+            $("#ArtLabel").css("color", "black");
+
+
+            var Spinner = Rats.UI.LoadAnimation.start();
+
+            var GuidFac     = '@Model.FacturaEst.Guid';
+            var GuidFacLin  = $("#FacLinGuidHidden").val();
+
+
+            var data = new FormData();
+            data.append("GuidFac",      GuidFac);
+            data.append("GuidFacLin",   GuidFacLin);
+
+            /************************************************************/
+            /* CAMPOS A ACTUALIZAR                                      */
+            /************************************************************/
+            var FacArt          = ComboFacLinArticulo.selectedValue;
+            var FacDesc         = $("#FacLinArtDescrip").val();
+            var FacLinTipo      = "";
+            // var FacLinKil       = ComboFacLinKilates.selectedValue;
+            var FacLinOro       = ComboFacLinTipoOro.selectedValue;
+            var FacLinTarifa    = ComboFacLinTarifa.selectedValue;
+
+            var FacLinQty       = $("#FacLinQty").val();
+            var FacLinPeso      = $("#FacLinPeso").val();
+            var FacLinMerma     = $("#FacLinMerma").val();
+            var FacLinPrecio    = $("#FacLinPrecio").val();
+            var FacLinDtoLin    = $("#FacLinDto").val();
+
+            var FacLinObserv    = $('#FacLinObserv').val();
+            var FacLinMedidas   = $('#FacLinMedidas').val();
+
+            var ImgSelect       = $(".ArtImgViewImgSelect");
+            var ImsSelect_Sec   = ImgSelect.attr('data-sec');
+
+
+            if (ComboFacLinTipo.selectedValue != "" && ComboFacLinTipo.selectedValue != null) {
+                FacLinTipo = ComboFacLinTipo.selectedValue;
+            } else {
+                FacLinTipo = "Etiqueta";
+            }
+
+            data.append("FacArt",           FacArt);
+            data.append("FacDesc",          FacDesc);
+
+            data.append("FacLinTipo",       FacLinTipo);
+            data.append("FacLinKil",        FacLinKil);
+            data.append("FacLinOro",        FacLinOro);
+            data.append("FacLinTarifa",     FacLinTarifa);
+
+            data.append("FacLinQty",        FacLinQty);
+            data.append("FacLinPeso",       FacLinPeso);
+            data.append("FacLinMerma",      FacLinMerma);
+            data.append("FacLinPrecio",     FacLinPrecio);
+            data.append("FacLinDtoLin",     FacLinDtoLin);
+
+            data.append("FacLinObserv",     FacLinObserv);
+
+            data.append("FacMedidas",       FacLinMedidas);
+            data.append("FacImageSelect",   ImsSelect_Sec);
+
+            /************************************************************/
+            // xavi
+            //console.log(GlobalListArticuloPIE);
+            //console.log(GlobalListArticuloCOMP);
+
+            let ListFacLinComponentes = GlobalListArticuloPIE.concat(GlobalListArticuloCOMP);
+            data.append("FacLinCOMP", JSON.stringify(ListFacLinComponentes));
+            data.append("FacLinCOMPEdit", GlobalListArticuloCOMP_Edit);
+
+            $.ajax({
+                type: 'POST',
+                url: "/Facturas/Save_FACLIN",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    Spinner.stop();
+                    if (res != null) {
+                        //console.log(res);
+
+                        if (GuidFacLin != null && GuidFacLin != "") {
+                            // Editamos
+                            N_Grid_Data_Refresh(theGridFacLin, res);
+                            theGridFacLin.select(-1, -1);
+                        } else {
+                            // Creamos
+                            N_Grid_Data_Add(theGridFacLin, res);
+                        }
+                        /*************/
+                        var NewItemsLineas = theGridFacLin.itemsSource.items;
+                        FacturaLINEAS = NewItemsLineas;
+                        /*************/
+
+                        Calculo_FacLin_TOTALES();
+                        FacLin_Limpiar_Campos();
+                        $("#BtnFacLinNewEditCancel").css("visibility", "hidden");
+                        $(".wrapper-pedlin-Componentes").css("visibility", "hidden");
+                        $(".wrapper-pedlin-Imagenes").css("visibility", "hidden");
+                        $("#FacLinImgView").attr("src", "");
+
+                        $("#ComboFacLinArticulo").focus();
+
+
+                    } else {
+                        DialogInfo("Error: Contacte con servicio técnico");
+                    }
+                },
+                always: function (data) { },
+                error: function (xhr, status, error) {
+                    Spinner.stop();
+                    console.log("Error", xhr, xhr.responseText, status, error);
+                }
+            });
+
+
+
+
+        }
+
+
+    }*@
+
+    function FACLIN_NewEdit_Cancel() {
+
+        $("#BtnFacLinNewEdit").prop("disabled", false);
+
+        FacLin_Limpiar_Campos();
+        $("#BtnFacLinNewEditCancel").css("visibility", "hidden");
+        $(".wrapper-pedlin-Componentes").css("visibility", "hidden");
+        $(".wrapper-pedlin-Imagenes").css("visibility", "hidden");
+        $("#FacLinImgView").attr("src", "");
+        theGridFacLin.select(-1, -1);
+
+        var FacKILStd = "18";
+        var FacOroStd = "AM";
+
+        // ComboFacLinKilates.selectedValue = FacKILStd;
+        ComboFacLinTipoOro.selectedValue = FacOroStd;
+
+
+        setTimeout(function () {
+            $("#BtnFacLinNewEditCancel").focus();
+        }, 10);
+
+        GlobalListArticuloPIE       = null;
+        GlobalListArticuloCOMP      = null;
+        GlobalListArticuloCOMP_Edit = false;
+    }
+
+
+
+    $('#FacLinQty').on('input', function () {
+        Calcular_FacLin_PrecioTotal();
+    });
+    $('#FacLinPrecio').on('input', function () {
+        Calcular_FacLin_PrecioTotal();
+    });
+    $('#FacLinDto').on('input', function () {
+        Calcular_FacLin_PrecioTotal();
+    });
+    $('#FacLinPeso').on('input', function () {
+        Calcular_FacLin_PrecioTotal();
+    });
+    $('#FacLinMerma').on('input', function () {
+        Calcular_FacLin_PrecioTotal();
+    });
+
+
+    ComboFacLinTarifa.selectedIndexChanged.addHandler(function (s, e) {
+        if (ComboFacLinArticulo.selectedItem != null) {
+            Call_Articulo_Find_Precios();
+        }
+    });
+    ComboFacLinTipo.selectedIndexChanged.addHandler(function (s, e) {
+        if (ComboFacLinArticulo.selectedItem != null) {
+            Call_Articulo_Find_Precios();
+        }
+    });
+    $('.PedLinPrecioAct').on('click', function () {
+        Call_Articulo_Find_Precios(true);
+    });
+
+
+    function Calcular_FacLin_PrecioTotal() {
+
+        var FacLinTOTAL = 0;
+
+        var FacQty      = 0;
+        var FacPeso     = 0;
+        var FacMerma    = 0;
+        var FacPrecio   = 0;
+        var FacDtoLin   = 0;
+
+
+        if (ComboFacLinArticulo.selectedValue != null && ComboFacLinArticulo.selectedValue != "") {
+
+            var FacLinTipo = "";
+
+            if (ComboFacLinTipo.selectedValue != "" && ComboFacLinTipo.selectedValue != null) {
+                FacLinTipo = ComboFacLinTipo.selectedValue;
+            } else {
+                FacLinTipo = "Etiqueta";
+            }
+
+            FacQty      = numeral($("#FacLinQty").val()).value();
+            FacPeso     = numeral($("#FacLinPeso").val()).value();
+            FacMerma    = numeral($("#FacLinMerma").val()).value();
+            FacPrecio   = numeral($("#FacLinPrecio").val()).value();
+            FacDtoLin   = numeral($("#FacLinDto").val()).value();
+
+            switch (FacLinTipo) {
+                case "Etiqueta":
+                    var Bruto   = FacQty * FacPrecio;
+                    FacLinTOTAL = Bruto - (Bruto * FacDtoLin / 100);
+                    break;
+                case "Hechura":
+
+                    break;
+                case "Peso":
+
+                    break;
+                case "PesoHechura":
+
+                    break;
+                default:
+
+            }
+
+            $("#FacLinTOTAL").val(numeral(FacLinTOTAL).format('0,0.00'));
+        }
+
+
+    }
+
+
+    /**********************************************************************/
+    /* Secuencia de return: Articulo - Cantidad - Precio : Guardar*/
+    /**********************************************************************/
+    //$("#ComboFacLinArticulo").on("keydown", function (event) {
+    //    if (event.which == 13) {
+    //        if (ComboFacLinArticulo.selectedValue != null && ComboFacLinArticulo.selectedValue != "") {
+    //            selectAllText($("#FacLinQty"));
+    //        }
+    //    }
+    //});
+
+    $("#FacLinQty").on("keydown", function (event) {
+        if (event.which == 13) {
+            if (ComboFacLinArticulo.selectedValue != null && ComboFacLinArticulo.selectedValue != "") {
+                selectAllText($("#FacLinPrecio"));
+            }
+        }
+    });
+    $("#FacLinPrecio").on("keydown", function (event) {
+        if (event.which == 13) {
+            if (ComboFacLinArticulo.selectedValue != null && ComboFacLinArticulo.selectedValue != "") {
+
+                // Comprueba si la linea ya esta en MRP, no permitir modificaciones....
+                if($("#BtnFacLinNewEdit").prop("disabled") == false){
+                    $("#FacLinPrecio").blur();
+                    FACLIN_NewEdit();
+                }
+
+            }
+        }
+    });
+
+    $("#FacLinDto").on("keydown", function (event) {
+        if (event.which == 13) {
+            if (ComboFacLinArticulo.selectedValue != null && ComboFacLinArticulo.selectedValue != "") {
+
+                // Comprueba si la linea ya esta en MRP, no permitir modificaciones....
+                if($("#BtnFacLinNewEdit").prop("disabled") == false){
+                    $("#FacLinDto").blur();
+                    FACLIN_NewEdit();
+                }
+
+
+            }
+        }
+    });
+
+    function selectAllText(Obj) {
+        Obj.focus();
+        setTimeout(function () {
+            Obj.select();
+        }, 10);
+    }
+    /**********************************************************************/
+
+
+
+
+    /************************************************************************/
+    /* FUNCIONES GENERALES                                                  */
+    /************************************************************************/
+
+    class Result {
+        constructor(value, error) {
+            this.value = value;
+            this.error = error;
+            this.isSuccess = error == null;
+        }
+
+        static success(value) {
+            return new Result(value, null);
+        }
+
+        static failure(error) {
+            return new Result(null, error);
+        }
+    }
+
+
+
+    function Call_Articulo_Find_Precios(Forzar) {
+        try {
+            var FacArt = ComboFacLinArticulo ? ComboFacLinArticulo.selectedValue : null;
+
+            if (FacArt === null) {
+                console.error("ComboFacLinArticulo is null or undefined");
+                return;
+            }
+
+            var Procesar = true;
+
+            var GuidFacLin = $("#FacLinGuidHidden").val();
+            if (GuidFacLin != null && GuidFacLin != "") {
+                // Editamos no buscar precio de articulo
+                Procesar = false
+            } else {
+                // Creamos
+                Procesar = true;
+            }
+
+            if (Forzar == true) {
+                Procesar = true;
+            }
+
+            if (FacArt == "") {
+                Procesar = false
+            }
+
+            if (Procesar == true) {
+
+                var FacDesc = $("#FacLinArtDescrip").val();
+
+                var FacLinKil = ComboFacLinKilates ? ComboFacLinKilates.selectedValue : null;
+                var FacLinOro = ComboFacLinTipoOro ? ComboFacLinTipoOro.selectedValue : null;
+                var FacLinTarifa = ComboFacLinTarifa ? ComboFacLinTarifa.selectedValue : null;
+
+                var FacCabOroFino = $("#FacOroFino").val();
+
+                var FacLinTipo = "";
+                if (ComboFacLinTipo && ComboFacLinTipo.selectedValue != "" && ComboFacLinTipo.selectedValue != null) {
+                    FacLinTipo = ComboFacLinTipo.selectedValue;
+                } else {
+                    FacLinTipo = "Etiqueta";
+                }
+
+                var data = new FormData();
+                data.append("Articulo", FacArt);
+                if (FacLinKil == "") {
+                    FacLinKil = "18";
+                }
+                data.append("SelectKilates", FacLinKil);
+                data.append("SelectTipoVenta", FacLinTipo);
+                data.append("SelectTarifa", FacLinTarifa);
+                data.append("SelectOroFino", FacCabOroFino);
+                data.append("SelectTipoOro", FacLinOro);
+
+
+                /********************************************************************************/
+                /* PROCESO RESTRUCTURACION DE LISTAS DE COMPONENTES P-C PARA RECALCULO DE PRECIO*/
+                /********************************************************************************/
+                $('.ListFacLinCOMP_Mods > tbody > tr').each(function (data) {
+                    var Obj = $(this);
+                    var Sec = Obj.data('sec');
+                    var TipoSec = Obj.data('tiposec');
+                    TipoSec = TipoSec - 1;
+
+                    var Tipo = $("#FacLin_COMP_Mod_Tipo_" + Sec).val();
+                    var Qty = numeral($("#FacLin_COMP_Mod_Qty_" + Sec).val()).value();
+                    var Precio = numeral($("#FacLin_COMP_Mod_Precio_" + Sec).val()).value();
+                    var Valor = numeral($("#FacLin_COMP_Mod_Valor_" + Sec).val()).value();
+                    var Peso = numeral($("#FacLin_COMP_Mod_Peso_" + Sec).val()).value();
+                    var Desc = $("#FacLin_COMP_Mod_Desc_" + Sec).val();
+
+                    var Componente = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + Sec);
+
+
+                    if (Componente) {
+                        if (Tipo == "P") {
+                            if (GlobalListArticuloPIE != null) {
+                                GlobalListArticuloPIE[TipoSec].Componente = Componente.selectedValue;
+                                GlobalListArticuloPIE[TipoSec].Descripcion = Desc;
+                                GlobalListArticuloPIE[TipoSec].Cantidad = Qty;
+                                GlobalListArticuloPIE[TipoSec].Precio = Precio;
+                                GlobalListArticuloPIE[TipoSec].Valor = Valor;
+                                GlobalListArticuloPIE[TipoSec].Peso = Peso;
+                                GlobalListArticuloCOMP_Edit = true;
+                            }
+                        }
+
+                        if (Tipo == "C") {
+                            if (GlobalListArticuloCOMP != null) {
+                                GlobalListArticuloCOMP[TipoSec].Componente = Componente.selectedValue;
+                                GlobalListArticuloCOMP[TipoSec].Descripcion = Desc;
+                                GlobalListArticuloCOMP[TipoSec].Cantidad = Qty;
+                                GlobalListArticuloCOMP[TipoSec].Precio = Precio;
+                                GlobalListArticuloCOMP[TipoSec].Valor = Valor;
+                                GlobalListArticuloCOMP[TipoSec].Peso = Peso;
+                                GlobalListArticuloCOMP_Edit = true;
+                            }
+                        }
+                    }
+                });
+
+                data.append("EstructuraPIE", JSON.stringify(GlobalListArticuloPIE));
+                data.append("EstructuraCOMP", JSON.stringify(GlobalListArticuloCOMP));
+                /********************************************************************************/
+                /********************************************************************************/
+
+                //$.ajax({
+                //    type: 'POST',
+                //    url: "/Articulos/GetSimulacionPrecios",
+                //    data: data,
+                //    processData: false,
+                //    contentType: false,
+                //    success: function (res) {
+                //        if (res != null) {
+                //            var PrecioPVP = res.EstCOSTES.PrecioPVP;
+                //            console.log(res);
+                //            console.log(PrecioPVP);
+                //            $("#FacLinPrecio").val(numeral(PrecioPVP).format('0,0.00'));
+                //            Calcular_FacLin_PrecioTotal();
+                //        }
+                //    },
+                //    always: function (data) { },
+                //    error: function (xhr, status, error) {
+                //        console.log("Error", xhr, xhr.responseText, status, error);
+                //    }
+                //});
+            }
+        } catch (error) {
+            console.error("Error in Call_Articulo_Find_Precios:", error);
+        }
+    }
+
+
+
+
+    //function Get_FACLIN_ART_COMPONENTES() {
+
+
+    //    var Articulo    = ComboFacLinArticulo.selectedValue;
+    //    var GuidFacLin  = $("#FacLinGuidHidden").val();
+
+    //    if (Articulo != "") {
+
+    //        //console.log("**************************");
+    //        //console.log("Get_PEDLIN_ART_COMPONENTES");
+    //        //console.log("**************************");
+
+    //        //console.log("ARITUCLO: " + Articulo);
+    //        //console.log("GuidFacLin: " + GuidFacLin);
+
+    //        var data = new FormData();
+    //        data.append("Articulo", Articulo);
+    //        data.append("GuidFacLin", GuidFacLin);
+
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: "/Facturas/Get_FACLIN_ART_COMPONENTES",
+    //            data: data,
+    //            processData: false,
+    //            contentType: false,
+    //            success: function (res) {
+
+    //                //console.log(res);
+    //                //console.log(GuidFacLin);
+
+    //                if (res != null) {
+
+    //                    var FichaArticulo   = res.Articulo;
+    //                    var FichaFacLin     = res.FacLin;
+
+    //                    /* CARGA DE TIPO DE ORO */
+    //                    if (GuidFacLin == "") {
+    //                        var TipoOro = FichaArticulo.ArtTipoOro;
+    //                        ComboFacLinTipoOro.selectedValue = TipoOro;
+
+    //                        ComboFacLinKilates.selectedValue = "18";
+    //                    } else {
+    //                        var FacKIL = res.FacLin.FacKIL;
+    //                        var FacOro = res.FacLin.FacOro;
+    //                        if (FacOro == "" || FacOro == null) {
+    //                            FacOro = "AM";
+    //                        }
+    //                        if (FacKIL == "" || FacKIL == null) {
+    //                            FacKIL = "18";
+    //                        }
+
+    //                        ComboFacLinKilates.selectedValue = FacKIL;
+    //                        ComboFacLinTipoOro.selectedValue = FacOro;
+    //                    }
+
+
+    //                    /********************************* */
+    //                    /* CARGA DE LA GRID DE COMPONENTES */
+    //                    /********************************* */
+    //                    var ListArticuloPIE     = res.ListArticuloPIE;
+    //                    var ListArticuloCOMP    = res.ListArticuloCOMP;
+    //                    GlobalListArticuloPIE   = ListArticuloPIE;
+    //                    GlobalListArticuloCOMP  = ListArticuloCOMP;
+
+    //                    ListArticuloPIE.forEach(function (element) {
+    //                        element.Tipo = "P";
+    //                    });
+    //                    ListArticuloCOMP.forEach(function (element) {
+    //                        element.Tipo = "C";
+    //                    });
+    //                    const LisComponentes = ListArticuloPIE.concat(ListArticuloCOMP);
+    //                    //console.log(LisComponentes);
+
+
+    //                    AddLin_FacLin_EstCOMP_Mod(LisComponentes);
+
+
+    //                    var FacImgSelect = 1;
+    //                    if (FichaFacLin != null) {
+    //                        FacImgSelect = FichaFacLin.FacImageSelect;
+    //                        if (FacImgSelect == null || FacImgSelect == 0) {
+    //                            FacImgSelect = 1;
+    //                        }
+    //                    }
+
+    //                    /* CARGA DE IMAGEN-S */
+    //                    var ListImagenes = res.ListArticuloIMG;
+    //                    if (ListImagenes.length > 0) {
+
+    //                        var ArtImg = RutaImg + ListImagenes[FacImgSelect - 1].Imagen;
+    //                        $("#FacLinImgView").attr("src", ArtImg);
+
+    //                        $(".wrapper-pedlin-Imagenes-Others").html("");
+
+    //                        if (ListImagenes.length > 1) {
+    //                            for (var i = 1; i <= ListImagenes.length; i++) {
+    //                                var ArtImgOther = RutaImg + ListImagenes[i - 1].Imagen;
+    //                                //console.log(ArtImgOther);
+
+    //                                var ImgAdd = '<img id="FacLinArtImgView-' + i + '" src="' + ArtImgOther + '" alt="" class="PedLinArtImgOther" data-sec="' + i + '">';
+    //                                $(".wrapper-pedlin-Imagenes-Others").append(ImgAdd);
+    //                                $("#FacLinArtImgView-" + i).attr("data-sec", ListImagenes[i - 1].Secuencia);
+
+    //                            }
+
+    //                            $("#FacLinArtImgView-" + FacImgSelect).addClass("ArtImgViewImgSelect");
+
+    //                            $(".PedLinArtImgOther").on("click", function () {
+    //                                var Str = $(this).attr('src');
+    //                                var Sec = $(this).attr('data-sec');
+    //                                $("#FacLinImgView").attr("src", Str);
+    //                                $("#FacLinImgView").attr("data-sec", Sec);
+
+    //                                $(".PedLinArtImgOther").removeClass("ArtImgViewImgSelect");
+    //                                $(this).addClass("ArtImgViewImgSelect");
+    //                            });
+    //                        }
+
+
+    //                    }
+
+
+    //                } else {
+    //                    DialogInfo("Error: Contacte con servicio técnico");
+    //                }
+    //            },
+    //            always: function (data) { },
+    //            error: function (xhr, status, error) {
+    //                console.log("Error", xhr, xhr.responseText, status, error);
+    //            }
+    //        });
+
+    //    }
+
+
+    //}
+
+    function AddLin_FacLin_EstCOMP_Mod(LisComponentes) {
+
+        $('#BodyTabletFacLinCompMod').html("");
+        for (var i = 0; i < LisComponentes.length; i++) {
+            var Item = LisComponentes[i];
+            //console.log(Item);
+
+            COMP_Mod_NumLin = i;
+            var Sec             = Item.Secuencia;
+            var NumLin          = Item;
+            var Desc            = Item.Descripcion;
+            var TipoPrecio      = Item.TipoPrecio;
+            var Articulo        = Item.Articulo;
+            var Componente      = Item.Componente;
+
+            var Componente      = Item.Articulo;
+            var Tipo            = Item.Tipo;
+            var Qty             = numeral(Item.Cantidad).format('0,0.00');
+            var Precio          = numeral(Item.Precio).format('0,0.0000');
+            var Valor           = numeral(Item.Valor).format('0,0.0000');
+            var Peso            = numeral(Item.Peso).format('0,0.000');
+            var PesoSinMerma    = numeral(Item.PesoSinMerma).format('0,0.000');
+
+            var HasChgColorNum  = Item.HasChgColorNum;
+
+            var Comp_Has_Alt = "";
+            //var Alternativas = EstCOMP_ALT_Mod.filter(x => x.Articulo == Componente);
+            //if (Alternativas.length > 0) {
+
+            //    Comp_Has_Alt = '<i class="fal fa-exclamation"></i>';
+            //    Comp_Has_Alt = '<i class="fal fa-info"></i>';
+            //}
+
+            var ContCtrl = i * 1009;
+            var ContCtrlSub = ContCtrl - 1;
+
+            var CadAppend =
+                '<tr class="d-flex SimCompModLin" id="ModFacLin_' + COMP_Mod_NumLin + '" data-sec="' + COMP_Mod_NumLin + '" data-tiposec="' + Sec + '">';
+
+            if (Tipo == "P") {
+
+                if (HasChgColorNum > 0) {
+                    CadAppend = CadAppend +
+                        '<td class="CompDetailTableTD CompDetailTableTH-Left th_left" style="width:20px;margin-left: 0px;">' +
+                        '<i id="FacLin_COMP_Mod_Color_' + COMP_Mod_NumLin + '" class="fal fa-palette PedLinEditColors PedLinEditColorsRed" style="top: 8px;position: relative;"></i>' +
+                        '</td>';
+                } else {
+                    CadAppend = CadAppend +
+                        '<td class="CompDetailTableTD CompDetailTableTH-Left th_left" style="width:20px;margin-left: 0px;">' +
+                        '<i id="FacLin_COMP_Mod_Color_' + COMP_Mod_NumLin + '" class="fal fa-palette PedLinEditColors" style="top: 8px;position: relative;"></i>' +
+                        '</td>';
+                }
+
+            } else {
+                CadAppend = CadAppend +
+                    '<td class="CompDetailTableTD CompDetailTableTH-Left th_left" style="width:20px;margin-left: 0px;">' +
+                    '</td>';
+            }
+
+
+            CadAppend = CadAppend +
+                '<td class="CompDetailTableTD" style="width:170px;">' +
+                '<div id="FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin + '" style="width:170px" type="text" data-comp="' + Componente + '"></div><script type="text/javascript">' +
+                'var FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin + ' = new c1.mvc.input._AutoCompleteWrapper("#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin + '");FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin + '.initialize({"displayMemberPath":"Articulo","selectedValuePath":"Articulo","isDroppedDownChanged":IsDroppedDownChanged,"uniqueId":"_C1MVCCtrl' + ContCtrl + '","gotFocus":ComboGotFocus,"isDisabled":true,"placeholder":"","maxItems":5,"itemsSourceFunction":ComboFacArtLazing,"searchMemberPath":"Articulo,ArtDes","isContentHtml":true,"headerPath":"Articulo","text":""});<\/script>' +
+                '</td>' +
+
+                '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:10px;padding-top: 5px !important;margin:0;">' +
+                Comp_Has_Alt +
+                '</td>' +
+
+                '<td class="CompDetailTableTD CompDetailTableTH-Left th_left" style="width:25px;margin-left: 0px;padding-top: 5px !important;">' +
+                '<input id="FacLin_COMP_Mod_Tipo_' + COMP_Mod_NumLin + '"  type="text" class="form-control  " value="' + Tipo + '" disabled>' +
+                '</td>';
+
+            if (HasChgColorNum > 0) {
+                CadAppend = CadAppend +
+                    '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:45px;margin-left: 0px;margin-right: 0px;padding-top: 5px !important;">' +
+                    '<input id="FacLin_COMP_Mod_Qty_' + COMP_Mod_NumLin + '" type="text" class="form-control InputDecimalMask2 PedLinEditColorsRed" value="' + Qty + '" disabled>' +
+                    '</td>';
+            } else {
+                CadAppend = CadAppend +
+                    '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:45px;margin-left: 0px;margin-right: 0px;padding-top: 5px !important;">' +
+                    '<input id="FacLin_COMP_Mod_Qty_' + COMP_Mod_NumLin + '" type="text" class="form-control InputDecimalMask2 " value="' + Qty + '" disabled>' +
+                    '</td>';
+            }
+
+
+
+            CadAppend = CadAppend +
+                '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:80px;margin-left: 0px;margin-right: 0px;padding-top: 5px !important;">' +
+                '<input id="FacLin_COMP_Mod_Precio_' + COMP_Mod_NumLin + '" type="text" class="form-control InputDecimalMask2 " value="' + Precio + '€" disabled>' +
+                '</td>' +
+
+                '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:90px;margin-left: 0px;margin-right: 0px;padding-top: 5px !important;">' +
+                '<input id="FacLin_COMP_Mod_Valor_' + COMP_Mod_NumLin + '" type="text" class="form-control InputDecimalMask4 " value="' + Valor + '€" style="font-weight: bold;" disabled>' +
+                '</td>'
+                ;
+
+            if (Item.Peso > 0) {
+                var CadAppend = CadAppend +
+                    '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:55px;margin-left: 0px;margin-right: 0px;padding-top: 5px !important;">' +
+                    '<input id="FacLin_COMP_Mod_Peso_' + COMP_Mod_NumLin + '" type="text" class="form-control InputDecimalMask2 " value="' + Peso + '" style="font-weight: bold;" disabled>' +
+                    '</td>';
+            } else {
+                var CadAppend = CadAppend +
+                    '<td class="CompDetailTableTD CompDetailTableTH th_right" style="width:55px;margin-left: 0px;margin-right: 0px;padding-top: 5px !important;">' +
+                    '</td>';
+            }
+
+            var CadAppend = CadAppend +
+                '<td class="CompDetailTableTD CompDetailTableTH-Left th_left" style="width:500px;margin-left: 15px;padding-top: 5px !important;">' +
+                '<input id="FacLin_COMP_Mod_Desc_' + COMP_Mod_NumLin + '"  type="text" class="form-control  " value="' + Desc + '" disabled>' +
+                '</td>' +
+
+                '<td class="CompDetailTableTD CompDetailTableTH-Left th_left" style="width:100px;margin-left: 15px;padding-top: 5px !important;">' +
+                '<input id="FacLin_COMP_Mod_TipoPrecio_' + COMP_Mod_NumLin + '"  type="text" class="form-control  " value="' + TipoPrecio + '" disabled>' +
+                '</td>'
+                ;
+
+            $('#BodyTabletFacLinCompMod').append(CadAppend);
+
+            var ComboFacLinModArt = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+            var templateModArt =
+                '<table><tr>' +
+                '<td class=""   style="text-align: Left;width: 180px;font-size: 12px;" title="Articulo">{Articulo}</td>' +
+                '<td class=""   style="text-align: Left;width: 290px;font-size: 12px;" title="Descripción">{ArtDes}</td>' +
+                '<td class="number"     title="Venta">C: {ArtPrecioCoste} €</td>' +
+                '<td class="number"     title="Venta">V: {ArtPrecioPVP} €</td>' +
+                '</tr></table>';
+            ComboFacLinModArt.formatItem.addHandler(function (s, e) {
+                var html = wijmo.format(templateModArt, e.data);
+                e.item.innerHTML = html;
+            });
+            ComboFacLinModArt.isDisabled = false;
+
+            /********************************************************/
+            /* itemsSource combo componente + alternativas          */
+            /********************************************************/
+            var ListCOMP = [];
+            ListCOMP.push({ Articulo: Item.Componente, ArtDes: Item.Descripcion, ArtPrecioCoste: Item.Precio, ArtPrecioPVP: Item.Precio, Peso: 0, PesoSinMerma: 0 });
+
+            //if (Alternativas.length > 0) {
+            //    Alternativas.forEach(function (Alt, indice, array) {
+            //        ListCOMP.push({ Articulo: Alt.Alternativa, ArtDes: Alt.Descripcion, ArtPrecioCoste: Alt.PrecioCoste, ArtPrecioPVP: Alt.PrecioVenta });
+            //    });
+            //}
+            ComboFacLinModArt.itemsSource = ListCOMP;
+            /******************************************************** */
+
+            ComboFacLinModArt.text = Articulo;
+
+
+            // Mierda pasa algo con los eventos generados dinamicamente, si tienen el mismo nombre de variable no funciona
+            if (COMP_Mod_NumLin == 0) {
+                var ComboFacLinModArt0 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt0.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt0.selectedItem != null && ComboFacLinModArt0.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt0.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(0, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 1) {
+                var ComboFacLinModArt1 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt1.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt1.selectedItem != null && ComboFacLinModArt1.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt1.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(1, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 2) {
+                var ComboFacLinModArt2 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt2.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt2.selectedItem != null && ComboFacLinModArt2.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt2.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(2, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 3) {
+                var ComboFacLinModArt3 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt3.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt3.selectedItem != null && ComboFacLinModArt3.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt3.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(3, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 4) {
+                var ComboFacLinModArt4 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt4.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt4.selectedItem != null && ComboFacLinModArt4.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt4.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(4, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 5) {
+                var ComboFacLinModArt5 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt5.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt5.selectedItem != null && ComboFacLinModArt5.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt5.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(5, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 6) {
+                var ComboFacLinModArt6 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt6.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt6.selectedItem != null && ComboFacLinModArt6.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt6.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(6, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 7) {
+                var ComboFacLinModArt7 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt7.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt7.selectedItem != null && ComboFacLinModArt7.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt7.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(7, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 8) {
+                var ComboFacLinModArt8 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt8.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt8.selectedItem != null && ComboFacLinModArt8.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt8.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(8, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 9) {
+                var ComboFacLinModArt9 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt9.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt9.selectedItem != null && ComboFacLinModArt9.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt9.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(9, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 10) {
+                var ComboFacLinModArt10 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt10.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt10.selectedItem != null && ComboFacLinModArt10.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt10.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(10, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 11) {
+                var ComboFacLinModArt11 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt11.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt11.selectedItem != null && ComboFacLinModArt11.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt11.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(11, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 12) {
+                var ComboFacLinModArt12 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt12.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt12.selectedItem != null && ComboFacLinModArt12.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt12.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(12, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 13) {
+                var ComboFacLinModArt13 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt13.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt13.selectedItem != null && ComboFacLinModArt13.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt13.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(13, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 14) {
+                var ComboFacLinModArt14v= wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt14.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt14.selectedItem != null && ComboFacLinModArt14.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt14.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(14, Item)
+                    }
+                });
+            }
+            if (COMP_Mod_NumLin == 15) {
+                var ComboFacLinModArt15 = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin);
+                ComboFacLinModArt15.isDroppedDownChanging.addHandler(function (s, e) {
+                    if (ComboFacLinModArt15.selectedItem != null && ComboFacLinModArt15.isDroppedDown == true) {
+                        var Item = ComboFacLinModArt15.selectedItem;
+                        AddLin_FacLin_EstCOMP_Mod_Event_Chg(15,Item)
+                    }
+                });
+            }
+
+
+
+        }
+
+        $(".PedLinEditColors").on("click", function () {
+            //var Str = $(this).attr('src');
+            //var Sec = $(this).attr('data-sec');
+
+            var Id      = $(this).attr('id');
+            var NumLin  = Id.replace("FacLin_COMP_Mod_Color_", "");
+
+            // Comprueba si la linea ya esta en MRP, no permitir modificaciones....
+            if($("#BtnFacLinNewEdit").prop("disabled") == false){
+                FacLin_Comp_Change_Color_Piedras(NumLin);
+            }
+
+
+        });
+
+    }
+
+    function FacLin_Comp_Change_Color_Piedras(NumLin) {
+
+        // xavi
+        var FacLinea = 0;
+        var CompoQtyTotal = 0;
+        var theGridFacLin = wijmo.Control.getControl("#gridFacLineas");
+        if (theGridFacLin !== null) {
+            if (theGridFacLin.selection.isValid) {
+                var itemSelect = theGridFacLin.collectionView.currentItem;
+                if (itemSelect !== null) {
+                    FacLinea = itemSelect.FacLinea;
+                }
+            }
+
+        }
+
+        var ComponenteObj   = wijmo.Control.getControl('#FacLin_COMP_Mod_Art_' + NumLin);
+        var Componente      = ComponenteObj.selectedValue;
+        //var FacLinea        = parseInt(NumLin) + 1;
+        var SecuenciaComp = parseInt(NumLin) + 1;
+        CompoQtyTotal = parseFloat($('#FacLin_COMP_Mod_Qty_' + NumLin).val());
+
+
+
+        N_DialogFacLinChangeColor(Factura, FacLinea, SecuenciaComp, Componente, CompoQtyTotal).then((res) => {
+
+
+        }).catch((error) => {
+
+        });
+
+    }
+
+    function AddLin_FacLin_EstCOMP_Mod_Event_Chg(COMP_Mod_NumLin, Item) {
+
+        //console.log(Item);
+
+        var ArtDes          = Item.ArtDes;
+
+        var ArtPrecioCoste  = numeral(Item.ArtPrecioCoste).format('0,0.0000');
+        var ArtPrecioPVP    = numeral(Item.ArtPrecioPVP).format('0,0.0000');
+        var Peso            = numeral(Item.Peso).format('0,0.000');
+        var PesoSinMerma    = numeral(Item.PesoSinMerma).format('0,0.000');
+
+        var _CompoNew       = Item.Articulo;
+        $('#FacLin_COMP_Mod_Art_' + COMP_Mod_NumLin).attr('data-comp', _CompoNew);
+        $('#FacLin_COMP_Mod_Desc_' + COMP_Mod_NumLin).val(ArtDes);
+
+        var TipoPrecio = $('#FacLin_COMP_Mod_TipoPrecio_' + COMP_Mod_NumLin).val();
+        //console.log(TipoPrecio);
+
+        if (TipoPrecio == "C") {
+            $('#FacLin_COMP_Mod_Precio_' + COMP_Mod_NumLin).val(ArtPrecioCoste + '€');
+
+            var Qty         = numeral($('#FacLin_COMP_Mod_Qty_' + COMP_Mod_NumLin).val()).format('0,0.00').replace(",", ".");
+            var Precio      = numeral(Item.ArtPrecioCoste).format('0,0.0000').replace(",", ".");
+            var Valor       = numeral(Qty * Precio).format('0,0.0000');
+            $('#FacLin_COMP_Mod_Valor_' + COMP_Mod_NumLin).val(Valor + '€');
+
+        } else {
+            $('#FacLin_COMP_Mod_Precio_' + COMP_Mod_NumLin).val(ArtPrecioPVP + '€');
+
+            var Qty         = numeral($('#FacLin_COMP_Mod_Qty_' + COMP_Mod_NumLin).val()).format('0,0.00').replace(",", ".");
+            var Precio      = numeral(Item.ArtPrecioPVP).format('0,0.0000').replace(",", ".");
+            var Valor       = numeral(Qty * Precio).format('0,0.0000');
+            $('#FacLin_COMP_Mod_Valor_' + COMP_Mod_NumLin).val(Valor + '€');
+        }
+
+        Call_Articulo_Find_Precios(true);
+
+    }
+
+    $('.requiredEditMedidas').on('click', function () {
+
+        if (ComboFacLinArticulo.selectedValue != null && ComboFacLinArticulo.selectedValue != "") {
+
+            var FacLinQTY       = numeral($("#FacLinQty").val()).value();
+            var FacLinMedidas   = $('#FacLinMedidas').val();
+
+            N_DialogFacLinMedidas(FacLinMedidas, FacLinQTY).then((res) => {
+
+                $('#FacLinMedidas').val(res);
+
+            }).catch((error) => {
+
+            });
+
+        }
+
+
+    });
+
+
+
+
+
+</script>
+
+
+
+
+
+

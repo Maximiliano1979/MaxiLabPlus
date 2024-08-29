@@ -1,0 +1,184 @@
+﻿@model iLabPlus.Models.BDiLabPlus.CorreosSalientes
+
+@{
+
+
+}
+
+
+<div class="modal " id="modalCorreoSaliente" tabindex="-1" role="dialog" aria-labelledby="modalCenterWarningTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-correo" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCorreoSalienteTitle">Correo Saliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <form id="FormCorreosSalientesCreateEdit" method="post" asp-controller="CorreosSalientes" asp-action="CreateMail" enctype="multipart/form-data" style="height:100%;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Guid" class=" form-control" hidden />
+                <input asp-for="Empresa" class=" form-control" hidden />
+
+                <div class="contenido-container">
+
+                    <div class="modal-body" id="modal-bodyCorreosSalientes">
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1" style="min-width: 72px; ">De:</span>
+                                </div>
+                                <input type="text" class="form-control" id="Remitente" asp-for="Remitente" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon2" style="min-width: 72px; ">Para:</span>
+                                </div>
+                                <input type="text" class="form-control" id="Destinatario" asp-for="Destinatario" aria-describedby="basic-addon2">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3" style="min-width: 72px; ">CCO:</span>
+                                </div>
+                                <input type="text" class="form-control" id="CCO" asp-for="CCO" aria-describedby="basic-addon3">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon4" style="min-width: 72px; ">Asunto:</span>
+                                </div>
+                                <input type="text" class="form-control" id="Asunto" asp-for="Asunto" aria-describedby="basic-addon4">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Cuerpo">Contenido:</label>
+                            <textarea class="form-control" id="Cuerpo" asp-for="Cuerpo"></textarea>
+                        </div>
+
+                        <div class="form-group adjuntar-archivos-correos-salientes">
+                            <div>
+                                <label for="Adjuntos">Adjuntar archivos:</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="Adjuntos" multiple>
+                                    @*<label class="custom-file-label" for="Adjuntos">Elegir archivos</label>*@
+                                </div>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary" id="btnIAgenerator">iA Generator Panel</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="ventanaIAgenerator" class="ventana-emergente">
+                        <div class="card">
+                            <div class="card-header card-header-ia">
+                                <h5 class="card-title">Generador de Texto con IA</h5>
+                                <button type="button" class="btn-close" aria-label="Close"></button>
+                            </div>
+                            <div class="card-body card-body-ia">
+                                <textarea id="textoIAgenerator" class="form-control"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="container-button-generator">
+                            <button type="button" class="btn btn-primary btn-textarea" id="btnGenerarTexto">Generar</button>
+                        </div>
+
+                        <div class="card cardRespuesta">
+                            <div class="card-header card-header-ia">
+                                <h5 class="card-title">Texto Generado por IA</h5>
+                            </div>
+                            <div class="card-body card-body-ia">
+                                <textarea id="textoIAgenerator" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="container-button-generator">
+                            <button type="button" class="btn btn-primary btn-textarea" id="btnGenerarTexto">Copiar</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="modalCorreoSaliente-cancel" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" id="modalCorreoSaliente-ok" class="btn btn-primary">Enviar</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+
+        // Carga el editor de texto
+        $('#Cuerpo').summernote(
+            {
+                height: 260,
+                focus: true,
+                disableResizeEditor: true,
+                lineHeight: 9.0 
+            }
+        );
+        $('div.note-editable').height(260);
+        $('.note-statusbar').hide();
+
+
+
+        var ModelGuid = "@Model.Guid";
+
+        $(document).ready(function () {
+            $('.custom-file-input').on('change', function () {
+                // Obtener el nombre del archivo seleccionado y actualizar el label
+                var fileName = $(this).val().split('\\').pop();
+                $(this).siblings
+                    ('.custom-file-label').addClass("selected").html(fileName);
+            });
+        });
+
+
+        $('#btnIAgenerator').click(() => {
+            $('.modal-dialog-correo').toggleClass('expandido');
+
+            // Calcula la altura del modal-bodyCorreosSalientes
+            var alturaModalBody = $('#modal-bodyCorreosSalientes').height();
+
+            // Establece la altura del textarea
+            $('#textoIAgenerator').height(alturaModalBody - 100); // Resta 100px para el margen y el encabezado
+        });
+
+
+        function cerrarVentanaIA() {
+            // $('#ventanaIAgenerator').hide(); // Oculta el div
+            $('.modal-dialog-correo').removeClass('expandido'); // Elimino la clase expandido del modal
+        }
+
+        // Adjuntar el evento click al botón de cierre
+        $('.btn-close').click(cerrarVentanaIA); 
+
+        // Desvincular y volver a vincular el evento hidden.bs.modal
+        $('#modalCorreoSaliente').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+            cerrarVentanaIA();
+        });
+
+
+    });
+
+
+</script>
